@@ -11,6 +11,6 @@
 
 # ignore R project and history files
 **.Rhistory*
-**.Rproj*i
+**.Rproj*
 
 

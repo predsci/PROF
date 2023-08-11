@@ -1,0 +1,16 @@
+
+# ignore compiled binaries
+**.o
+**.so
+
+# ignore R-package binary
+*.tar.gz
+
+# ignore Mac files
+**.DS_Store
+
+# ignore R project and history files
+**.Rhistory*
+**.Rproj*i
+
+

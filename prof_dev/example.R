@@ -33,11 +33,20 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
 
 fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
 
+# to save the results of the fit (posterior distribution and initial state)
+
+saveRDS(fit_list, filename = '/path/to/filename.rds')
+
 # you can now seat and relax for 10-15 minutes
 
 # to plot the results of the fit to the screen
 
-plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+fit_traj <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+
+# the plotting routine returns a list with two elements ('covid19' and 'influenza')
+# each element is a list with the trajectories used to create the plots, the date array
+# and the reported incidence array
+#
 
 # to also save to a file use:
 #  plot_fit(prof_data = prof_data, par_list = par_list,
@@ -47,10 +56,17 @@ plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 # to use the posterior distributions of the fits to create individual forecasts
 # and combined burden forecasts use:
 
-plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+forecast_traj <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 
 # please note that we currently provide two versions of the combined forecast:
 # random (bottom left panel), and ordered (bottom right panel)
+
+# the plotting routine returns a list with four elements ('covid19', 'influenza', 'random', and
+# 'ordered'). Random and Ordered are the combined burden calculated with random and ordered
+# selection of trajectories, respectively.
+# Each element is a list with the trajectories used to create the plots, the date array
+# and the reported incidence array
+#
 
 # to also save the plot to a file use:
 #  plot_forecast(prof_data = prof_data, par_list = par_list,

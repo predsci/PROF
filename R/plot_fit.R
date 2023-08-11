@@ -26,10 +26,13 @@
 #'  wl real, needed for tanh function of bete(t)
 #'  @filename - if NULL print plot to screen, if not also save to filename
 #'  @param ntraj - integer number of stochastic trajectories, default 1000
-#' @return plots to screen or file
+#' @return
+#' plots to screen or file
+#' fit_traj - a list with a list for each disease containing: trajectories,
+#' dates, and reported incidence
 #'
 #'
-plot_fit <- function(prof_data, par_list, fit_list = NULL, ntraj =1000, filename = NULL) {
+plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL) {
 
   tab_list = fit_list$tab_list
 
@@ -42,6 +45,7 @@ plot_fit <- function(prof_data, par_list, fit_list = NULL, ntraj =1000, filename
   disease_list = names(prof_data)
 
   pl = list()
+  fit_traj = list()
 
   # loop on all diseases
   for (ip in 1:npath) {
@@ -182,6 +186,12 @@ plot_fit <- function(prof_data, par_list, fit_list = NULL, ntraj =1000, filename
 
     simdat = simdat[1:icount,]
 
+    # save to list
+
+    fit_traj[[disease]] = list(traj = simdat,
+                               date = as.Date(dates, format = '%Y-%m-%d'),
+                               reported = obs)
+
     apply(simdat,2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles
 
     quantiles <- t(quantiles)
@@ -234,6 +244,7 @@ plot_fit <- function(prof_data, par_list, fit_list = NULL, ntraj =1000, filename
 
   }
 
-  # Will need to save all the trajectories
+  # return the trajectory list
 
+  return(fit_traj)
 }

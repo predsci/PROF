@@ -1,0 +1,28 @@
+library(stringr)
+
+fit_data <- function(data) {
+
+  # number of pathogens
+  npath = length(data)
+
+  # loop on all pathogens
+  for ip in (1:npath) {
+
+    mydata = data[[ip]]
+
+    # location name
+    reg_name = mydata$reg_name
+
+    # location population
+    pop = mydata$population
+
+
+    # pathogen name (covid or flu)
+
+    pathogen = mydata$pathogen
+
+
+
+  }
+
+}

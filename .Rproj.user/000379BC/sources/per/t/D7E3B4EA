@@ -1,0 +1,26 @@
+{
+    "id": "D7E3B4EA",
+    "path": "~/Dropbox/CSMB03/michal/code/td-covid/forecast_covid_td_beta.R",
+    "project_path": null,
+    "type": "r_source",
+    "hash": "1157751502",
+    "contents": "",
+    "dirty": false,
+    "created": 1691617902264.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "403,23",
+        "scrollLine": "381"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1691624644,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1691624644160,
+    "read_only": false,
+    "read_only_alternatives": []
+}

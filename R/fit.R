@@ -18,11 +18,11 @@
 #' dis_par_ranges - a list with parameter ranges and starting values
 #' mcmc_pars
 #' @return
-#' tab_list - posterior distributionof parameters for each disease
+#' tab_list - posterior distribution of parameters for each disease
 #' state0 - the initial conditions for all the compartments
 #' wl - the parameter used for tanh of beta(t), default 3
 #'
-fit_data <- function(prof_data=NULL, par_list = NULL) {
+fit_data <- function(prof_data, par_list) {
 
   if (is.null(prof_data)) stop('Missing prof_data')
   if (is.null(par_list)) stop('Missing par_list')

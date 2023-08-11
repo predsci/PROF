@@ -35,11 +35,22 @@ to a local R-library using 'R CMD build dice' and 'R CMD INSTALL -l /my_lib_loc 
 -->
 
 ## Getting Started
-In general, the scripts in examples/ are a good way to get started and the manual 
-dice/vignettes/dice.pdf contains much more detailed information along with some 
-walk-throughs. Help pages for PROF and YYY are also good starting points:  
+The PROF/prof_dev directory provides an example script that is a good starting point for using the package.  This script relies on the two other scripts in the same directory and hence we suggest to start as follows.
 
-> \> library(PROF)  
-> \> ?PROF  
-> \> ?YYY  
+Create a 'test' directory 
+
+>\> mkdir test
+
+ navigate to the 'test' directory
+
+ >\> cd test
+
+Copy all three scripts from PROF/prof_dev to the 'test' directory
+
+>\> cp /path/to/PROF/prof_dev/*R .
+
+Open R or R studio and the 'example.R' script
+
+Read the script and execute it, preferably first line by line
+
 

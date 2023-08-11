@@ -28,8 +28,11 @@
 #'  @param nfrcst - number of time units to produce a forecast for (assume to be the same
 #'  cadence as the data), default is 35 days
 #'  @filename - if NULL print plot to screen, if not save also to filename
-#' @return plots to screen and  file
-#'
+#' @return
+#' plots to screen and  file
+#' forecast_traj - a list with a list for each disease and for the combined burden
+#' (random and ordered): trajectories,
+#' dates, and reported incidence.
 #'
 plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 35, filename = NULL) {
 
@@ -44,6 +47,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   disease_list = names(prof_data)
 
   pl = simdat_list = dates_frcst_list = list()
+
+  forecast_traj = list()
 
   # loop on all diseases
   for (ip in 1:npath) {
@@ -208,6 +213,10 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     simdat_list[[ip]] = simdat
 
+    forecast_traj[[disease]] = list(traj = simdat,
+                                    date = as.Date(dates_frcst, format = '%Y-%m-%d'),
+                                    reported = c(obs, rep(NA, nfrcst)))
+
     apply(simdat,2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles
 
     quantiles <- t(quantiles)
@@ -247,7 +256,6 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   cat("Combining Forecasts \n")
 
 
-
   combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
 
   simdat_both = combined_frcst$simdat_both
@@ -258,6 +266,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   combined_names <- c('random', 'ordered')
 
+
   for (ip in 1:npath) {
 
 
@@ -266,6 +275,10 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   quantiles_both <- t(quantiles_both)
   quantiles_both <- as.data.frame(quantiles_both)
 
+  forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
+                                               date = as.Date(dates_both, format = '%Y-%m-%d'),
+                                               reported =
+                                                 c(obs_both, rep(NA, length(dates_both)-length(obs_both))))
 
   total_both=cbind(date = as.Date(dates_both, format = '%Y-%m-%d'),quantiles_both,
               reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))))
@@ -301,7 +314,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   }
 
-  # Will need to save all the trajectories
+  # return forecast_traj
 
-
+  return(forecast_traj)
 }

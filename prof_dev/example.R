@@ -47,7 +47,7 @@ plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 # to use the posterior distributions of the fits to create individual forecasts
 # and combined burden forecasts use:
 
-plot_fprecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 
 # please note that we currently provide two versions of the combined forecast:
 # random (bottom left panel), and ordered (bottom right panel)

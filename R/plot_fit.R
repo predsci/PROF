@@ -11,7 +11,8 @@
 #' population - population size
 #' loc_name - location name
 #' inc_type - incidence type, e.g. hosp_admits
-#' data itself as a 2D structure of dates and incidence
+#' data - all available data as a 2D structure of dates and incidence
+#' data_fit - subset of data for fitting (can be eqaul to data)
 #' @param par_list data structure for parameters
 #' for each disease it includes
 #' model
@@ -63,11 +64,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
     # disease name (covid or flu)
     disease = mydata$disease
 
-    # hospitalization incidence
-    inc = mydata$data$inc
+    # hospitalization incidence - fitted
+    inc = mydata$data_fit$inc
 
-    # dates
-    dates  = mydata$data$date
+    # dates - fitted
+
+    dates  = mydata$data_fit$date
 
     ndates = length(dates)
 
@@ -98,9 +100,9 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
     model = prof_init_par$model
 
-    # observations
+    # observations - fitted
 
-    obs = mydata$data$inc
+    obs = mydata$data_fit$inc
 
     # print information for the User
 

@@ -11,7 +11,8 @@
 #' population - population size
 #' loc_name - location name
 #' inc_type - incidence type, e.g. hosp_admits
-#' data itself as a 2D structure of dates and incidence
+#' data - all available data as a 2D structure of dates and incidence
+#' data_fit - subset of data for fitting (can be eqaul to data)
 #' @param par_list data structure for parameters
 #' for each disease it includes
 #' model
@@ -66,11 +67,11 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     # disease name (covid or flu)
     disease = mydata$disease
 
-    # hospitalization incidence
-    inc = mydata$data$inc
+    # hospitalization incidence - fitted
+    inc = mydata$data_fit$inc
 
-    # dates
-    dates  = mydata$data$date
+    # dates - fitted
+    dates  = mydata$data_fit$date
 
     ndates = length(dates)
 
@@ -121,7 +122,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     model = prof_init_par$model
 
-    # observations
+    # observations - all data stream
 
     obs = mydata$data$inc
 
@@ -213,16 +214,22 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     simdat_list[[ip]] = simdat
 
+    npad = nfrcst - length(obs)
+    if (npad > 0) {
+      reported = c(obs[1:length(dates_frcst)], rep(NA, npad))
+    } else {
+      reported = obs[1:length(dates_frcst)]
+    }
     forecast_traj[[disease]] = list(traj = simdat,
                                     date = as.Date(dates_frcst, format = '%Y-%m-%d'),
-                                    reported = c(obs, rep(NA, nfrcst)))
+                                    reported = reported)
 
     apply(simdat,2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles
 
     quantiles <- t(quantiles)
     quantiles <- as.data.frame(quantiles)
     total=cbind(date = as.Date(dates_frcst, format = '%Y-%m-%d'),time = 1:ntimes_frcst,quantiles,
-                reported = c(obs, rep(NA, nfrcst)))
+                reported = reported)
 
     # Remove 'X' from column names
     #colnames(total) <- gsub("X", "", colnames(total))
@@ -255,7 +262,6 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   # Combine forecasts
   cat("Combining Forecasts \n")
 
-
   combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
 
   simdat_both = combined_frcst$simdat_both
@@ -263,6 +269,13 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   dates_both  = combined_frcst$dates_both
 
   obs_both    = combined_frcst$obs_both
+
+  npad = nfrcst - length(obs_both)
+  if (npad > 0) {
+    reported_both = c(obs_both[1:length(dates_frcst)], rep(NA, npad))
+  } else {
+    reported_both = obs_both[1:length(dates_frcst)]
+  }
 
   combined_names <- c('random', 'ordered')
 
@@ -277,8 +290,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
                                                date = as.Date(dates_both, format = '%Y-%m-%d'),
-                                               reported =
-                                                 c(obs_both, rep(NA, length(dates_both)-length(obs_both))))
+                                               reported = reported_both)
 
   total_both=cbind(date = as.Date(dates_both, format = '%Y-%m-%d'),quantiles_both,
               reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))))

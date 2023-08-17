@@ -20,7 +20,7 @@ start_date = as.Date("2022-09-01")
 end_date = as.Date("2023-06-01") #Sys.Date()
 # Set data fitting subset dates
 fit_start = as.Date("2022-09-01")
-fit_end = as.Date("2022-12-15")
+fit_end = as.Date("2023-02-15")
 
 keep_cols = c("previous_day_admission_influenza_confirmed",
               "previous_day_admission_influenza_confirmed_coverage",
@@ -42,7 +42,7 @@ flu_data = format_hhs_state(state_data=CA_inf, fit_col=fit_col, loc_name=state,
 # set fit data entry
 flu_data$influenza$data_fit = flu_data$influenza$data[
   flu_data$influenza$data$date >= fit_start &
-    flu_data$influenza$data$date <= fit_end, 
+    flu_data$influenza$data$date <= fit_end,
 ]
 
 
@@ -75,7 +75,7 @@ cov_data = format_hhs_state(state_data=CA_cov, fit_col=fit_col, loc_name=state,
 # set fit data entry
 cov_data$covid19$data_fit = cov_data$covid19$data[
   cov_data$covid19$data$date >= fit_start &
-    cov_data$covid19$data$date <= fit_end, 
+    cov_data$covid19$data$date <= fit_end,
 ]
 
 # --- Combine two diseases into a single data structure ---

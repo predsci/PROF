@@ -343,6 +343,11 @@ plot_prof_data <- function(prof_data, filename = NULL) {
     dates  = mydata$data$date
     inc_type = mydata$inc_type
 
+    dates_fit = mydata$data_fit$date
+    inc_fit   = mydata$data_fit$inc
+
+    data_fit = data.frame(x=dates_fit, y = inc_fit)
+
     cadence = as.numeric(dates[2]-dates[1])
     if (cadence == 1) cadence_lab = 'Daily'
     if (cadence == 7) cadence_lab = 'Weekly'
@@ -354,8 +359,13 @@ plot_prof_data <- function(prof_data, filename = NULL) {
     xlab = paste0(start_year,' - ', end_year)
     ylab = inc_type
     data = data.frame(x=dates, y = inc)
-    pl[[ip]] <- ggplot(data, aes(x, y)) +
-      geom_point(color=col[ip]) +
+
+
+
+    pl[[ip]] <- ggplot() +
+      geom_point(data = data_fit, aes(x,y), color = col[ip], alpha = 1.0, size = 3) +
+      geom_point(data = data, aes(x,y), color=col[ip], alpha = 0.2, size = 3) +
+      geom_vline(xintercept=max(data_fit$x), linetype = 'dashed', col = 'darkgreen') +
       labs(x = xlab,           # X-axis label
            y = ylab,           # Y-axis label
            title = main_txt)  # Main title
@@ -399,6 +409,7 @@ plot_prof_data <- function(prof_data, filename = NULL) {
 #'
 #'
 combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_list = NULL) {
+
   if (is.null(prof_data)) stop('Missing prof_data in combined_foreccasts')
   if (is.null(dates_frcst_list)) stop('Missing dates_frcst_list in combined_foreccasts')
   if (is.null(simdat_list)) stop('Missing simdat_list in in combined_foreccasts')
@@ -432,18 +443,27 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 
     mydata = prof_data[[ip]]
 
-    # hospitalization incidence
-    inc = mydata$data$inc
+    # hospitalization incidence - fitted
+    inc = mydata$data_fit$inc
 
     # dates
-    dates  = mydata$data$date
+    dates  = mydata$data_fit$date
+
+    # complete hospitalization incidence and dates
+
+    inc_all = mydata$data$inc
+    dates_all  = mydata$data$date
 
     dates_frcst = dates_frcst_list[[ip]]
 
     ind0 = which(dates_frcst == start_date)
     ind1 = which(dates_frcst ==   end_date)
 
-    inc = inc[ind0:length(inc)]
+    if (length(inc_all) >= length(dates_frcst)) {
+      inc = inc_all[ind0:ind1]
+    }  else {
+      inc = inc_all[ind0:length(inc)]
+    }
 
     simdat = simdat_list[[ip]]
 

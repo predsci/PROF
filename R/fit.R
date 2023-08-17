@@ -10,7 +10,8 @@
 #' population - population size
 #' loc_name - location name
 #' inc_type - incidence type, e.g. hosp_admits
-#' data itself as a 2D structure of dates and incidence
+#' data - all available data as a 2D structure of dates and incidence
+#' data_fit - subset of data for fitting (can be eqaul to data)
 #' @param par_list data structure for parameters
 #' for each disease it includes
 #' model - 'seirh' or 'sirh'
@@ -58,11 +59,11 @@ fit_data <- function(prof_data, par_list) {
     # disease name (covid or flu)
     disease = mydata$disease
     if (is.null(disease)) stop('Missing <disease> in prof_data structure')
-    # hospitalization incidence
-    inc = mydata$data$inc
+    # hospitalization incidence - for fitting
+    inc = mydata$data_fit$inc
     if (is.null(inc)) stop('Missing <inc> in prof_data structure')
-    # dates
-    dates  = mydata$data$date
+    # dates - for fitting
+    dates  = mydata$data_fit$date
     if (is.null(dates)) stop('Missing <date> in prof_data structure')
 
     cat("\nFitting ",toupper(disease), " Data for ", reg_name,'\n')

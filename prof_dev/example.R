@@ -6,7 +6,7 @@ library(PROF)
 
 # set path to location of example.R script
 
-setwd("~/Dropbox/CSMB03/code/PROF/prof_dev")
+setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 
 # use the provided 'ex_hhs_data.R' script to download the HHS hospitlization
 # file, subset to CA and format the data for both covid19 and influenza

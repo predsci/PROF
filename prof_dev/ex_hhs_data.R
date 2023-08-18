@@ -15,9 +15,13 @@ hosp_data = load_HHS_csv(hhs_file=result$download_path)
 
 # --- Subset influenza admits data for California ---
 state = "CA"
-# For the 2022-2023 season this is reasonable
+# Set observed data subset dates
 start_date = as.Date("2022-09-01")
 end_date = as.Date("2023-06-01") #Sys.Date()
+# Set data fitting subset dates
+fit_start = as.Date("2022-09-01")
+fit_end = as.Date("2023-02-15")
+
 keep_cols = c("previous_day_admission_influenza_confirmed",
               "previous_day_admission_influenza_confirmed_coverage",
               "previous_day_deaths_influenza",
@@ -35,6 +39,11 @@ population = 39144818                   # write function to look-up state pops
 flu_data = format_hhs_state(state_data=CA_inf, fit_col=fit_col, loc_name=state,
                             pop=population, disease=disease, inc_type=inc_type)
 
+# set fit data entry
+flu_data$influenza$data_fit = flu_data$influenza$data[
+  flu_data$influenza$data$date >= fit_start &
+    flu_data$influenza$data$date <= fit_end,
+]
 
 
 # --- Repeat for COVID ---
@@ -62,6 +71,12 @@ disease = "covid19"
 population = 39144818                   # write function to look-up state pops
 cov_data = format_hhs_state(state_data=CA_cov, fit_col=fit_col, loc_name=state,
                             pop=population, disease=disease, inc_type=inc_type)
+
+# set fit data entry
+cov_data$covid19$data_fit = cov_data$covid19$data[
+  cov_data$covid19$data$date >= fit_start &
+    cov_data$covid19$data$date <= fit_end,
+]
 
 # --- Combine two diseases into a single data structure ---
 prof_data = list(covid19=cov_data$covid19, influenza=flu_data$influenza)

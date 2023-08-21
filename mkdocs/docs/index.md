@@ -14,6 +14,7 @@ probabilistic forecasts of the near-term number of hospital admissions. If both 
 
 Will be explained here including sketches
 
+![Compartmental Modles](img/models_sketch.png){ align = left } 
 # Time-Dependent Force of Infection
 
 Will be explained here

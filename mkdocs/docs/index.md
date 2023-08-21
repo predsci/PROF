@@ -8,11 +8,11 @@ and combined burden of influenza and COVID-19 at the state level. An S[I]2HR and
 are used to fit the two pathogens and both use a flexible time-dependent transmission term. Once the User
 selects a state, and either one or both viruses, the PROF sequential fitting procedure determines the joint posterior distribution for the model
 parameters.  The joint posterior distribution is then used with the model to generate location-specific
-probabilistic forecasts of the near-term number of hospital admissions. If both viruses are chosen, this procedure is done twice and the total hospital burden forecast is estimated by combining the trajectory profiles of each disease in multiple ways, inlcuding random, ordered, and in-between.
+probabilistic forecasts of the near-term number of hospital admissions. If both viruses are chosen, this procedure is done twice and the total hospital burden forecast is estimated by combining the trajectory profiles of each disease in multiple ways, including random, ordered, and in-between.
 
 # Compartmental Models
 
-Will be explained here including skethes
+Will be explained here including sketches
 
 # Time-Dependent Force of Infection
 

@@ -1,7 +1,6 @@
 site_name: PROF
 site_description: PROF Documentation
-authors:
-    - Michal Ben-Nun
+site_author: PROF Team
 
 # repository information
 repo_url: https://github.com/predsci/PROF
@@ -38,13 +37,13 @@ nav:
 
 # theme
 theme:
-  name: material
+  name: mkdocs
   language: en
   palette:
     primary: indigo
     accent: light blue
-  logo: img/sun.png
-  favicon: img/sun.png
+  logo: img/psi.png
+  favicon: img/psi.png
   font:
     code: Oswald
   features:
@@ -56,8 +55,8 @@ theme:
 plugins:
   - search:
       lang: en
-  - mkdocs-jupyter:
-      ignore_h1_titles: True
+#  - mkdocs-jupyter:
+#      ignore_h1_titles: True
   - mkdocstrings:
       docstring_style: numpy
 #      watch:
@@ -67,10 +66,10 @@ plugins:
 markdown_extensions:
   - attr_list
   - admonition
-  - pymdownx.critic
-  - pymdownx.mark
-  - pymdownx.tabbed
-  - pymdownx.arithmatex
+#  - pymdownx.critic
+#  - pymdownx.mark
+#  - pymdownx.tabbed
+#  - pymdownx.arithmatex
 
 extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML

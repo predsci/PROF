@@ -6,8 +6,8 @@ through cooperative agreement number NU38OT000297, as part of the "Development o
 
 ## References
 
-* [Ben-Nun et al. 2022] (https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010375)
-* [Riley et al. 2023] (https://academic.oup.com/milmed/article/188/1-2/311/6387156)
+* [Ben-Nun et al. 2022](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010375)
+* [Riley et al. 2023](https://academic.oup.com/milmed/article/188/1-2/311/6387156)
 * Turtle et al. (2023) - Epidemics, Submitted
 
 ## Contact 

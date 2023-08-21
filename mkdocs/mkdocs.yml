@@ -57,7 +57,7 @@ plugins:
       lang: en
 #  - mkdocs-jupyter:
 #      ignore_h1_titles: True
-  - mkdocstrings:
+#  - mkdocstrings:
 #      docstring_style: numpy
 #      watch:
 #        - PROF/PROF

@@ -37,7 +37,11 @@ nav:
 
 # theme
 theme:
-  name: mkdocs
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - yml
+    - rust
   language: en
   palette:
     primary: indigo

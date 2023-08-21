@@ -10,16 +10,23 @@ selects a state, and either one or both viruses, the PROF sequential fitting pro
 parameters.  The joint posterior distribution is then used with the model to generate location-specific
 probabilistic forecasts of the near-term number of hospital admissions. If both viruses are chosen, this procedure is done twice and the total hospital burden forecast is estimated by combining the trajectory profiles of each disease in multiple ways, including random, ordered, and in-between.
 
+# Data
+
 # Compartmental Models
 
-Will be explained here including sketches
+PROF uses compartmental models with a flexible time-dependent transmission term to fit daily hospitalization data. For both COVID-19 and influenza, the models include a hospitalization compartment which is split into two subcompartments. This split ensures that the model preserves the correct generation time (T~g) and that the ratio between cumulative recovered and hospitalized individuals is determined by the infection hospitalization ratio (p~H). For influenza, individuals begin in the susceptible compartment. If exposed they transition ($$beta(t)$$) to the infectious compartment where there is a probability of hospitalization or recovery (p~H/1-p~H) Individuals progress ($$1/mu$$) from the first hospitalization compartment (H~1) to the second (H~2), and the number entering this compartment is recorded (and optimized, see below)
 
-![Compartmental Modles](img/models_sketch.png){ align = left } 
+
+![Influenza Model](img/model_influenza.png){ align = left } 
+
+
+Create sketch for SE[I]~2HR
+
 # Time-Dependent Force of Infection
 
 Will be explained here
 
-# Methodology
+# Methodology - Fitting, Forecasting and Combined Burden
 
 Explain the fitting procedure, forecasting and combining forecasts
 

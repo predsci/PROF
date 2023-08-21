@@ -66,7 +66,7 @@ Read the script and execute it, preferably first line by line. Please note that 
 
 ## Documentation and Examples
 
-Documentation and Examples can be found here: <put link to predsci.github.io/PROF>
+Documentation and Examples: (url=https://predsci.github.io/PROF)
 ## Acknowledgements
 The development of PROF is supported by the Council of State and Territorial Epidemiologists (CSTE) and the Centers for Disease Control and Prevention (CDC)
 through cooperative agreement number NU38OT000297, as part of the "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision-making" project.

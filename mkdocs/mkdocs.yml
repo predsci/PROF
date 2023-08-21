@@ -58,7 +58,7 @@ plugins:
 #  - mkdocs-jupyter:
 #      ignore_h1_titles: True
   - mkdocstrings:
-      docstring_style: numpy
+#      docstring_style: numpy
 #      watch:
 #        - PROF/PROF
 

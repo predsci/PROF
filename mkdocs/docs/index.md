@@ -28,7 +28,10 @@ A similar model is used for COVID-19 with the only difference being the addition
 
 # Time-Dependent Force of Infection
 
-Will be explained here
+We use a smoothly varying two-value functional form to describe the time-dependent reproduction number: R(t) = &beta;(t)&gamma;, where &beta;(t) is the time-dependent transmission rate is &gamma; is the total recovery rate. 
+![transmission-term-equation](img/transmission_term_eq.png)
+The above equation produces a smooth curve where at roughly time t<sub>0</sub> the value of R(t) transitions from R<sub>0</sub> to R<sub>1</sub> 
+with an approximate transition time of ~2L days.
 
 # Methodology - Fitting, Forecasting and Combined Burden
 

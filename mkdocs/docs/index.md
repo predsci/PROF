@@ -19,10 +19,12 @@ probabilistic forecasts of the near-term number of hospital admissions. If both 
 PROF uses compartmental models with a flexible time-dependent transmission term to fit daily hospitalization data. For both COVID-19 and influenza, the models include a hospitalization compartment which is split into two subcompartments. This split ensures that the model preserves the correct generation time (T<sub>g</sub>) and that the ratio between cumulative recovered and hospitalized individuals is determined by the infection hospitalization ratio (p<sub>H</sub>). For influenza, individuals begin in the susceptible compartment. If exposed they transition (&beta;(t)) to the infectious compartment where there is a probability of hospitalization or recovery (p<sub>H</sub>/1-p<sub>H</sub>) Individuals progress (1/&mu;) from the first hospitalization compartment (H<sub>1</sub>) to the second (H<sub>2</sub>), and the number entering this compartment is recorded (and optimized, see below). 
 
 
-![Influenza Model](img/model_influenza.png){ align = left } 
+![Influenza Model](img/model_influenza.png)
 
 
-Create sketch for SE[I]~2HR
+A similar model is used for COVID-19 with the only difference being the addition of the Exposed (but not yet infectious) compartment.
+
+![covid19 Model](img/model_covid19.png)
 
 # Time-Dependent Force of Infection
 

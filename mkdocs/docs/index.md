@@ -32,7 +32,7 @@ We use a smoothly varying two-value functional form to describe the time-depende
 
 $$R(t)=\frac{1}{2}\left( R_{0} + R_{1} + (R_{1}-R_{0})tanh\left( \frac{t-t_{0}}{L} \right) \right)$$
 
-![transmission-term-equation](img/transmission_term_eq.png)
+##![transmission-term-equation](img/transmission_term_eq.png)
 The above equation produces a smooth curve where at roughly time t<sub>0</sub> the value of R(t) transitions from R<sub>0</sub> to R<sub>1</sub> 
 with an approximate transition time of ~2L days.
 

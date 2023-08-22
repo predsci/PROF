@@ -11,8 +11,8 @@ parameters.  The joint posterior distribution is then used with the model to gen
 probabilistic forecasts of the near-term number of hospital admissions. If both viruses are chosen, this procedure is done twice and the total hospital burden forecast is estimated by combining the trajectory profiles of each disease in multiple ways, including random, ordered, and in-between.
 
 # Data
-PROF provides full support for downloading the most up-to-date daily confirmed hospital admission data for COVID-19 and influenza. 
-
+PROF provides full support for downloading the most up-to-date previous-day confirmed hospital admission data for COVID-19 and influenza. 
+The data set is provided by the U.S. Health & Human Services is updated weekly on Friday and is called: "COVID-19 Reported Patient Impact and Hospital Capacity by State (RAW)".   For more on the data set, see [here](https://healthdata.gov/dataset/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/6xf2-c3ie)
 
 # Compartmental Models
 

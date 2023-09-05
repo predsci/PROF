@@ -139,7 +139,7 @@ format_hhs_state <- function(state_data, fit_col, inc_type,
                              loc_name, pop, disease) {
   # initialize output list
   out_list = list()
-  out_list[[disease]] = list(disease=disease, population=pop, loc_name=state,
+  out_list[[disease]] = list(disease=disease, population=pop, loc_name=loc_name,
                              inc_type=inc_type)
   # extract incidence column
   inc_df = state_data[, c('date', fit_col)]
@@ -161,4 +161,103 @@ test_import <- function() {
 }
 
 
+
+#' Example use of HHS data functions.
+#' 
+#' This is a set of HHS function calls that demonstrate how to retrieve and 
+#' structure data for use with PROF fitting routines.  This function has 
+#' many inputs hard-coded (dates, population, etc) and should be used as a 
+#' blueprint rather than as an operational function.
+#' @param state chr. Two-letter state/territory abbreviation.
+#'
+#' @return PROF data list.
+#' @export
+#'
+#' @examples
+#' # download and format HHS hospitalization data for flu and COVID
+#' PROF_data = hhs_data_ex(state="CA")
+#' # plot the contents of a PROF data structure
+#' plot_prof_data(prof_data=PROF_data)
+hhs_data_ex <- function(state="CA") {
+  # example use of HHS PROTECT data functions
+  
+  # download HHS hospitalizations file
+  result = hhs_hosp_state_down(down_dir="~/Downloads")
+  
+  if (result$out_flag!=0) {
+    stop("There was an error with the download.")
+  }
+  
+  # load the file
+  hosp_data = load_HHS_csv(hhs_file=result$download_path)
+  # hosp_data = load_HHS_csv(hhs_file="~/Dropbox/CSMB01/data/HHS_daily-hosp_state.csv")
+  
+  # --- Subset influenza admits data for California ---
+  # Set observed data subset dates
+  start_date = as.Date("2022-09-01")
+  end_date = as.Date("2023-06-01") #Sys.Date()
+  # Set data fitting subset dates
+  fit_start = as.Date("2022-09-01")
+  fit_end = as.Date("2023-02-15")
+  
+  keep_cols = c("previous_day_admission_influenza_confirmed",
+                "previous_day_admission_influenza_confirmed_coverage",
+                "previous_day_deaths_influenza",
+                "previous_day_deaths_influenza_coverage")
+  
+  CA_inf = get_HHS_state(hosp_data=hosp_data, get_cols=keep_cols,
+                         state=state, start_date=start_date,
+                         end_date=end_date)
+  
+  # format the data for fitting
+  fit_col = "previous_day_admission_influenza_confirmed"
+  inc_type = "hosp_admits"
+  disease = "influenza"
+  population = 39144818                   # write function to look-up state pops
+  flu_data = format_hhs_state(state_data=CA_inf, fit_col=fit_col, loc_name=state,
+                              pop=population, disease=disease, inc_type=inc_type)
+  
+  # set fit data entry
+  flu_data$influenza$data_fit = flu_data$influenza$data[
+    flu_data$influenza$data$date >= fit_start &
+      flu_data$influenza$data$date <= fit_end,
+  ]
+  
+  
+  # --- Repeat for COVID ---
+  start_date = as.Date("2022-10-01")
+  end_date = as.Date("2023-06-01") #Sys.Date()
+  keep_cols = c("previous_day_admission_adult_covid_confirmed",
+                "previous_day_admission_adult_covid_confirmed_coverage",
+                "previous_day_admission_pediatric_covid_confirmed",
+                "previous_day_admission_pediatric_covid_confirmed_coverage",
+                "deaths_covid", "deaths_covid_coverage")
+  
+  CA_cov = get_HHS_state(hosp_data=hosp_data, get_cols=keep_cols,
+                         state=state, start_date=start_date,
+                         end_date=end_date)
+  # combine adult and pediatric counts
+  CA_cov[["previous_day_admission_confirmed"]] =
+    CA_cov$previous_day_admission_adult_covid_confirmed +
+    CA_cov$previous_day_admission_pediatric_covid_confirmed
+  
+  # format the data for fitting
+  fit_col = "previous_day_admission_confirmed"
+  inc_type = "hosp_admits"
+  disease = "covid19"
+  population = 39144818                   # write function to look-up state pops
+  cov_data = format_hhs_state(state_data=CA_cov, fit_col=fit_col, loc_name=state,
+                              pop=population, disease=disease, inc_type=inc_type)
+  
+  # set fit data entry
+  cov_data$covid19$data_fit = cov_data$covid19$data[
+    cov_data$covid19$data$date >= fit_start &
+      cov_data$covid19$data$date <= fit_end,
+  ]
+  
+  # --- Combine two diseases into a single data structure ---
+  prof_data = list(covid19=cov_data$covid19, influenza=flu_data$influenza)
+  
+  return(prof_data)
+}
 

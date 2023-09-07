@@ -46,7 +46,7 @@ to a local R-library using 'R CMD build dice' and 'R CMD INSTALL -l /my_lib_loc 
 -->
 
 ## Getting Started
-The PROF/prof_dev directory provides an example script that is a good starting point for using the package.  This script relies on two other scripts in the same directory and hence we suggest to start as follows.
+The PROF/prof_dev directory provides an example script that is a good starting point for using the package. 
 
 Create a 'test' directory 
 
@@ -56,9 +56,9 @@ Create a 'test' directory
 
  >\> cd test
 
-Copy all three scripts from PROF/prof_dev to the 'test' directory
+Copy the example.R script from PROF/prof_dev to the 'test' directory
 
->\> cp /path/to/PROF/prof_dev/*R .
+>\> cp /path/to/PROF/prof_dev/example.R .
 
 Open R or R studio and the 'example.R' script
 

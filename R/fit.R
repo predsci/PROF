@@ -109,7 +109,7 @@ fit_data <- function(prof_data, par_list) {
       # estimate for baseline - will need to set key word based on number of weeks
       # of data
 
-      end_of_season = FALSE
+      end_of_season = TRUE
 
       baseline <- get_baseline(inc, end_of_season)
 
@@ -255,7 +255,7 @@ fit_data <- function(prof_data, par_list) {
     input_parmax = prof_init_par$dis_par_ranges$parmax
 
     parmin = par
-    parmin[ind_opt] <- lapply(par[ind_opt], function(x) x * 0.5)
+    parmin[ind_opt] <- lapply(par[ind_opt], function(x) x * 0.75)
     # hand-tune some min values
     parmin['pH'] = 1e-4
     parmin[['mu_H1H2']] = 0.5

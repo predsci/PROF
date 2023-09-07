@@ -6,12 +6,12 @@ library(PROF)
 
 # set path to location of example.R script
 
-setwd("~/Dropbox/CSMB03/code/PROF/prof_dev")
+setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 
-# use the provided 'ex_hhs_data.R' script to download the HHS hospitlization
+# use the provided 'hhs_data_ex' function to download the HHS hospitlization
 # file, subset to CA and format the data for both covid19 and influenza
 
-source("ex_hhs_data.R")
+prof_data = hhs_data_ex(state="CA")
 
 # The 'prof_data' data structure should now be available and the data can
 # be plotted

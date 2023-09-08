@@ -12,7 +12,7 @@ probabilistic forecasts of the near-term number of hospital admissions. If both 
 
 # Data
 PROF provides full support for downloading the most up-to-date previous-day confirmed hospital admission data for COVID-19 and influenza. 
-The data set is provided by the U.S. Health & Human Services is updated weekly on Friday and is called: "COVID-19 Reported Patient Impact and Hospital Capacity by State (RAW)".   For more on the data set, see [here](https://healthdata.gov/dataset/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/6xf2-c3ie)
+The data set is provided by the U.S. Health & Human Services is updated weekly on Friday and is called: "COVID-19 Reported Patient Impact and Hospital Capacity by State (RAW)".   For more on the data set, see [here](https://healthdata.gov/dataset/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/6xf2-c3ie).
 
 # Compartmental Models
 

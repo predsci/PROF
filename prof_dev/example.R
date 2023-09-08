@@ -11,7 +11,7 @@ setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 # use the provided 'hhs_data_ex' function to download the HHS hospitlization
 # file, subset to CA and format the data for both covid19 and influenza
 
-prof_data = hhs_data_ex(state="CA")
+prof_data = hhs_data_ex(season = 2022, state="CA", fit_end = as.Date("02-15-2023", format='%m-%d-%Y'))
 
 # The 'prof_data' data structure should now be available and the data can
 # be plotted
@@ -31,13 +31,14 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
 
 # to fit both pathogens use:
 
+
 fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
+
+# you can now seat and relax for 10-15 minutes
 
 # to save the results of the fit (posterior distribution and initial state)
 
 saveRDS(fit_list, filename = '/path/to/filename.rds')
-
-# you can now seat and relax for 10-15 minutes
 
 # to plot the results of the fit to the screen
 

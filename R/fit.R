@@ -109,7 +109,7 @@ fit_data <- function(prof_data, par_list) {
       # estimate for baseline - will need to set key word based on number of weeks
       # of data
 
-      end_of_season = TRUE
+      end_of_season = FALSE
 
       baseline <- get_baseline(inc, end_of_season)
 

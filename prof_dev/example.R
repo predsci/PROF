@@ -31,7 +31,6 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
 
 # to fit both pathogens use:
 
-
 fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
 
 # you can now seat and relax for 10-15 minutes

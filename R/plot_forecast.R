@@ -253,7 +253,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
       geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
       geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
       geom_point(aes(y=reported),color='black')+
-      geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue") +
+      geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
       labs(y=ylab,x=xlab) + ggtitle(title))
 
   } #end of loop over diseases
@@ -277,8 +277,14 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     reported_both = obs_both[1:length(dates_frcst)]
   }
 
-  combined_names <- c('random', 'ordered')
+  combined_names <- c('random', 'sorted')
 
+  # find maximum in simdat_both of random and sorted and use
+
+  both_max = 0.0
+  for (ip in 1:npath) {
+    both_max = max(both_max, round(max(simdat_both[[ip]])))
+  }
 
   for (ip in 1:npath) {
 
@@ -303,8 +309,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
                                       geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
                                       geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
                                       geom_point(aes(y=reported),color='black')+
-                                      geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue") +
-                                      labs(y=ylab,x=xlab) + ggtitle(title_both))
+                                      geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
+                                      labs(y=ylab,x=xlab) + ggtitle(title_both)) + coord_cartesian(ylim = c(0, both_max))
 
   }
 

@@ -106,8 +106,8 @@
       
       
 !     cases = Ih * rho + 1e-6
-!     order of parameters is  pop, gamma, pH, mu_H1H2, mu_EI, rho, baseline, all beta 
-!                              1     2     3     4      5     6      7   
+!     order of parameters is  pop, gamma, pH, mu_H1H2, mu_EI, rho, baseline, I0, all beta 
+!                              1     2     3     4      5     6      7        8
       do ii = 1, ntimes
          mu = trajectory(ii,nstates) * param(ind_rho)  +
      $        1.e-6 + param(ind_bsln)

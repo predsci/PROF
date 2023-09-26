@@ -15,18 +15,20 @@
       real*8 dydx(nstates), dyt(nstates), dym(nstates)
       real*8 hh, h6, xh, tiny, myt
       real*8 beta(nb), ts(nb)
-      real*8 pop, gamma, pH, mu_H1H2
+      real*8 pop, gamma, pH, mu_H1H2, sI0
       integer icount, k
       real*8 mu
       
 !     States will be orderes as: sS, sI, sR, sH, Ic, Ih
 !     Ic and Ih will be zeroed at the begining of each time step
 
+!     order of parameters is  pop, gamma, pH, mu_H1H2, rho, baseline, I0, all beta 
+!                              1     2     3     4      5     6       7        8      
       pop   = param(1)
       gamma = param(2)
       pH    = param(3)
       mu_H1H2 = param(4)
-      
+      sI0     = param(7)
       trajectory = 0.0d0
 
       yt = 0.0d0
@@ -36,7 +38,10 @@
       
 ! initialize      
       y = states_init
-      
+
+      y(1) = pop - sI0
+      y(2) = sI0
+      y(3) = pop - (y(1) + y(2))
       myt = t0
 
       hh = dt * 0.5

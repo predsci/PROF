@@ -293,6 +293,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   }
 
   npad_fit = nfrcst - length(obs_fit_both)
+  if (npad_fit > 0) {
     reported_fit_both = c(obs_fit_both[1:length(dates_frcst)], rep(NA, npad))
   } else {
     reported_fit_both = obs_fit_both[1:length(dates_frcst)]

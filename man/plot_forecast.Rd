@@ -20,7 +20,8 @@ disease - covid19 or influenza
 population - population size
 loc_name - location name
 inc_type - incidence type, e.g. hosp_admits
-data itself as a 2D structure of dates and incidence}
+data - all available data as a 2D structure of dates and incidence
+data_fit - subset of data for fitting (can be eqaul to data)}
 
 \item{par_list}{data structure for parameters
 for each disease it includes
@@ -42,6 +43,9 @@ cadence as the data), default is 35 days
 }
 \value{
 plots to screen and  file
+forecast_traj - a list with a list for each disease and for the combined burden
+(random and ordered): trajectories,
+dates, and reported incidence.
 }
 \description{
 Uses the posterior distribution of the fit(s) and

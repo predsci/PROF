@@ -4,10 +4,12 @@
 \alias{init_param}
 \title{Set disease specific initial guess for some model parameters}
 \usage{
-init_param(mymodel, inc)
+init_param(mymodel, mydisease, inc)
 }
 \arguments{
 \item{mymodel}{model name sirh or seirh}
+
+\item{mydisease}{disease name covid19 or influenza}
 
 \item{inc}{time-series of hospitalization}
 }

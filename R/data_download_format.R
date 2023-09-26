@@ -216,7 +216,7 @@ hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
   fit_col = "previous_day_admission_influenza_confirmed"
   inc_type = "hosp_admits"
   disease = "influenza"
-  population = 39144818                   # write function to look-up state pops
+  population = get_loc_pop(location=state)
   flu_data = format_hhs_state(state_data=CA_inf, fit_col=fit_col, loc_name=state,
                               pop=population, disease=disease, inc_type=inc_type)
 
@@ -248,7 +248,7 @@ hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
   fit_col = "previous_day_admission_confirmed"
   inc_type = "hosp_admits"
   disease = "covid19"
-  population = 39144818                   # write function to look-up state pops
+  population = get_loc_pop(location=state)
   cov_data = format_hhs_state(state_data=CA_cov, fit_col=fit_col, loc_name=state,
                               pop=population, disease=disease, inc_type=inc_type)
 
@@ -263,4 +263,37 @@ hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
 
   return(prof_data)
 }
+
+
+#' Retrieve population of a U.S. state or territory.
+#'
+#' @param location character. Intended to be a two-letter abbreviation, but will
+#' also attempt to match to location full names.
+#'
+#' @return integer. Population of the specified location.
+#' @export
+#'
+#' @examples
+#' get_loc_pop("CA")
+get_loc_pop <- function(location="US") {
+  # load population file included in PROF package
+  data("loc_pops")
+   
+  # match location to state abbreviation
+  state_index = loc_pops$abbreviation == location
+  if (sum(state_index)==0) {
+    # attempt to match to full location names
+    state_index = loc_pops$location_name == location
+    
+    if (sum(state_index)==0) {
+      stop("Location provided to PROF::get_loc_pop() does not match any entries
+           in the internal population dataset.")
+    }
+  }
+  
+  out_pop = loc_pops$population[state_index]
+  
+  return(out_pop)
+}
+
 

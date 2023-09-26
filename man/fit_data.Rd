@@ -4,7 +4,7 @@
 \alias{fit_data}
 \title{Fit model(s) to dataset(s)}
 \usage{
-fit_data(prof_data = NULL, par_list = NULL)
+fit_data(prof_data, par_list)
 }
 \arguments{
 \item{prof_data}{data structure for diseases
@@ -13,7 +13,8 @@ disease - covid19 or influenza
 population - population size
 loc_name - location name
 inc_type - incidence type, e.g. hosp_admits
-data itself as a 2D structure of dates and incidence}
+data - all available data as a 2D structure of dates and incidence
+data_fit - subset of data for fitting (can be eqaul to data)}
 
 \item{par_list}{data structure for parameters
 for each disease it includes
@@ -23,7 +24,7 @@ dis_par_ranges - a list with parameter ranges and starting values
 mcmc_pars}
 }
 \value{
-tab_list - posterior distributionof parameters for each disease
+tab_list - posterior distribution of parameters for each disease
 state0 - the initial conditions for all the compartments
 wl - the parameter used for tanh of beta(t), default 3
 }

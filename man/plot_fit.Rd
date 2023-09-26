@@ -4,7 +4,7 @@
 \alias{plot_fit}
 \title{Plots the Results of Fit model(s) to dataset(s)}
 \usage{
-plot_fit(prof_data, par_list, fit_list = NULL, ntraj = 1000, filename = NULL)
+plot_fit(prof_data, par_list, fit_list, ntraj = 1000, filename = NULL)
 }
 \arguments{
 \item{prof_data}{data structure for diseases
@@ -13,7 +13,8 @@ disease - covid19 or influenza
 population - population size
 loc_name - location name
 inc_type - incidence type, e.g. hosp_admits
-data itself as a 2D structure of dates and incidence}
+data - all available data as a 2D structure of dates and incidence
+data_fit - subset of data for fitting (can be eqaul to data)}
 
 \item{par_list}{data structure for parameters
 for each disease it includes
@@ -33,6 +34,8 @@ wl real, needed for tanh function of bete(t)
 }
 \value{
 plots to screen or file
+fit_traj - a list with a list for each disease containing: trajectories,
+dates, and reported incidence
 }
 \description{
 Uses the posterior distribution of the fit(s) and

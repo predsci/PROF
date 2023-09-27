@@ -8,7 +8,7 @@
     <title>Setup - PROF</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,14 +17,13 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yml.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -37,7 +36,7 @@
           <img src="../img/psi.png" class="logo" alt="Logo"/>
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -74,71 +73,88 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Setup</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li class="breadcrumb-item active">Setup</li>
     <li class="wy-breadcrumbs-aside">
-        <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/setup.md"
-          class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/setup.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
 </div>
-
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
                 <h1 id="setup">Setup</h1>
 <p>We have setup an example.R script and suggest that you give it a try after installing the package.</p>
-<p>This example has been configured for fitting and forecasting influenza and COVID-19 data for the state of California in the 2022-23 season.</p>
+<p>This example has been configured for fitting and forecasting influenza and COVID-19 data for any of the 50 states D.C. and Puerto Rico for either the 2021-2022 or 2022-2023 seasons.</p>
+<p>All available data is first downloaded and then the data for the requested location is retrieved and processed. You can fit the entire requested season or just part of it.  Below we demonstrate both options.  </p>
 <p>All available data for the season is downloaded fitting uses data only until February 15, 2023.   You can then compare the forecast to the available data.</p>
 <p>We start by opening an R or RStudio session and loading the PROF package:</p>
 <blockquote>
-<p>> library(PROF)</p>
+<p>&gt; library(PROF)</p>
 </blockquote>
-<p>We then use the provided 'hhs_data_ex' function to download the HHS hospitalization file, subset to CAN and format the data for both COVID-19 and influenza.</p>
-<p>We define the season and the end date for fitting.</p>
+<p>We then use the provided 'hhs_data_ex' function to download the HHS hospitalization file, subset to a state and format the data for both COVID-19 and influenza.
+We also define the season and the end date for fitting.</p>
 <blockquote>
-<p>> prof_data = hhs_data_ex(state="CA", fit_end = as.Date("02-15-2023", format="%m-%d-%Y"))</p>
+<p>&gt; prof_data = hhs_data_ex(season = 2022, state="CA", fit_end = as.Date("2023-02-15"))</p>
+</blockquote>
+<p>To fit the entire season use:</p>
+<blockquote>
+<p>&gt; prof_data = hhs_data_ex(season = 2022, state="CA")</p>
+</blockquote>
+<p>To fit the entire  2021-2022 season for Washington state use:</p>
+<blockquote>
+<p>&gt; prof_data = hhs_data_ex(season = 2021, state="WA")</p>
+</blockquote>
+<p>and to fit part of this season to data for the state of Texas use:</p>
+<blockquote>
+<p>&gt; prof_data = hhs_data_ex(season = 2021, state="TX", fit_end = as.Date("2022-04-15"))</p>
 </blockquote>
 <p>When the download is complete we plot the data to the screen:</p>
 <blockquote>
-<p>> plot_prof_data(prof_data = prof_data)</p>
+<p>&gt; plot_prof_data(prof_data = prof_data)</p>
 </blockquote>
 <p>To save the plot to a file use:</p>
 <blockquote>
-<p>> plot_prof_data(prof_data = prof_data, filename = '/path/to/filename')</p>
+<p>&gt; plot_prof_data(prof_data = prof_data, filename = '/path/to/filename')</p>
 </blockquote>
-<p>Next we load the paramaters for the models (for more details see the R/ex_par_list.R script):</p>
+<p>Next we load the parameters for the models (for more details see the R/ex_par_list.R script):</p>
 <blockquote>
-<p>> par_list = init_par_list(diseases=c("covid19", "influenza"), models=c("seirh", "sirh"))</p>
+<p>&gt; par_list = init_par_list(diseases=c("covid19", "influenza"), models=c("seirh", "sirh"))</p>
+</blockquote>
+<p>The above call tells PROF that we would like to fit SEIRH/SIRH models to the COVID-19/influenza data. </p>
+<p>To fit an SEIRH model for both COVID-19 and influenza use:</p>
+<blockquote>
+<p>&gt; par_list = init_par_list(diseases=c("covid19", "influenza"), models=c("seirh", "seirh"))</p>
 </blockquote>
 <p>We can now sequentially fit both pathogens:</p>
 <blockquote>
-<p>> fit_list &lt;- fit_data(prof_data = prof_data, par_list = par_list)</p>
+<p>&gt; fit_list &lt;- fit_data(prof_data = prof_data, par_list = par_list)</p>
 </blockquote>
-<p>You can now seat and relax for 10-15 minutes</p>
+<p>You can now sit and relax for 10-15 minutes</p>
 <p>To save the results of the fit (posterior distribution and initial state) use:</p>
 <blockquote>
-<p>> saveRDS(fit_list, filename = '/path/to/filename.rds')</p>
+<p>&gt; saveRDS(fit_list, filename = '/path/to/filename.rds')</p>
 </blockquote>
 <p>To plot the results of the fit to the screen use:</p>
 <blockquote>
-<p>> fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)</p>
+<p>&gt; fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)</p>
 </blockquote>
 <p>The plotting routine returns a list with two elements ('covid19' and 'influenza') each element is a list with the trajectories used to create the plots, the date array
 and the reported incidence array.</p>
 <p>To save the plot to a file use:</p>
 <blockquote>
-<p>> fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')</p>
+<p>&gt; fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')</p>
 </blockquote>
 <p>To use the posterior distributions of the fits to create individual forecasts and  a combined burden forecast use:</p>
 <blockquote>
-<p>> forecast_traj &lt;- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)</p>
+<p>&gt; forecast_traj &lt;- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)</p>
 </blockquote>
 <p>Please note that we currently provide two versions of the combined forecast: random (bottom left panel), and ordered (bottom right panel).</p>
 <p>The plotting routine returns a list with four elements ('covid19', 'influenza', 'random', and 'ordered'). Random and Ordered are the combined burden calculated with random and ordered selection of trajectories, respectively. Each element is a list with the trajectories used to create the plots, the date array and the reported incidence array.</p>
 <p>To also save the plot to a file use:</p>
 <blockquote>
-<p>> forecast_traj &lt;- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')</p>
+<p>&gt; forecast_traj &lt;- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')</p>
 </blockquote>
               
             </div>
@@ -176,18 +192,19 @@ and the reported incidence array.</p>
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
-      <script src="../javascripts/config.js" defer></script>
-      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      <script src="../javascripts/config.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

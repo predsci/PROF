@@ -3,7 +3,7 @@
 \docType{data}
 \name{loc_pops}
 \alias{loc_pops}
-\title{U.S. location fips and populations info.}
+\title{U.S. location FIPS codes and population info.}
 \format{
 A data frame with 54 rows and 4 variables
 }

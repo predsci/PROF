@@ -4,10 +4,16 @@
 \alias{hhs_data_ex}
 \title{Example use of HHS data functions.}
 \usage{
-hhs_data_ex(season = NULL, state = "CA", fit_end = NULL)
+hhs_data_ex(season = NULL, state = NULL, fit_end = NULL)
 }
 \arguments{
+\item{season}{integer start year of season 2021, 2022 or 2023 (in a few weeks)}
+
 \item{state}{chr. Two-letter state/territory abbreviation.}
+
+\item{fit_end}{Date.  Optional. Default is to fit all availablae data
+for the season.  But if fit_date is provided all available data will
+be downloaded but data will be fitted only until (and including) fit_date}
 }
 \value{
 PROF data list.
@@ -20,7 +26,8 @@ blueprint rather than as an operational function.
 }
 \examples{
 # download and format HHS hospitalization data for flu and COVID
-PROF_data = hhs_data_ex(state="CA")
+PROF_data = hhs_data_ex(season = 2022, state="CA", fit_end = as.Date("2023-02-15"))
 # plot the contents of a PROF data structure
 plot_prof_data(prof_data=PROF_data)
+
 }

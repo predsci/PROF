@@ -143,7 +143,7 @@ init_param <- function(mymodel, mydisease, inc) {
   } else if (mymodel == 'seirh' & mydisease == 'influenza') { #influenza  and SEIRH
     gamma = 2.6
     mu_H1H2 = 1.0
-    Beta = 1.3/gamma
+    Beta = 1.2/gamma
     mu_EI = 1.0
     pH = 0.001
     rho = 0.95

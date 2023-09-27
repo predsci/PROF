@@ -89,6 +89,8 @@ fit_data <- function(prof_data, par_list) {
     # estimate the initial number of infections - later this will be optimized
 
     cat("\nEstimating Initial Number of Infectious ", '\n')
+    cat("\nThis number will be refined in the optimization step\n")
+
     I0est = est_I0(inc, disease)
 
     # based on model set initial conditions for the states/compartments

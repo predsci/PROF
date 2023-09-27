@@ -15,3 +15,7 @@ dataframe of all HHS PROTECT columns
 \description{
 Read the file with stringsAsFactors=TRUE, and return a dataframe.
 }
+\examples{
+load_HHS_csv(hhs_file = NULL)
+
+}

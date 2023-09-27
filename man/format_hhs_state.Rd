@@ -31,3 +31,7 @@ A list of lists.
 After subsetting the admissions data to a single location, now format for
 fitting.
 }
+\examples{
+format_hhs_state(state_data, fit_col, inc_type,loc_name, pop, disease)
+
+}

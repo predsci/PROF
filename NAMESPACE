@@ -2,6 +2,8 @@
 
 export(format_hhs_state)
 export(get_HHS_state)
+export(get_loc_pop)
+export(hhs_data_ex)
 export(hhs_hosp_state_down)
 export(load_HHS_csv)
 exportPattern("^[[:alpha:]]+")

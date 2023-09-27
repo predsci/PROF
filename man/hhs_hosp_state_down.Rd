@@ -19,3 +19,7 @@ an integer. 0 for success and non-zero for failure.
 Download daily state-level HHS PROTECT hospitalization admission data
 to a CSV.
 }
+\examples{
+hhs_hosp_state_down(down_dir = "~/Downloads", down_filename = NULL)
+
+}

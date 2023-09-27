@@ -10,6 +10,8 @@
 #' @export
 #'
 #' @examples
+#' hhs_hosp_state_down(down_dir = "~/Downloads", down_filename = NULL)
+#'
 hhs_hosp_state_down <- function(down_dir="~/", down_filename=NULL) {
 
 
@@ -39,6 +41,8 @@ hhs_hosp_state_down <- function(down_dir="~/", down_filename=NULL) {
 #' @export
 #'
 #' @examples
+#' load_HHS_csv(hhs_file = NULL)
+#'
 load_HHS_csv <- function(hhs_file=NULL) {
   # open raw data file
   hosp_data = read.csv(file=hhs_file, stringsAsFactors=T)
@@ -65,6 +69,15 @@ load_HHS_csv <- function(hhs_file=NULL) {
 #' @export
 #'
 #' @examples
+#' mycols = get_cols=c("previous_day_admission_adult_covid_confirmed",
+#' "previous_day_admission_adult_covid_confirmed_coverage",
+#' "previous_day_admission_pediatric_covid_confirmed",
+#' "previous_day_admission_pediatric_covid_confirmed_coverage",
+#' "deaths_covid", "deaths_covid_coverage")
+#'
+#' get_HHS_state(hosp_data = NULL, get_cols = mycols, state = "CA",
+#' start_date = NULL, end_date = NULL, shift_dates = F)
+#'
 get_HHS_state <- function(hosp_data=NULL, get_cols=c(
   "previous_day_admission_adult_covid_confirmed",
   "previous_day_admission_adult_covid_confirmed_coverage",
@@ -135,6 +148,8 @@ get_HHS_state <- function(hosp_data=NULL, get_cols=c(
 #' @export
 #'
 #' @examples
+#' format_hhs_state(state_data, fit_col, inc_type,loc_name, pop, disease)
+#'
 format_hhs_state <- function(state_data, fit_col, inc_type,
                              loc_name, pop, disease) {
   # initialize output list
@@ -153,9 +168,8 @@ format_hhs_state <- function(state_data, fit_col, inc_type,
 
 #' Test only
 #'
-#' @return
+#' @return make_config()
 #'
-#' @examples
 test_import <- function() {
   make_config()
 }
@@ -168,17 +182,24 @@ test_import <- function() {
 #' structure data for use with PROF fitting routines.  This function has
 #' many inputs hard-coded (dates, population, etc) and should be used as a
 #' blueprint rather than as an operational function.
+#'
+#' @param season integer start year of season 2021, 2022 or 2023 (in a few weeks)
 #' @param state chr. Two-letter state/territory abbreviation.
+#' @param fit_end Date.  Optional. Default is to fit all availablae data
+#' for the season.  But if fit_date is provided all available data will
+#' be downloaded but data will be fitted only until (and including) fit_date
 #'
 #' @return PROF data list.
-#' @export
 #'
 #' @examples
 #' # download and format HHS hospitalization data for flu and COVID
-#' PROF_data = hhs_data_ex(state="CA")
+#' PROF_data = hhs_data_ex(season = 2022, state="CA", fit_end = as.Date("2023-02-15"))
 #' # plot the contents of a PROF data structure
 #' plot_prof_data(prof_data=PROF_data)
-hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
+#'
+#' @export
+#'
+hhs_data_ex <- function(season = NULL, state=NULL, fit_end = NULL) {
   # example use of HHS PROTECT data functions
 
   # download HHS hospitalizations file
@@ -188,27 +209,50 @@ hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
     stop("There was an error with the download.")
   }
 
+  if(is.null(state)) {
+    cat("\nState Abbbreviation Not Provided, Defaulting to CA\n")
+    state = 'CA'
+  }
+
+  if (is.null(season)) {
+    cat("\nSeason Not Provided, Defaulting to 2022-2023")
+    season = 2022
+  }
+
+  if(!is.null(fit_end)) {
+    fit_year = year(fit_end)
+    if (fit_year != season && fit_year != (season+1)) {
+      stop("\nRequested fit_end is NOT consistent with selected season\n")
+    }
+  }
+
+  # check that we are supporting the requested season
+
+  supported_seasons = c(2021, 2022)
+
+  if (!any(supported_seasons == season)) stop('\nRequested Season is Not Supported\n')
+
   # load the file
   hosp_data = load_HHS_csv(hhs_file=result$download_path)
   # hosp_data = load_HHS_csv(hhs_file="~/Dropbox/CSMB01/data/HHS_daily-hosp_state.csv")
 
-  # --- Subset influenza admits data for California ---
+  # --- Subset influenza admits data for Requested State ---
   # Set observed data subset dates
-  start_date = as.Date("2022-09-01")
-  end_date = as.Date("2023-06-01") #Sys.Date()
-  # Set data fitting subset dates
-  fit_start = as.Date("2022-09-01")
-  if (is.null(fit_end)) {
-    fit_end = as.Date("2023-02-15")
-  }
 
+  start_date = as.Date(paste0(season,'-09-01'))
+  end_date   = as.Date(paste0(season+1,'-06-01'))
+
+  fit_start = as.Date(paste0(season,'-09-01'))
+  if (is.null(fit_end)) {
+    fit_end = end_date #as.Date(paste0(season+1,"-02-15"))
+  }
 
   keep_cols = c("previous_day_admission_influenza_confirmed",
                 "previous_day_admission_influenza_confirmed_coverage",
                 "previous_day_deaths_influenza",
                 "previous_day_deaths_influenza_coverage")
 
-  CA_inf = get_HHS_state(hosp_data=hosp_data, get_cols=keep_cols,
+  state_inf = get_HHS_state(hosp_data=hosp_data, get_cols=keep_cols,
                          state=state, start_date=start_date,
                          end_date=end_date)
 
@@ -216,8 +260,8 @@ hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
   fit_col = "previous_day_admission_influenza_confirmed"
   inc_type = "hosp_admits"
   disease = "influenza"
-  population = 39144818                   # write function to look-up state pops
-  flu_data = format_hhs_state(state_data=CA_inf, fit_col=fit_col, loc_name=state,
+  population = get_loc_pop(location=state)
+  flu_data = format_hhs_state(state_data=state_inf, fit_col=fit_col, loc_name=state,
                               pop=population, disease=disease, inc_type=inc_type)
 
   # set fit data entry
@@ -228,28 +272,30 @@ hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
 
 
   # --- Repeat for COVID ---
-  start_date = as.Date("2022-10-01")
-  end_date = as.Date("2023-06-01") #Sys.Date()
+
+  start_date = as.Date(paste0(season,'-10-15'))
+  end_date   = as.Date(paste0(season+1,'-06-01'))
+
   keep_cols = c("previous_day_admission_adult_covid_confirmed",
                 "previous_day_admission_adult_covid_confirmed_coverage",
                 "previous_day_admission_pediatric_covid_confirmed",
                 "previous_day_admission_pediatric_covid_confirmed_coverage",
                 "deaths_covid", "deaths_covid_coverage")
 
-  CA_cov = get_HHS_state(hosp_data=hosp_data, get_cols=keep_cols,
+  state_cov = get_HHS_state(hosp_data=hosp_data, get_cols=keep_cols,
                          state=state, start_date=start_date,
                          end_date=end_date)
   # combine adult and pediatric counts
-  CA_cov[["previous_day_admission_confirmed"]] =
-    CA_cov$previous_day_admission_adult_covid_confirmed +
-    CA_cov$previous_day_admission_pediatric_covid_confirmed
+  state_cov[["previous_day_admission_confirmed"]] =
+    state_cov$previous_day_admission_adult_covid_confirmed +
+    state_cov$previous_day_admission_pediatric_covid_confirmed
 
   # format the data for fitting
   fit_col = "previous_day_admission_confirmed"
   inc_type = "hosp_admits"
   disease = "covid19"
-  population = 39144818                   # write function to look-up state pops
-  cov_data = format_hhs_state(state_data=CA_cov, fit_col=fit_col, loc_name=state,
+  population = get_loc_pop(location=state)
+  cov_data = format_hhs_state(state_data=state_cov, fit_col=fit_col, loc_name=state,
                               pop=population, disease=disease, inc_type=inc_type)
 
   # set fit data entry
@@ -263,4 +309,38 @@ hhs_data_ex <- function(season = NULL, state="CA", fit_end = NULL) {
 
   return(prof_data)
 }
+
+
+#' Retrieve population of a U.S. state or territory.
+#'
+#' @param location character. Intended to be a two-letter abbreviation, but will
+#' also attempt to match to location full names.
+#'
+#' @return integer. Population of the specified location.
+#' @export
+#'
+#' @examples
+#' get_loc_pop("CA")
+#'
+get_loc_pop <- function(location="US") {
+  # load population file included in PROF package
+  data("loc_pops")
+
+  # match location to state abbreviation
+  state_index = loc_pops$abbreviation == location
+  if (sum(state_index)==0) {
+    # attempt to match to full location names
+    state_index = loc_pops$location_name == location
+
+    if (sum(state_index)==0) {
+      stop("Location provided to PROF::get_loc_pop() does not match any entries
+           in the internal population dataset.")
+    }
+  }
+
+  out_pop = loc_pops$population[state_index]
+
+  return(out_pop)
+}
+
 

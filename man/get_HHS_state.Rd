@@ -42,3 +42,14 @@ for the specified state.
 \description{
 Subset HHS PROTECT hospitalizations by state, metric, and dates.
 }
+\examples{
+mycols = get_cols=c("previous_day_admission_adult_covid_confirmed",
+"previous_day_admission_adult_covid_confirmed_coverage",
+"previous_day_admission_pediatric_covid_confirmed",
+"previous_day_admission_pediatric_covid_confirmed_coverage",
+"deaths_covid", "deaths_covid_coverage")
+
+get_HHS_state(hosp_data = NULL, get_cols = mycols, state = "CA",
+start_date = NULL, end_date = NULL, shift_dates = F)
+
+}

@@ -11,7 +11,7 @@ setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 # use the provided 'hhs_data_ex' function to download the HHS hospitlization
 # file, subset to CA and format the data for both covid19 and influenza
 
-prof_data = hhs_data_ex(season = 2022, state="CA", fit_end = as.Date("02-15-2023", format='%m-%d-%Y'))
+prof_data = hhs_data_ex(season = 2022, state="TX", fit_end = as.Date("2023-02-15"))
 
 # The 'prof_data' data structure should now be available and the data can
 # be plotted

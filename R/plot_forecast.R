@@ -126,6 +126,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     obs = mydata$data$inc
 
+    obs_fit = mydata$data_fit$inc
+
     #print information to the User
     cat("\nCreating Forecast: ", nfrcst," ", print_lab, " Forward for ", reg_name, ' ', toupper(disease),'\n')
 
@@ -151,6 +153,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
       for (ii in ind) {
 
         mypar <- tab[ii, 1:nparamtot]
+        state0["I0"] = mypar['I0']
         coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
                             mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
                             state0["I0"], state0["S0"], state0["R0"],
@@ -188,7 +191,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
       for (ii in ind) {
 
         mypar <- tab[ii, 1:nparamtot]
-
+        state0["I0"] = mypar['I0']
         coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
                               mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
                               state0['I0'], state0['S0'], state0['E0'], state0['R0'],
@@ -220,16 +223,25 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     } else {
       reported = obs[1:length(dates_frcst)]
     }
+
+    npad_fit = nfrcst - length(obs_fit)
+
+    if (npad_fit > 0) {
+      reported_fit = c(obs_fit[1:length(dates_frcst)], rep(NA, npad_fit))
+    } else {
+      reported_fit = obs_fit[1:length(dates_frcst)]
+    }
+
     forecast_traj[[disease]] = list(traj = simdat,
                                     date = as.Date(dates_frcst, format = '%Y-%m-%d'),
-                                    reported = reported)
+                                    reported = reported, reported_fit = reported_fit)
 
     apply(simdat,2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles
 
     quantiles <- t(quantiles)
     quantiles <- as.data.frame(quantiles)
     total=cbind(date = as.Date(dates_frcst, format = '%Y-%m-%d'),time = 1:ntimes_frcst,quantiles,
-                reported = reported)
+                reported = reported, reported_fit = reported_fit)
 
     # Remove 'X' from column names
     #colnames(total) <- gsub("X", "", colnames(total))
@@ -252,7 +264,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
       geom_line(aes(y=`50%`),color='red')+
       geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
       geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-      geom_point(aes(y=reported),color='black')+
+      geom_point(aes(y=reported),color='black', alpha = 0.4)+
+      geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
       geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
       labs(y=ylab,x=xlab) + ggtitle(title))
 
@@ -270,11 +283,20 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   obs_both    = combined_frcst$obs_both
 
+  obs_fit_both = combined_frcst$obs_fit_both
+
   npad = nfrcst - length(obs_both)
   if (npad > 0) {
     reported_both = c(obs_both[1:length(dates_frcst)], rep(NA, npad))
   } else {
     reported_both = obs_both[1:length(dates_frcst)]
+  }
+
+  npad_fit = nfrcst - length(obs_fit_both)
+  if (npad_fit > 0) {
+    reported_fit_both = c(obs_fit_both[1:length(dates_frcst)], rep(NA, npad))
+  } else {
+    reported_fit_both = obs_fit_both[1:length(dates_frcst)]
   }
 
   combined_names <- c('random', 'sorted')
@@ -288,7 +310,6 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   for (ip in 1:npath) {
 
-
   apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
 
   quantiles_both <- t(quantiles_both)
@@ -296,10 +317,12 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
                                                date = as.Date(dates_both, format = '%Y-%m-%d'),
-                                               reported = reported_both)
+                                               reported_both = reported_both,
+                                               reported_fit_both = reported_fit_both)
 
   total_both=cbind(date = as.Date(dates_both, format = '%Y-%m-%d'),quantiles_both,
-              reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))))
+              reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))),
+              reported_fit = c(obs_fit_both, rep(NA, length(dates_both)-length(obs_fit_both))))
 
   title_both = paste0(reg_name,' - Combined Burden (', combined_names[ip],')')
 
@@ -308,7 +331,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
                                       geom_line(aes(y=`50%`),color='red')+
                                       geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
                                       geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-                                      geom_point(aes(y=reported),color='black')+
+                                      geom_point(aes(y=reported),color='black', alpha = 0.4)+
+                                      geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
                                       geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
                                       labs(y=ylab,x=xlab) + ggtitle(title_both)) + coord_cartesian(ylim = c(0, both_max))
 

@@ -26,6 +26,8 @@ A similar model is used for COVID-19 with the only difference being the addition
 
 ![covid19 Model](img/model_covid19.png)
 
+While we recommend utilizing the SIRH model for influenza and SEIRH for COVID-19, PROF is flexible and supports the fitting of either model to either pathogen. 
+
 # Time-Dependent Force of Infection
 
 We use a smoothly varying two-value functional form to describe the time-dependent reproduction number: R(t) = &beta;(t)&gamma;, where &beta;(t) is the time-dependent transmission rate is &gamma; is the total recovery rate. 

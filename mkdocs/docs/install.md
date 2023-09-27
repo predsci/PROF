@@ -9,7 +9,7 @@ This R package requires an R or RStudio installation and Fortran/GCC compilers.
 ## Cloning through GitHub
 Users are also welcome to directly download the package either as a zip or by cloning the repository.
 
-To clone: `` git clone [repository url]``
+To clone: `` git clone https://github.com/predsci/PROF.git``
 
 Then Open an R or RStudio session.  Navigate to the location of the cloned project, open the PROF.Rproj file and install the package.
 

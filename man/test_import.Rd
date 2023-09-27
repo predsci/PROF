@@ -7,7 +7,7 @@
 test_import()
 }
 \value{
-
+make_config()
 }
 \description{
 Test only

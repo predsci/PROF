@@ -25,17 +25,20 @@
 #'
 fit_data <- function(prof_data, par_list) {
 
-  if (is.null(prof_data)) stop('Missing prof_data')
-  if (is.null(par_list)) stop('Missing par_list')
+  if (is.null(prof_data)) stop('Missing prof_data \n')
+  if (is.null(par_list)) stop('Missing par_list \n')
 
   # number of diseases
   npath = length(prof_data)
 
-  if (npath > 2 | npath < 1) stop('Incorrect Number of diseases found in prof_data')
+  if (npath > 2 | npath < 1) stop('Incorrect Number of diseases found in prof_data \n')
 
   npath = length(par_list)
 
-  if (npath > 2 | npath < 1) stop('Incorrect Number of diseases found in par_list')
+  if (npath > 2 | npath < 1) stop('Incorrect Number of diseases found in par_list \n')
+
+  if (length(par_list) != length(prof_data)) stop('Number of diseases in par_list does
+                                                  \n not equal the number if prof_data \n')
 
   # prepare a list for the Posterior distribution of each disease fit
   # and for the initial conditions
@@ -49,43 +52,48 @@ fit_data <- function(prof_data, par_list) {
 
     prof_init_par = par_list[[ip]]
 
-    if (is.null(mydata)) stop('Incorrect Data Structure for prof_data')
+    if (is.null(mydata)) stop('Incorrect Data Structure for prof_data \n')
     # location name
     reg_name = mydata$loc_name
-    if (is.null(reg_name)) stop('Missing <loc_name> in prof_data structure')
+    if (is.null(reg_name)) stop('Missing <loc_name> in prof_data structure \n')
     # location population
     pop = mydata$population
-    if (is.null(pop)) stop('Missing <population> in prof_data structure')
+    if (is.null(pop)) stop('Missing <population> in prof_data structure \n')
     # disease name (covid or flu)
     disease = mydata$disease
-    if (is.null(disease)) stop('Missing <disease> in prof_data structure')
+    if (is.null(disease)) stop('Missing <disease> in prof_data structure \n')
     # hospitalization incidence - for fitting
     inc = mydata$data_fit$inc
-    if (is.null(inc)) stop('Missing <inc> in prof_data structure')
+    if (is.null(inc)) stop('Missing <inc> in prof_data structure \n')
     # dates - for fitting
     dates  = mydata$data_fit$date
-    if (is.null(dates)) stop('Missing <date> in prof_data structure')
+    if (is.null(dates)) stop('Missing <date> in prof_data structure \n')
 
     cat("\nFitting ",toupper(disease), " Data for ", reg_name,'\n')
 
+
     ndates = length(dates)
 
-    # using the date array build an integer day array
+    # using the date array to build an integer day array
 
     times = dates_to_int(dates)
 
     ntimes = length(times)
 
-    # retrieve model 'seirh' or 'sirh' based on disease
+    # retrieve model 'seirh' or 'sirh'
 
-    model = prof_init_par$model # get_model(disease)
+    model = prof_init_par$model
 
-    # estimate the initial number of infections
+    cat('\nUsing ', toupper(model),' Compartmental Model \n')
+
+    # estimate the initial number of infections - later this will be optimized
 
     cat("\nEstimating Initial Number of Infectious ", '\n')
+    cat("\nThis number will be refined in the optimization step\n")
+
     I0est = est_I0(inc, disease)
 
-    # based on model/disease set initial conditions for the states/compartments
+    # based on model set initial conditions for the states/compartments
 
     # but first check to see if the user has set it up
 
@@ -102,20 +110,29 @@ fit_data <- function(prof_data, par_list) {
 
     state0_list[[disease]] <- state0
 
-    # set some disease specific model parameters
+    # set some initial model specific parameters (depend on model and disease)
 
     if (any(is.na(prof_init_par$dis_par_ranges$par))) {
-      param0 <- init_param(model, inc)
-      # estimate for baseline - will need to set key word based on number of weeks
-      # of data
+
+      param0 <- init_param(model, disease, inc)
+
+      # estimate for baseline - first use data_fit to see if we are at the end
+      # of the season
 
       end_of_season = FALSE
+
+      if (disease == 'influenza') {
+        if(length(prof_data$influenza$data_fit$inc) > 200) end_of_season = TRUE
+      } else {
+        if(length(prof_data$covid19$data_fit$inc) > 220) end_of_season = TRUE
+      }
 
       baseline <- get_baseline(inc, end_of_season)
 
       # append 'baseline' to parameter list
 
-      param0 <- append(param0, c('baseline' = baseline ))
+      param0 <- append(param0, c('baseline' = baseline , 'I0' = I0est))
+
     } else {
       param0 <- prof_init_par$dis_par_ranges$par
     }
@@ -137,20 +154,20 @@ fit_data <- function(prof_data, par_list) {
       param_optim <- c(list1, list2, 'pop' = pop)
       param_optim <- run_optim(param_optim, inc)
 
-      # param0 will now inlcude the following
+      # param0 will now include the following
       # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param0['wl'])
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param_optim['I0'], param0['wl'])
       # caution!! will need to check for unreasonable parameter values
     } else {
       # construct a parameter list as needed by run_optim
       list1 <- param0[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')]
-      list2 <- state0[c('S0', 'I0','R0')]
+      list2 <- state0[c('S0','E0', 'I0','R0')]
       # note here we do not call run_optim since it tends to fail
       param_optim <- c(list1, list2, 'pop' = pop)
 
       # param0 will now inlcude the following
       # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['wl'])
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['I0'], param0['wl'])
     }
 
     # Define all the states that will be integrated/accumulated
@@ -178,7 +195,6 @@ fit_data <- function(prof_data, par_list) {
 
     par_names = prof_init_par$dis_par_ranges$par_names
 
-
     param_info_list <- update_par_names(nb, par_names)
 
     nparam = param_info_list$nparam
@@ -194,9 +210,9 @@ fit_data <- function(prof_data, par_list) {
     # need to add a test that sum(state0 == population)
 
     if (model == 'sirh') {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline', 'I0')])
     } else {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0')])
     }
 
     par =list()
@@ -210,12 +226,12 @@ fit_data <- function(prof_data, par_list) {
     naccum = length(accum)
 
     # imodel is Needed by Fortran code to select between SEIRH and SIRH models
-    if (disease == 'covid19') {
+    if (model == 'seirh') {
       imodel = 1
-      paropt = c('mu_H1H2', 'mu_EI', 'pH', 'baseline', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
+      paropt = c('mu_H1H2', 'mu_EI', 'pH', 'baseline', 'I0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
     } else {
       imodel = 2
-      paropt = c('mu_H1H2', 'pH', 'baseline', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
+      paropt = c('mu_H1H2', 'pH', 'baseline', 'I0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
     }
 
 

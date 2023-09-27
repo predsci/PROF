@@ -96,6 +96,7 @@ set_init_states <- function(pop, I0, mymodel) {
 #'
 #' Based on the disease set the initial guess for model parameters
 #' @param mymodel model name sirh or seirh
+#' @param mydisease disease name covid19 or influenza
 #' @param inc time-series of hospitalization
 #' @return param a model specific list with initial guess for parameters:
 #'
@@ -112,9 +113,9 @@ set_init_states <- function(pop, I0, mymodel) {
 #' mu_EI - latency period (seirh only)
 #'
 #' @keywords internal
-init_param <- function(mymodel, inc) {
+init_param <- function(mymodel, mydisease, inc) {
 
-  if (mymodel == 'sirh') { #influenza
+  if (mymodel == 'sirh' & mydisease == 'influenza') { #influenza  and SIRH
     gamma = 2.6
     mu_H1H2 = 1.0
     Beta = 1.3 / gamma
@@ -123,7 +124,7 @@ init_param <- function(mymodel, inc) {
     wl = 3.0
     param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
                  wl = wl)
-  } else { # covid19
+  } else if (mymodel == 'seirh' & mydisease == 'covid19') { # covid19 and SEIRH
     gamma = 4.0
     mu_H1H2 = 1.0
     if (max(inc) <= 15) {
@@ -139,6 +140,32 @@ init_param <- function(mymodel, inc) {
     wl = 3.0
     param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
                  pH = pH, rho = rho, wl = wl)
+  } else if (mymodel == 'seirh' & mydisease == 'influenza') { #influenza  and SEIRH
+    gamma = 2.6
+    mu_H1H2 = 1.0
+    Beta = 1.2/gamma
+    mu_EI = 1.0
+    pH = 0.001
+    rho = 0.95
+    wl = 3.0
+    param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
+                 pH = pH, rho = rho, wl = wl)
+  } else if (mymodel == 'sirh' & mydisease == 'covid19') { # covid19 and SIRH
+    if (max(inc) <= 15) {
+      Beta = 1.05 / gamma
+    } else if ( max(inc) < 35 & max(inc) > 15) {
+      Beta = 1.2/ gamma
+    } else {
+      Beta = 0.5
+    }
+    mu_EI = 1.0
+    pH = 0.01
+    rho = 0.95
+    wl = 3.0
+    param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
+                 wl = wl)
+  } else {
+    stop('Can not Find Model or Disease \n')
   }
 
   return(param)
@@ -462,7 +489,15 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
     if (length(inc_all) >= length(dates_frcst)) {
       inc = inc_all[ind0:ind1]
     }  else {
-      inc = inc_all[ind0:length(inc)]
+      inc = inc_all[ind0:length(inc_all)]
+    }
+
+    inc_fit_all =  mydata$data_fit$inc
+
+    if (length(inc_fit_all) >= length(dates_frcst)) {
+      inc_fit = inc_fit_all[ind0:ind1]
+    }  else {
+      inc_fit = inc_fit_all[ind0:length(inc_fit_all)]
     }
 
     simdat = simdat_list[[ip]]
@@ -474,10 +509,13 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
     if (ip == 1) {
       rand_simdat_both = ordered_simdat_both = simdat * 0.0
       obs_both = inc * 0.0
+      obs_fit_both = inc_fit * 0.0
     }
 
     rand_simdat_both = rand_simdat_both + simdat
     obs_both = obs_both + inc
+
+    obs_fit_both = obs_fit_both + inc_fit
 
     # now order also
 
@@ -492,7 +530,7 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
   simdat_both[['random']]  = rand_simdat_both
   simdat_both[['ordered']] = ordered_simdat_both
 
-  return(list(simdat_both = simdat_both, obs_both = obs_both, dates_both = dates_both))
+  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both))
 }
 
 

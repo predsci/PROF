@@ -533,6 +533,144 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
   return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both))
 }
 
+#'
+#' Fit a baseline statistical model to the data
+#'
+#' See: file:///Users/michal/Downloads/pnas.2113561119.sapp.pdf for more details (start at bottom of page 3)
+#' This baseline model forecasts a predictive median incidence equal to the incidence in the
+#' most recent data point(s), with uncertainty around the median based on changes in incidence
+#' that were observed in the past of the time series.
+#'
+#' Note that we do not force the median of the forecast forecast to be equal to
+#' the last observed value since the data is likely to be daily.  But we do truncate the distribution
+#' so that it has no negative values.
+#' Adjustments are made for daily data (e.g., we use the last seven data points for the forecast)
+#'
+#' @param inc integer. Observed pathogen incidence
+#' @param ntraj integer. Requested number of trajectories
+#' @return A 2D array of dimension (ntraj, ntimes) with the trajectories (ntimes is the incidence length)
+#
+
+stat_fit <- function(inc, ntraj) {
+
+  ntimes = length(inc)
+
+  simdat = array(0, c(ntraj, ntimes))
+
+  data_last = inc[ntimes]
+
+  noise_p = diff(inc)
+  noise_n = - noise_p
+  noise = c(noise_p, noise_n)
+
+  ecdf_noise <- ecdf(noise)
+
+  piecewise_linear <- function(n) {
+    u <- runif(n)
+    x <- quantile(noise, u)
+    y <- ecdf_noise(x)
+    data.frame(x = x, y = y)
+  }
+
+  for (ii in 1:ntraj) {
+    my_noise = piecewise_linear((ntimes))
+    my_cases = inc + my_noise$x
+    my_cases = pmax(my_cases,0) # ensure it is not negative
+    simdat[ii,] = my_cases
+  }
+
+  return(simdat)
+}
+
+#'
+#' Forecast using a baseline statistical model fitted to the data
+#'
+#' See: file:///Users/michal/Downloads/pnas.2113561119.sapp.pdf for more details (start at bottom of page 3)
+#' This baseline model forecasts a predictive median incidence equal to the incidence in the
+#' most recent data point(s), with uncertainty around the median based on changes in incidence
+#' that were observed in the past of the time series.
+#' Adjustments are made for daily data (e.g., we use the last seven data points for the forecast)
+#' Note that we do not force the median of the forecast forecast to be equal to
+#' the last observed value since the data is likely to be daily.  But we do truncate the distribution
+#' so that it has no negative values.
+#'
+#' @param data entire data structure of the pathogen
+#' @param ntraj integer. Number of requested trajectories
+#' @param nfrcst integer. Number of requested forecast horizons
+#'
+#' @return simdat a 2D array of dimension (ntraj, (ntimes+nfrcst))
+
+stat_forecast <- function(data, ntraj, nfrcst) {
+
+  date = data$data_fit$date
+  inc = data$data_fit$inc
+
+  # using the date array build an integer day array
+
+  times = dates_to_int(date)
+
+  ntimes = length(times)
+
+  ntimes_frcst= ntimes + nfrcst
+
+  # build also the arrays for the forecasts
+
+  cadence = as.numeric(dates[2]-dates[1])
+
+  if (cadence == 1) {
+    cadence_lab = paste0(cadence, ' day')
+    print_lab = 'Days'
+    dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 day')
+  }
+
+  if (cadence == 7) {
+    cadence_lab = paste0(cadence, ' week')
+    print_lab = 'Weeks'
+    dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 week')
+  }
+
+  if (cadence == 7) {
+    data_last = inc[ntimes]
+  } else {
+    data_last = inc[(ntimes-7+1):ntimes]
+  }
+
+
+  noise_p = diff(inc)
+  noise_n = - noise_p
+  noise = c(noise_p, noise_n)
+
+  ecdf_noise <- ecdf(noise)
+
+  piecewise_linear <- function(n) {
+    u <- runif(n)
+    x <- quantile(noise, u)
+    y <- ecdf_noise(x)
+    data.frame(x = x, y = y)
+  }
+
+  simdat <- array(0, c(ntraj, ntimes_frcst))
+
+  # figure out how many times data_last needs to be added to inc
+  nadd = floor(nfrcst/length(data_last))
+  inc_frcst = c(inc, rep(data_last, nadd))
+
+  if (length(inc_frcst) < ntimes_frcst) {
+    nadd2 = ntimes_frcst - length(inc_first)
+    ind = sample(data_last, nadd2)
+    inc_frcst = c(inc_frcst, data_last[ind])
+  }
+
+  for (ii in 1:ntraj) {
+    my_noise = piecewise_linear((ntimes_frcst))
+    my_cases = inc_frcst + my_noise$x
+    my_cases = pmax(my_cases,0) # ensure it is not negative
+    simdat[ii,] = my_cases
+  }
+
+  return(simdat)
+}
+
 
 # C functions
 

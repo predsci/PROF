@@ -89,14 +89,15 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     if (cadence == 1) {
       cadence_lab = paste0(cadence, ' day')
       print_lab = 'Days'
+      dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 day')
     }
 
     if (cadence == 7) {
       cadence_lab = paste0(cadence, ' week')
-      print_lab = 'Days'
+      print_lab = 'Weeks'
+      dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 week')
     }
 
-    dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 day')
 
     dates_frcst_list[[ip]] = dates_frcst
 

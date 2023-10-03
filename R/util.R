@@ -656,7 +656,7 @@ stat_forecast <- function(data, ntraj, nfrcst) {
   inc_frcst = c(inc, rep(data_last, nadd))
 
   if (length(inc_frcst) < ntimes_frcst) {
-    nadd2 = ntimes_frcst - length(inc_first)
+    nadd2 = ntimes_frcst - length(inc_frcst)
     ind = sample(data_last, nadd2)
     inc_frcst = c(inc_frcst, data_last[ind])
   }

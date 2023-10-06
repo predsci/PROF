@@ -60,7 +60,8 @@ plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list =
 # to use the posterior distributions of the fits to create individual forecasts 35 days forward
 # and combined burden forecasts use:
 
-forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, ntraj = 35)
+forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list,
+                               nfrcst = 35)
 
 
 # please note that we currently provide two versions of the combined forecast:

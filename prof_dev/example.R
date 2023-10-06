@@ -11,7 +11,7 @@ setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 # use the provided 'hhs_data_ex' function to download the HHS hospitlization
 # file, subset to CA and format the data for both covid19 and influenza
 
-prof_data = hhs_data_ex(season = 2022, state="TX", fit_end = as.Date("2023-02-15"))
+prof_data = hhs_data_ex(season = 2023, state="CA")
 
 # The 'prof_data' data structure should now be available and the data can
 # be plotted
@@ -39,24 +39,29 @@ fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
 
 saveRDS(fit_list, filename = '/path/to/filename.rds')
 
-# to plot the results of the fit to the screen
+# to plot the results of the fit to the screen. This function will also create and
+# display the results of a statistical baseline model
 
-fit_traj <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 
-# the plotting routine returns a list with two elements ('covid19' and 'influenza')
-# each element is a list with the trajectories used to create the plots, the date array
-# and the reported incidence array
-#
+# The plotting routine returns a list with the following elements
+# fit_traj - a list for each disease containing: model fit mechanistic trajectories,
+# dates, and reported incidence
+# stat_traj - a list for each disease containing: baseline statistical trajectories,
+# dates and reported incidence
+# pl - a list of ggplot2 objects one for each disease for the mechanistic plots
+# pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 
-# to also save to a file use:
-#  plot_fit(prof_data = prof_data, par_list = par_list,
+# to save the plots to a file use:
+#  plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list,
 # fit_list = fit_list, filename = '/path/to/filename')
 
 
-# to use the posterior distributions of the fits to create individual forecasts
+# to use the posterior distributions of the fits to create individual forecasts 35 days forward
 # and combined burden forecasts use:
 
-forecast_traj <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, ntraj = 35)
+
 
 # please note that we currently provide two versions of the combined forecast:
 # random (bottom left panel), and ordered (bottom right panel)
@@ -72,5 +77,15 @@ forecast_traj <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_l
 #  plot_forecast(prof_data = prof_data, par_list = par_list,
 # fit_list = fit_list, filename = '/path/to/filename')
 
+
+# to use a baseline statistical model  create individual forecasts 35 days forward
+# and combined burden forecasts use:
+
+stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, ntraj = 35)
+
+# For the combined burden of the baseline statistical model we offer the same two
+# options (random and sorted)
+
+# Add example of combining mechanistic for COVID-19 and statistical for influenza
 ###############
 

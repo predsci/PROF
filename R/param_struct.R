@@ -39,7 +39,6 @@ init_model_sirh <- function() {
 
   # Designate which model
   out[['model']] = 'sirh'
-
   # set initial values for the compartments of the model
   out[['constant_dis_pars']] = list(S0=NA,
                                     I0=NA,
@@ -49,7 +48,7 @@ init_model_sirh <- function() {
   # recovery time, Infection-Hospitalization-Rate, etc
   # set parameter ranges and starting values for fitting
   out[['dis_par_ranges']] = list(
-    par_names=c('Beta', 'gamma','pH', 'mu_H1H2', 'rho', 'baseline','I0'),
+    par_names=c('Beta', 'gamma', 'pH', 'mu_H1H2', 'rho', 'baseline', 'I0'),
     parmin=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA, 'baseline'=NA, 'I0' = NA),
     parmax=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA, 'baseline'=NA, 'I0' = NA),
     par=list(   'Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA, 'baseline'=NA, 'I0' = NA)

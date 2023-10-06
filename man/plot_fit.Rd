@@ -2,7 +2,8 @@
 % Please edit documentation in R/plot_fit.R
 \name{plot_fit}
 \alias{plot_fit}
-\title{Plots the Results of Fit model(s) to dataset(s)}
+\title{Plots the Results of Fit model(s) to dataset(s) and Results of a Statistical
+Baseline Model}
 \usage{
 plot_fit(prof_data, par_list, fit_list, ntraj = 1000, filename = NULL)
 }
@@ -24,21 +25,30 @@ dis_par_ranges
 mcmc_pars}
 
 \item{fit_list}{- output of fit_data. A list with the following components
-tab_list - a list with the posterior distribution(s) for disease(s) fit(s)
-for each disease it includes the population, model parameters and LLK
-state0_list - A list with initial number of individuals in each compartment
-for each pathogen
-wl real, needed for tanh function of bete(t)
-@filename - if NULL print plot to screen, if not also save to filename
-@param ntraj - integer number of stochastic trajectories, default 1000}
+
+ tab_list - a list with the posterior distribution(s) for disease(s) fit(s)
+ for each disease it includes the population, model parameters and LLK
+ state0_list - A list with initial number of individuals in each compartment
+ for each pathogen
+ wl real, needed for tanh function of bete(t)
+ @filename - if NULL print plot to screen, if not also save to filename
+ @param ntraj - integer number of stochastic trajectories, default 1000}
 }
 \value{
-plots to screen or file
-fit_traj - a list with a list for each disease containing: trajectories,
+plots to screen or file and a list with the following items
+
+fit_traj - a list for each disease containing: model fit mechanistic trajectories,
 dates, and reported incidence
+
+stat_traj - a list for each disease containing: baseline statistical trajectories,
+dates and reported incidence
+
+pl - a list of ggplot2 objects one for each disease for the mechanistic plots
+
+pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 }
 \description{
-Uses the posterior distribution of the fit(s) and
+For the Mechanistic Results, uses the posterior distribution of the fit(s) and
 a stochastic code to generate trajectories and calculate
 the statistics
 }

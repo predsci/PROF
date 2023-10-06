@@ -635,7 +635,6 @@ stat_forecast <- function(data, ntraj, nfrcst) {
     data_last = inc[(ntimes-7+1):ntimes]
   }
 
-
   noise_p = diff(inc)
   noise_n = - noise_p
   noise = c(noise_p, noise_n)

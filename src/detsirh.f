@@ -22,6 +22,8 @@
 !     States will be orderes as: sS, sI, sR, sH, Ic, Ih
 !     Ic and Ih will be zeroed at the begining of each time step
 
+!     order of parameters is  pop, gamma, pH, mu_H1H2, rho, baseline, I0, all beta 
+!                              1     2     3     4      5     6       7        8      
       pop   = param(1)
       gamma = param(2)
       pH    = param(3)

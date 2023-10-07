@@ -24,8 +24,11 @@ To fit the entire  2021-2022 season for Washington state use:
 
 >\> prof_data = hhs_data_ex(season = 2021, state="WA")
 
-and to fit part of this season to data for the state of Texas use:
+To fit part of this season to data for the state of Texas use:
 >\> prof_data = hhs_data_ex(season = 2021, state="TX", fit_end = as.Date("2022-04-15"))
+
+To fit all currently available data for the 2023-24 season for the state of California use:
+>\> prof_data = hhs_data_ex(season = 2023, state="CA")
 
 When the download is complete we plot the data to the screen:
 
@@ -45,7 +48,7 @@ To fit an SEIRH model for both COVID-19 and influenza use:
 
 >\> par_list = init_par_list(diseases=c("covid19", "influenza"), models=c("seirh", "seirh"))
 
-We can now sequentially fit both pathogens:
+We can now sequentially fit both pathogens using the compartmental models we selected:
 
 >\> fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
 
@@ -59,8 +62,14 @@ To plot the results of the fit to the screen use:
 
 >\> fit_traj <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 
-The plotting routine returns a list with two elements ('covid19' and 'influenza') each element is a list with the trajectories used to create the plots, the date array
-and the reported incidence array.
+Please note that by default this routine also plots the results of fitting a baseline statistical model to the data.  Early in the season this may provide a reasonable fit and
+forecast.
+
+The plotting routine returns a list with the following elements:
+ fit_traj - a list for each disease containing: model fit mechanistic trajectories, dates, and reported incidence
+stat_traj - a list for each disease containing: baseline statistical trajectories, dates and reported incidence
+pl - a list of ggplot2 objects one for each disease for the mechanistic plots
+pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 
 To save the plot to a file use:
 
@@ -78,4 +87,12 @@ The plotting routine returns a list with four elements ('covid19', 'influenza', 
 To also save the plot to a file use:
 
 >\> forecast_traj <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')
+
+To use the baseline statistical model to create a 42 day forward forecast and the two estimates for the combined burden use:
+>\> stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 42)
+
+For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 35.  The cadence (i.e., units)
+of this parameter are assumed to be the same as the same as that of the incidence data.
+
+
 

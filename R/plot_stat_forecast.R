@@ -1,9 +1,6 @@
 #'
-#' Plots the Results of Fit model(s) to dataset(s)
+#' Plots the Results of a Baseline Statistical Model to the dataset(s)
 #'
-#' Uses the posterior distribution of the fit(s) and
-#' a stochastic code to generate trajectories and calculate
-#' the statistics
 #'
 #' @param prof_data data structure for diseases
 #' for each disease it includes:
@@ -13,18 +10,6 @@
 #' inc_type - incidence type, e.g. hosp_admits
 #' data - all available data as a 2D structure of dates and incidence
 #' data_fit - subset of data for fitting (can be eqaul to data)
-#' @param par_list data structure for parameters
-#' for each disease it includes
-#' model
-#' constant_dis_pars
-#' dis_par_ranges
-#' mcmc_pars
-#' @param fit_list - output of fit_data. A list with the following components
-#'  tab_list - a list with the posterior distribution(s) for disease(s) fit(s)
-#'  for each disease it includes the population, model parameters and LLK
-#'  state0_list - A list with initial number of individuals in each compartment
-#'  for each pathogen
-#'  wl real, needed for tanh function of bete(t)
 #'  @param ntraj - integer number of stochastic trajectories, default 1000
 #'  @param nfrcst - number of time units to produce a forecast for (assume to be the same
 #'  cadence as the data), default is 35 days
@@ -35,13 +20,10 @@
 #' (random and ordered): trajectories,
 #' dates, and reported incidence.
 #'
-plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 35, filename = NULL) {
+plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename = NULL) {
 
-  tab_list = fit_list$tab_list
-
-  state0_list = fit_list$state0_list
-
-  wl = fit_list$wl
+  if (is.null(ntraj)) ntraj = 1000
+  if (is.null(nfrcst)) nfrcst = 35
 
   npath = length(prof_data)
 
@@ -54,18 +36,11 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   # loop on all diseases
   for (ip in 1:npath) {
 
-    mydata = prof_data[[ip]]
+    disease = disease_list[ip]
 
-    prof_init_par = par_list[[ip]]
+    mydata = prof_data[[disease]]
 
-    # location name
     reg_name = mydata$loc_name
-
-    # location population
-    pop = mydata$population
-
-    # disease name (covid or flu)
-    disease = mydata$disease
 
     # hospitalization incidence - fitted
     inc = mydata$data_fit$inc
@@ -101,27 +76,6 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     dates_frcst_list[[ip]] = dates_frcst
 
-    # retrieve posterior for disease
-
-    tab = tab_list[[disease]]
-
-    nlines = dim(tab)[1]
-
-    nparamtot = dim(tab)[2] -1 # it includes the LLK hence the -1
-
-    z <- round(nlines*2/3):nlines
-
-    ind <- sample(z, round( 1.2* ntraj))
-
-    simdat <- array(0, c(ntraj, ntimes_frcst))
-
-    # retrieve initial conditions for disease
-
-    state0 = state0_list[[disease]]
-
-    # set the model to 'sirh' or 'seirh' based on disease
-
-    model = prof_init_par$model
 
     # observations - all data stream
 
@@ -129,92 +83,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     obs_fit = mydata$data_fit$inc
 
-    #print information to the User
-    cat("\nCreating Forecast: ", nfrcst," ", print_lab, " Forward for ", reg_name, ' ', toupper(disease),'\n')
-
-    if (model == 'sirh') {
-      # Here using a time-dependent version
-      parnames_td_sirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2",
-                           "pop","pH","S0",'I0',"R0", "rho","baseline")
-
-      pomp(data=data.frame(time = 1:ntimes_frcst),
-           times="time",t0=0,
-           rprocess=euler(step.fun = Csnippet(td.sirh.step),delta.t=1/40.),
-           accumvars = c("Ic", "Ih"),
-           rinit=td.init,
-           rmeasure=rmeas,
-           dmeasure=dmeas,
-           obsnames="cases",
-           statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
-           paramnames=parnames_td_sirh) -> flu_sirh
-
-
-      icount=0
-
-      for (ii in ind) {
-
-        mypar <- tab[ii, 1:nparamtot]
-        state0["I0"] = mypar['I0']
-        coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
-                            mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
-                            state0["I0"], state0["S0"], state0["R0"],
-                            mypar['rho'], round(mypar['baseline']), wl = wl)
-        # generate simulation data with the parameters defined above
-
-        model.pred <- simulate(flu_sirh, format="data.frame", nsim = 1)
-
-        if (model.pred$cases[which.max(obs)] > round(mypar['baseline']) *2){
-          icount = icount + 1
-          simdat[icount,] <- model.pred$cases
-        }
-
-        if (icount == ntraj) break
-
-      }
-
-    } else {
-
-      parnames_td_seirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2","mu_EI", "pop","pH","S0","E0",'I0',"R0", "rho","baseline")
-
-      pomp(data=data.frame(time = 1:ntimes_frcst),
-           times="time",t0=0,
-           rprocess=euler(step.fun = Csnippet(td.seirh.step),delta.t=1/40.),
-           accumvars = c("Ic", "Ih"),
-           rinit=td.init.seirh,
-           rmeasure=rmeas,
-           dmeasure=dmeas,
-           obsnames="cases",
-           statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
-           paramnames=parnames_td_seirh) -> covid_seir
-
-      icount=0
-
-      for (ii in ind) {
-
-        mypar <- tab[ii, 1:nparamtot]
-        state0["I0"] = mypar['I0']
-        coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
-                              mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
-                              state0['I0'], state0['S0'], state0['E0'], state0['R0'],
-                              mypar['rho'], round(mypar['baseline']), wl = wl)
-
-        # generate simulation data with the parameters defined above
-
-        model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)
-
-        if (max(model.pred$cases) > mypar['baseline']){
-          icount = icount + 1
-          simdat[icount,] <- model.pred$cases
-
-        }
-
-        if (icount == ntraj) break
-
-      }
-
-    }
-
-    simdat = simdat[1:icount,]
+    cat('\nCreating ',toupper(disease),' Statistical Forecast for ', reg_name,' ', nfrcst,' Days Forward\n\n')
+    simdat = stat_forecast(mydata, ntraj, nfrcst)
 
     simdat_list[[ip]] = simdat
 
@@ -254,7 +124,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     ylab = paste0(cadence_lab, ' New Hosp')
 
-    title = paste0(reg_name,' - ', toupper(disease))
+    title = paste0(reg_name,' - ', toupper(disease),' Statistical Baseline Model')
 
     start_year = lubridate::year(range(dates)[1])
     end_year   = lubridate::year(range(dates)[2])

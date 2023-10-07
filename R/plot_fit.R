@@ -1,7 +1,8 @@
 #'
-#' Plots the Results of Fit model(s) to dataset(s)
+#' Plots the Results of Fit model(s) to dataset(s) and Results of a Statistical
+#' Baseline Model
 #'
-#' Uses the posterior distribution of the fit(s) and
+#' For the Mechanistic Results, uses the posterior distribution of the fit(s) and
 #' a stochastic code to generate trajectories and calculate
 #' the statistics
 #'
@@ -20,6 +21,7 @@
 #' dis_par_ranges
 #' mcmc_pars
 #' @param fit_list - output of fit_data. A list with the following components
+#'
 #'  tab_list - a list with the posterior distribution(s) for disease(s) fit(s)
 #'  for each disease it includes the population, model parameters and LLK
 #'  state0_list - A list with initial number of individuals in each compartment
@@ -28,9 +30,17 @@
 #'  @filename - if NULL print plot to screen, if not also save to filename
 #'  @param ntraj - integer number of stochastic trajectories, default 1000
 #' @return
-#' plots to screen or file
-#' fit_traj - a list with a list for each disease containing: trajectories,
+#' plots to screen or file and a list with the following items
+#'
+#' fit_traj - a list for each disease containing: model fit mechanistic trajectories,
 #' dates, and reported incidence
+#'
+#' stat_traj - a list for each disease containing: baseline statistical trajectories,
+#' dates and reported incidence
+#'
+#' pl - a list of ggplot2 objects one for each disease for the mechanistic plots
+#'
+#' pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 #'
 #'
 plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL) {
@@ -45,8 +55,8 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
   disease_list = names(prof_data)
 
-  pl = list()
-  fit_traj = list()
+  pl = pl_stat = list()
+  fit_traj = stat_traj = list()
 
   # loop on all diseases
   for (ip in 1:npath) {
@@ -139,7 +149,7 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
         # generate simulation data with the parameters defined above
 
         model.pred <- simulate(flu_sirh, format="data.frame", nsim = 1)
-        if (model.pred$cases[which.max(obs)] > round(mypar['baseline']) *2){
+        if (model.pred$cases[which.max(obs)] > round(mypar['baseline'])) {
           icount = icount + 1
           simdat[icount,] <- model.pred$cases
         }
@@ -147,6 +157,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
         if (icount == ntraj) break
 
       }
+
+      simdat = simdat[1:icount,]
+      # Something new - create also a statistical fit to the pathogen time-series
+
+      simdat_stat = stat_fit(obs, ntraj)
+
 
     } else {
 
@@ -187,9 +203,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
       }
 
-    }
+      simdat = simdat[1:icount,]
+      # Something new - create also a statistical fit to the pathogen time-series
 
-    simdat = simdat[1:icount,]
+      simdat_stat = stat_fit(obs, ntraj)
+
+    }
 
     # save to list
 
@@ -204,9 +223,6 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
     total=cbind(date = as.Date(dates, format = '%Y-%m-%d'),time = 1:ntimes,quantiles,
                 reported = obs)
 
-    # Remove 'X' from column names
-    #colnames(total) <- gsub("X", "", colnames(total))
-
     total = as.data.frame(total)
 
     cadence = as.numeric(dates[2]-dates[1])
@@ -215,14 +231,36 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
     ylab = paste0(cadence_lab, ' New Hosp')
 
-    title = paste0(reg_name,' - ', toupper(disease))
+    title = paste0(reg_name,' - ', toupper(disease),' Mechanistic Fit')
 
     start_year = lubridate::year(range(dates)[1])
-    end_year   = lubridate::year(range(dates)[2])
+    end_year   = start_year + 1
     xlab = paste0(start_year,' - ', end_year)
 
     pl[[disease]] <- ggplot(data=total,
                          mapping=aes(x=date))+
+      geom_line(aes(y=`50%`),color='red')+
+      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
+      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
+      geom_point(aes(y=reported),color='black')+
+      labs(y=ylab,x=xlab) + ggtitle(title)
+
+
+    stat_traj[[disease]] = list(traj = simdat_stat,
+                                date = as.Date(dates, format = '%Y-%m-%d'),
+                                reported = obs)
+
+    apply(simdat_stat,2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_stat
+
+    quantiles_stat <- t(quantiles_stat)
+    quantiles_stat <- as.data.frame(quantiles_stat)
+    total_stat=cbind(date = as.Date(dates, format = '%Y-%m-%d'),time = 1:ntimes,quantiles_stat,
+                reported = obs)
+
+    title = paste0(reg_name,' - ', toupper(disease),' Statistical Baseline Model')
+
+    pl_stat[[disease]] = ggplot(data=total_stat,
+                                           mapping=aes(x=date))+
       geom_line(aes(y=`50%`),color='red')+
       geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
       geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
@@ -234,16 +272,17 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
   cat("\nMaking Plots\n\n")
 
   if (npath == 2) {
-    suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 2)))
+    suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], pl_stat[[1]], pl_stat[[2]], ncol = 2)))
     if (!is.null(filename)) {
-      suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 2)))
-      ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
+      suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], pl_stat[[1]], pl_stat[[2]], ncol = 2)))
+      ggsave(filename = filename, plot = grid_plots, width = 14, height = 10, dpi = 300)
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(pl[[1]])
+    suppressWarnings(print(grid.arrange(pl[[1]], pl_stat[[1]], ncol = 2)))
     if (!is.null(filename)) {
-      ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
+      suppressWarnings(print(grid.arrange(pl[[1]], pl_stat[[1]], ncol = 2)))
+      ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
 
@@ -251,5 +290,6 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
   # return the trajectory list
 
-  return(fit_traj)
+  return(list(fit_traj = fit_traj, stat_traj = stat_traj, pl = pl, pl_stat = pl_stat))
+
 }

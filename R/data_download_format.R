@@ -228,7 +228,7 @@ hhs_data_ex <- function(season = NULL, state=NULL, fit_end = NULL) {
 
   # check that we are supporting the requested season
 
-  supported_seasons = c(2021, 2022)
+  supported_seasons = c(2021, 2022, 2023)
 
   if (!any(supported_seasons == season)) stop('\nRequested Season is Not Supported\n')
 
@@ -243,6 +243,12 @@ hhs_data_ex <- function(season = NULL, state=NULL, fit_end = NULL) {
   end_date   = as.Date(paste0(season+1,'-06-01'))
 
   fit_start = as.Date(paste0(season,'-09-01'))
+
+  if (season == 2023) {
+    start_date = as.Date(paste0(season,'-07-01'))
+    fit_start = as.Date(paste0(season,'-07-01'))
+  }
+
   if (is.null(fit_end)) {
     fit_end = end_date #as.Date(paste0(season+1,"-02-15"))
   }
@@ -275,6 +281,15 @@ hhs_data_ex <- function(season = NULL, state=NULL, fit_end = NULL) {
 
   start_date = as.Date(paste0(season,'-10-15'))
   end_date   = as.Date(paste0(season+1,'-06-01'))
+
+  if (season == 2023) {
+    start_date = as.Date(paste0(season,'-06-01'))
+    fit_start = as.Date(paste0(season,'-06-01'))
+  }
+
+  if (is.null(fit_end)) {
+    fit_end = end_date #as.Date(paste0(season+1,"-02-15"))
+  }
 
   keep_cols = c("previous_day_admission_adult_covid_confirmed",
                 "previous_day_admission_adult_covid_confirmed_coverage",

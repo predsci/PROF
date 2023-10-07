@@ -106,9 +106,13 @@ We also define the season and the end date for fitting.</p>
 <blockquote>
 <p>&gt; prof_data = hhs_data_ex(season = 2021, state="WA")</p>
 </blockquote>
-<p>and to fit part of this season to data for the state of Texas use:</p>
+<p>To fit part of this season to data for the state of Texas use:</p>
 <blockquote>
 <p>&gt; prof_data = hhs_data_ex(season = 2021, state="TX", fit_end = as.Date("2022-04-15"))</p>
+</blockquote>
+<p>To fit all currently available data for the 2023-24 season for the state of California use:</p>
+<blockquote>
+<p>&gt; prof_data = hhs_data_ex(season = 2023, state="CA")</p>
 </blockquote>
 <p>When the download is complete we plot the data to the screen:</p>
 <blockquote>
@@ -127,7 +131,7 @@ We also define the season and the end date for fitting.</p>
 <blockquote>
 <p>&gt; par_list = init_par_list(diseases=c("covid19", "influenza"), models=c("seirh", "seirh"))</p>
 </blockquote>
-<p>We can now sequentially fit both pathogens:</p>
+<p>We can now sequentially fit both pathogens using the compartmental models we selected:</p>
 <blockquote>
 <p>&gt; fit_list &lt;- fit_data(prof_data = prof_data, par_list = par_list)</p>
 </blockquote>
@@ -140,8 +144,13 @@ We also define the season and the end date for fitting.</p>
 <blockquote>
 <p>&gt; fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)</p>
 </blockquote>
-<p>The plotting routine returns a list with two elements ('covid19' and 'influenza') each element is a list with the trajectories used to create the plots, the date array
-and the reported incidence array.</p>
+<p>Please note that by default this routine also plots the results of fitting a baseline statistical model to the data.  Early in the season this may provide a reasonable fit and
+forecast.</p>
+<p>The plotting routine returns a list with the following elements:
+ fit_traj - a list for each disease containing: model fit mechanistic trajectories, dates, and reported incidence
+stat_traj - a list for each disease containing: baseline statistical trajectories, dates and reported incidence
+pl - a list of ggplot2 objects one for each disease for the mechanistic plots
+pl_stat - a list of ggplot2 objects one for each disease for the statistical plots</p>
 <p>To save the plot to a file use:</p>
 <blockquote>
 <p>&gt; fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')</p>
@@ -156,6 +165,12 @@ and the reported incidence array.</p>
 <blockquote>
 <p>&gt; forecast_traj &lt;- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')</p>
 </blockquote>
+<p>To use the baseline statistical model to create a 42 day forward forecast and the two estimates for the combined burden use:</p>
+<blockquote>
+<p>&gt; stat_forecast_list &lt;- plot_stat_forecast(prof_data = prof_data, nfrcst = 42)</p>
+</blockquote>
+<p>For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 35.  The cadence (i.e., units)
+of this parameter are assumed to be the same as the same as that of the incidence data.</p>
               
             </div>
           </div><footer>

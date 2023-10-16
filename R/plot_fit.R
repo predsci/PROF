@@ -35,12 +35,7 @@
 #' fit_traj - a list for each disease containing: model fit mechanistic trajectories,
 #' dates, and reported incidence
 #'
-#' stat_traj - a list for each disease containing: baseline statistical trajectories,
-#' dates and reported incidence
-#'
 #' pl - a list of ggplot2 objects one for each disease for the mechanistic plots
-#'
-#' pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 #'
 #'
 plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL) {
@@ -159,10 +154,6 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       }
 
       simdat = simdat[1:icount,]
-      # Something new - create also a statistical fit to the pathogen time-series
-
-      simdat_stat = stat_fit(obs, ntraj)
-
 
     } else {
 
@@ -204,9 +195,6 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       }
 
       simdat = simdat[1:icount,]
-      # Something new - create also a statistical fit to the pathogen time-series
-
-      simdat_stat = stat_fit(obs, ntraj)
 
     }
 
@@ -245,51 +233,28 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       geom_point(aes(y=reported),color='black')+
       labs(y=ylab,x=xlab) + ggtitle(title)
 
-
-    stat_traj[[disease]] = list(traj = simdat_stat,
-                                date = as.Date(dates, format = '%Y-%m-%d'),
-                                reported = obs)
-
-    apply(simdat_stat,2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_stat
-
-    quantiles_stat <- t(quantiles_stat)
-    quantiles_stat <- as.data.frame(quantiles_stat)
-    total_stat=cbind(date = as.Date(dates, format = '%Y-%m-%d'),time = 1:ntimes,quantiles_stat,
-                reported = obs)
-
-    title = paste0(reg_name,' - ', toupper(disease),' Statistical Baseline Model')
-
-    pl_stat[[disease]] = ggplot(data=total_stat,
-                                           mapping=aes(x=date))+
-      geom_line(aes(y=`50%`),color='red')+
-      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
-      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-      geom_point(aes(y=reported),color='black')+
-      labs(y=ylab,x=xlab) + ggtitle(title)
-
   } #end of loop over diseases
 
   cat("\nMaking Plots\n\n")
 
   if (npath == 2) {
-    suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], pl_stat[[1]], pl_stat[[2]], ncol = 2)))
+    suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], ncol = 2)))
     if (!is.null(filename)) {
-      suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], pl_stat[[1]], pl_stat[[2]], ncol = 2)))
-      ggsave(filename = filename, plot = grid_plots, width = 14, height = 10, dpi = 300)
+      suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], ncol = 2)))
+      ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(print(grid.arrange(pl[[1]], pl_stat[[1]], ncol = 2)))
+    suppressWarnings(pl[[1]])
     if (!is.null(filename)) {
-      suppressWarnings(print(grid.arrange(pl[[1]], pl_stat[[1]], ncol = 2)))
-      ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
-      cat("\n Saving Fit Plots to: ", filename,'\n')
+      ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
+      cat("\n Saving Fit Plot to: ", filename,'\n')
     }
 
   }
 
   # return the trajectory list
 
-  return(list(fit_traj = fit_traj, stat_traj = stat_traj, pl = pl, pl_stat = pl_stat))
+  return(list(fit_traj = fit_traj, pl = pl))
 
 }

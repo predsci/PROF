@@ -67,14 +67,21 @@ forecast.
 
 The plotting routine returns a list with the following elements:
  fit_traj - a list for each disease containing: model fit mechanistic trajectories, dates, and reported incidence
-stat_traj - a list for each disease containing: baseline statistical trajectories, dates and reported incidence
 pl - a list of ggplot2 objects one for each disease for the mechanistic plots
-pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
+
 
 To save the plot to a file use:
 
 >\> fit_traj <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')
 
+
+To plot the results of fitting a baseline statistical mode to each pathogen use:
+>\> stat_fit_list <- plot_stat_fit(prof_data = prof_data)
+
+The above call returns a list with the following elements:
+
+stat_fit_traj - a list for each disease containing: baseline statistical fit trajectories, dates, and reported incidence
+pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 
 To use the posterior distributions of the fits to create individual forecasts and  a combined burden forecast use:
 

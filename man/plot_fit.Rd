@@ -40,12 +40,7 @@ plots to screen or file and a list with the following items
 fit_traj - a list for each disease containing: model fit mechanistic trajectories,
 dates, and reported incidence
 
-stat_traj - a list for each disease containing: baseline statistical trajectories,
-dates and reported incidence
-
 pl - a list of ggplot2 objects one for each disease for the mechanistic plots
-
-pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 }
 \description{
 For the Mechanistic Results, uses the posterior distribution of the fit(s) and

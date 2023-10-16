@@ -44,6 +44,7 @@ saveRDS(fit_list, filename = '/path/to/filename.rds')
 
 plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 
+
 # The plotting routine returns a list with the following elements
 # fit_traj - a list for each disease containing: model fit mechanistic trajectories,
 # dates, and reported incidence
@@ -56,6 +57,10 @@ plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list =
 #  plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list,
 # fit_list = fit_list, filename = '/path/to/filename')
 
+
+# To plot the results if fitting a baseline statistical model to the data use:
+
+stat_fit_list <- plot_stat_fit(prof_data = prof_data)
 
 # to use the posterior distributions of the fits to create individual forecasts 35 days forward
 # and combined burden forecasts use:

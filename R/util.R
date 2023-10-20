@@ -607,7 +607,7 @@ stat_forecast <- function(data, ntraj, nfrcst) {
 
   # using the date array build an integer day array
 
-  times = dates_to_int(date)
+  times = dates_to_int(dates)
 
   ntimes = length(times)
 

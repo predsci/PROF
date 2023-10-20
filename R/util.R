@@ -602,7 +602,7 @@ stat_fit <- function(inc, ntraj) {
 
 stat_forecast <- function(data, ntraj, nfrcst) {
 
-  date = data$data_fit$date
+  dates = data$data_fit$date
   inc = data$data_fit$inc
 
   # using the date array build an integer day array

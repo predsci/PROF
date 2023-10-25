@@ -615,7 +615,7 @@ stat_forecast <- function(data, ntraj, nfrcst) {
 
   # build also the arrays for the forecasts
 
-  cadence = as.numeric(dates[2]-dates[1])
+  cadence = times[2] - times[1]
 
   if (cadence == 1) {
     cadence_lab = paste0(cadence, ' day')

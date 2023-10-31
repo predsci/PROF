@@ -1,4 +1,4 @@
-# Example of how to use the data functions seperately
+# Example of how to use the data functions separately
 
 library(PROF)
 # source("~/Dropbox/GitReps/PROF/R/data_download_format.R")
@@ -10,14 +10,14 @@ fit_end = as.Date("2023-01-31")
 
 
 # download HHS hospitalizations file
-# result = hhs_hosp_state_down(down_dir="~/Downloads")
-# 
-# if (result$out_flag!=0) {
-#   stop("There was an error with the download.")
-# }
+result = hhs_hosp_state_down(down_dir="~/Downloads")
+
+if (result$out_flag!=0) {
+  stop("There was an error with the download.")
+}
 
 # extract state and structure for PROF
-hhs_path = "~/Dropbox/CSMB01/data/HHS_daily-hosp_state.csv"
+hhs_path = result$download_path
 prof_data = hhs_2_PROF(hhs_path=hhs_path, season = season, state=state)
 
 

@@ -339,17 +339,27 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   }
 
+  interactive_plot <- list()
+
+  for (ip in 1:npath) {
+    interactive_plot[[ip]] <- ggplotly(pl[[ip]])
+  }
+
   cat("\nMaking Plots\n\n")
   if (npath == 2) {
 
     suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2)))
+    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]], nrows = 1, titleX = TRUE, titleY = TRUE)
     if (!is.null(filename)) {
       suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2))
       ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
     }
   } else {
+
     suppressWarnings(pl[[1]])
+    arrange_plot <- interactive_plot[[1]]
+
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')

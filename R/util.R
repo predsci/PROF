@@ -113,6 +113,7 @@ set_init_states <- function(pop, I0, mymodel) {
 #' mu_EI - latency period (seirh only)
 #'
 #' @keywords internal
+
 init_param <- function(mymodel, mydisease, inc) {
 
   if (mymodel == 'sirh' & mydisease == 'influenza') { #influenza  and SIRH
@@ -361,19 +362,26 @@ plot_prof_data <- function(prof_data, filename = NULL) {
 
   col = c('salmon', 'cornflowerblue')
   pl = list()
+
+
   for (ip in 1:npath) {
 
     mydata = prof_data[[ip]]
+
     reg_name = mydata$loc_name
     disease = mydata$disease
     inc = mydata$data$inc
     dates  = mydata$data$date
     inc_type = mydata$inc_type
 
-    dates_fit = mydata$data_fit$date
-    inc_fit   = mydata$data_fit$inc
+    alpha_data = alpha_fit = 1.0
+    if (!is.null(mydata$data_fit)) {
+      dates_fit = mydata$data_fit$date
+      inc_fit   = mydata$data_fit$inc
+      data_fit = data.frame(x=dates_fit, y = inc_fit)
+      alpha_data = 0.2
+    }
 
-    data_fit = data.frame(x=dates_fit, y = inc_fit)
 
     cadence = as.numeric(dates[2]-dates[1])
     if (cadence == 1) cadence_lab = 'Daily'
@@ -382,39 +390,52 @@ plot_prof_data <- function(prof_data, filename = NULL) {
     main_txt = paste0(reg_name, ' - ', disease,' ',cadence_lab)
 
     start_year = lubridate::year(range(dates)[1])
-    end_year   = lubridate::year(range(dates)[2])
+    end_year   = start_year + 1
     xlab = paste0(start_year,' - ', end_year)
     ylab = inc_type
     data = data.frame(x=dates, y = inc)
 
-
-
     pl[[ip]] <- ggplot() +
-      geom_point(data = data_fit, aes(x,y), color = col[ip], alpha = 1.0, size = 3) +
-      geom_point(data = data, aes(x,y), color=col[ip], alpha = 0.2, size = 3) +
-      geom_vline(xintercept=max(data_fit$x), linetype = 'dashed', col = 'darkgreen') +
+      geom_point(data = data, aes(x,y), color=col[ip], alpha = alpha_data, size = 3) +
       labs(x = xlab,           # X-axis label
            y = ylab,           # Y-axis label
            title = main_txt)  # Main title
 
+    if (!is.null(mydata$data_fit)) {
+      pl[[ip]] <- pl[[ip]] +
+        geom_point(data = data_fit, aes(x,y), color = col[ip], alpha = alpha_fit, size = 3) +
+        geom_vline(xintercept=max(data_fit$x), linetype = 'dashed', col = 'darkgreen')
+
+    }
+
+  }
+
+  interactive_plot <- list()
+
+  for (ip in 1:npath) {
+    interactive_plot[[ip]] <- ggplotly(pl[[ip]])
   }
 
   if (npath == 2) {
-    suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 2)))
+    # suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 2)))
+    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]], nrows = 1, titleX = TRUE, titleY = TRUE)
+
     if (!is.null(filename)) {
       suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 2)))
       ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(pl[[1]])
+    # suppressWarnings(pl[[1]])
+    arrange_plot <- interactive_plot[[1]]
+
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
 
   }
-
+ return(arrange_plot)
 }
 
 #'

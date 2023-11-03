@@ -8,10 +8,15 @@ library(PROF)
 
 setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 
-# use the provided 'hhs_data_ex' function to download the HHS hospitlization
-# file, subset to CA and format the data for both covid19 and influenza
+# download HHS Hospitalization file
 
-prof_data = hhs_data_ex(season = 2023, state="CA")
+result = hhs_hosp_state_down(down_dir="~/Downloads")
+
+# set state and season and extract data
+state = "CA"
+season = 2023
+prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=state)
+
 
 # The 'prof_data' data structure should now be available and the data can
 # be plotted
@@ -19,6 +24,12 @@ prof_data = hhs_data_ex(season = 2023, state="CA")
 # To plot the data to a screen use:
 
 plot_prof_data(prof_data = prof_data)
+
+# add fit data structure to each pathogen - this is the data that will
+# be fitted
+# NULL values for start/end dates mean set to start/end of the season data
+
+prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 
 # To plot the data to the screen and save to a file use
 # plot_prof_data(prof_data = prof_data, filename = '/path/to/filename')

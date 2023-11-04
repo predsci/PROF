@@ -2,41 +2,56 @@
 
 We have setup an example.R script and suggest that you give it a try after installing the package.
 
-This example has been configured for fitting and forecasting influenza and COVID-19 data for any of the 50 states D.C. and Puerto Rico for either the 2021-2022 or 2022-2023 seasons.
+This example has been configured for fitting and forecasting influenza and COVID-19 data for any of the 50 states D.C. and Puerto Rico for the 2021-22, 2022-23, or 2023-24 seasons.
 
 All available data is first downloaded and then the data for the requested location is retrieved and processed. You can fit the entire requested season or just part of it.  Below we demonstrate both options.  
 
-All available data for the season is downloaded fitting uses data only until February 15, 2023.   You can then compare the forecast to the available data.
+
 
 We start by opening an R or RStudio session and loading the PROF package:
 
 >\> library(PROF)
 
-We then use the provided 'hhs_data_ex' function to download the HHS hospitalization file, subset to a state and format the data for both COVID-19 and influenza.
-We also define the season and the end date for fitting.
+We then download the HHS data using the provided 'hhs_hosp_state_down' function
 
->\> prof_data = hhs_data_ex(season = 2022, state="CA", fit_end = as.Date("2023-02-15"))
+>\> result = hhs_hosp_state_down(down_dir="~/Downloads")
 
-To fit the entire season use:
->\> prof_data = hhs_data_ex(season = 2022, state="CA")
+We can check to see if the download was successful:
 
-To fit the entire  2021-2022 season for Washington state use:
+>\> result$out_flag 
 
->\> prof_data = hhs_data_ex(season = 2021, state="WA")
+The above should be zero.
 
-To fit part of this season to data for the state of Texas use:
->\> prof_data = hhs_data_ex(season = 2021, state="TX", fit_end = as.Date("2022-04-15"))
+We know select a state and a season
 
-To fit all currently available data for the 2023-24 season for the state of California use:
->\> prof_data = hhs_data_ex(season = 2023, state="CA")
+>\> state = "CA"
 
-When the download is complete we plot the data to the screen:
+>\> season = 2023
+
+and extract the data:
+
+>\> prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=state)
+
+You can select other states or any of the two previous seasons (2021 and 2022).
+
+The 'prof_data' data structure should now be available and the data can be plotted to the screen:
 
 >\> plot_prof_data(prof_data = prof_data)
 
-To save the plot to a file use:
+Plots can also be saved to a file using:
 
 >\> plot_prof_data(prof_data = prof_data, filename = '/path/to/filename')
+
+Next we will add 'fit data' structure to each pathogen - this is the data that will be fitted
+NULL values for start/end dates mean set to start/end of the season data, and fit all avialable data:
+
+prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
+
+To fit only part of the data use for example:
+
+prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end="2023-10-28")
+
+If you would like to fit only part of the data we recommend using the interactive plots of the data for selecting  the 'fit_end' date.
 
 Next we load the parameters for the models (for more details see the R/ex_par_list.R script):
 

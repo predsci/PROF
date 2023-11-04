@@ -12,6 +12,7 @@ Imports:
   utils,
   zoo,
   ggplot2,
+  plotly,
   plyr,
   dplyr,
   lubridate,

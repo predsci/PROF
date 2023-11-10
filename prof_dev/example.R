@@ -26,7 +26,7 @@ prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=sta
 plot_prof_data(prof_data = prof_data)
 
 # add fit data structure to each pathogen - this is the data that will
-# be fitted
+# be fitted with a mechanistic compartmental model
 # NULL values for start/end dates mean set to start/end of the season data
 
 prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
@@ -50,41 +50,45 @@ fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
 
 saveRDS(fit_list, filename = '/path/to/filename.rds')
 
-# to plot the results of the fit to the screen. This function will also create and
-# display the results of a statistical baseline model
+# to plot the results of the fit to the screen use:
 
 plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
-
 
 # The plotting routine returns a list with the following elements
 # fit_traj - a list for each disease containing: model fit mechanistic trajectories,
 # dates, and reported incidence
+# pl - a list of ggplot2 objects one for each disease for the mechanistic plots
+
+# We can also fit a baseline statistical model to the data.
+# We start by adding the fit-stat data structure to each pathogen - this is the data
+# that will be fitted with a simple baseline statistical model
+
+prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
+
+# Running and plotting the fitting of a simple statistical baseline model will only take a
+# few seconds:
+
+stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NULL)
+
+# in the above call we set the number of trajectories to 1e4 and we do not save the plots
+# to a file (to save to a file set a value to the filename)
+# The fitting and plotting routine returns a list with two elements:
 # stat_traj - a list for each disease containing: baseline statistical trajectories,
 # dates and reported incidence
-# pl - a list of ggplot2 objects one for each disease for the mechanistic plots
 # pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 
-# to save the plots to a file use:
-#  plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list,
-# fit_list = fit_list, filename = '/path/to/filename')
 
-
-# To plot the results if fitting a baseline statistical model to the data use:
-
-stat_fit_list <- plot_stat_fit(prof_data = prof_data)
-
-# to use the posterior distributions of the fits to create individual forecasts 35 days forward
-# and combined burden forecasts use:
+# to use the posterior distributions of the compartmental fits to create individual forecasts
+# `nfrcst'` days forward and combined burden forecasts use:
 
 forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list,
                                nfrcst = 35)
 
-
 # please note that we currently provide two versions of the combined forecast:
-# random (bottom left panel), and ordered (bottom right panel)
+# random (bottom left panel), and sorted (bottom right panel)
 
 # the plotting routine returns a list with four elements ('covid19', 'influenza', 'random', and
-# 'ordered'). Random and Ordered are the combined burden calculated with random and ordered
+# 'sorted'). Random and Sorted are the combined burden calculated with random and sorted
 # selection of trajectories, respectively.
 # Each element is a list with the trajectories used to create the plots, the date array
 # and the reported incidence array
@@ -95,13 +99,14 @@ forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_l
 # fit_list = fit_list, filename = '/path/to/filename')
 
 
-# to use a baseline statistical model  create individual forecasts 35 days forward
+# to use a baseline statistical model and create individual forecasts 35 days forward
 # and combined burden forecasts use:
 
 stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 35)
 
 # For the combined burden of the baseline statistical model we offer the same two
-# options (random and sorted)
+# options (random and sorted). The statistical plotting routine returns a list with the
+# same four elements as the one for the mechanistic forecasts
 
 # Add example of combining mechanistic for COVID-19 and statistical for influenza
 ###############

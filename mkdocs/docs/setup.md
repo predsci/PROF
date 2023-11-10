@@ -22,7 +22,7 @@ We can check to see if the download was successful:
 
 The above should be zero.
 
-We know select a state and a season
+We now select a state and a season
 
 >\> state = "CA"
 
@@ -42,8 +42,9 @@ Plots can also be saved to a file using:
 
 >\> plot_prof_data(prof_data = prof_data, filename = '/path/to/filename')
 
-Next we will add 'fit data' structure to each pathogen - this is the data that will be fitted
-NULL values for start/end dates mean set to start/end of the season data, and fit all avialable data:
+Next we will add 'fit data' structure to each pathogen - this is the data that will be fitted using a mechanistic
+compartmental model. 
+NULL values for start/end dates mean set to start/end of the season data, and fit all available data:
 
 prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 
@@ -77,18 +78,17 @@ To plot the results of the fit to the screen use:
 
 >\> fit_traj <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 
-Please note that by default this routine also plots the results of fitting a baseline statistical model to the data.  Early in the season this may provide a reasonable fit and
-forecast.
-
 The plotting routine returns a list with the following elements:
- fit_traj - a list for each disease containing: model fit mechanistic trajectories, dates, and reported incidence
+fit_traj - a list for each disease containing: model fit mechanistic trajectories, dates, and reported incidence
 pl - a list of ggplot2 objects one for each disease for the mechanistic plots
-
 
 To save the plot to a file use:
 
 >\> fit_traj <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')
 
+
+Please note that by default this routine also plots the results of fitting a baseline statistical model to the data.  Early in the season this may provide a reasonable fit and
+forecast.
 
 To plot the results of fitting a baseline statistical mode to each pathogen use:
 >\> stat_fit_list <- plot_stat_fit(prof_data = prof_data)
@@ -102,19 +102,39 @@ To use the posterior distributions of the fits to create individual forecasts an
 
 >\> forecast_traj <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 
-Please note that we currently provide two versions of the combined forecast: random (bottom left panel), and ordered (bottom right panel).
+Please note that we currently provide two versions of the combined forecast: random (bottom left panel), and sorted (bottom right panel).
 
-The plotting routine returns a list with four elements ('covid19', 'influenza', 'random', and 'ordered'). Random and Ordered are the combined burden calculated with random and ordered selection of trajectories, respectively. Each element is a list with the trajectories used to create the plots, the date array and the reported incidence array.
+The plotting routine returns a list with four elements ('covid19', 'influenza', 'random', and 'sorted'). Random and Sorted are the combined burden calculated with random and sorted selection of trajectories, respectively. Each element is a list with the trajectories used to create the plots, the date array and the reported incidence array.
 
 To also save the plot to a file use:
 
 >\> forecast_traj <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')
 
+PROF can also be used to fit and forecast using a fast baseline statistical model.  The procedure follows the steps we have taken for the compartmental mechanistic model. 
+
+First, we add 'fit-stat data ' structure to each pathogen - this is the data that will be fitted using a baseline statistical model.
+NULL values for start/end dates mean set to start/end of the season data, and fit all available data:
+
+prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
+
+To fit and plot the results we use:
+
+stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NULL)
+
+Here we have set the number of trajectories to 10,000 (default is 1,000).  To save the plots to a file use:
+
+stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = 'path/to/filename')
+
 To use the baseline statistical model to create a 42 day forward forecast and the two estimates for the combined burden use:
 >\> stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 42)
 
+For the combined burden of the baseline statistical model we offer the same two options (random and sorted). The statistical plotting routine returns a list with the
+same four elements as the one for the mechanistic forecasts
+
 For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 35.  The cadence (i.e., units)
-of this parameter are assumed to be the same as the same as that of the incidence data.
+of this parameter are assumed to be the same as that of the incidence data.
+
+
 
 
 

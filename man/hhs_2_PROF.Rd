@@ -18,8 +18,8 @@ PROF data structure (list of pathogen-data)
 }
 \description{
 This function converts HHS hospitalization data to the structure that
-works with with PROF fitting routines.  This function retrieves data 
-for an entire season and expects the HHS data is already downloaded. 
+works with with PROF fitting routines.  This function retrieves data
+for an entire season and expects the HHS data is already downloaded.
 Before sending to fitting procedures, the output of this function
 needs fitting date ranges (see PROF::hhs_set_fitdates()).
 }

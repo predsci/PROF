@@ -155,6 +155,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
         mypar <- tab[ii, 1:nparamtot]
         state0["I0"] = mypar['I0']
+        state0["S0"] = mypar['pop'] - state0["I0"]
         coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
                             mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
                             state0["I0"], state0["S0"], state0["R0"],
@@ -193,6 +194,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
         mypar <- tab[ii, 1:nparamtot]
         state0["I0"] = mypar['I0']
+        state0["E0"] = mypar["I0"]
+        state0["S0"] = mypar['pop'] - (state0["I0"] + state0['E0'])
         coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
                               mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
                               state0['I0'], state0['S0'], state0['E0'], state0['R0'],

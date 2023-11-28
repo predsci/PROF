@@ -285,8 +285,23 @@ fit_data <- function(prof_data, par_list) {
     parmax = par
     parmax[ind_opt] <- lapply(par[ind_opt], function(x) x * 2.0)
     # hand-tune some max values
-    parmax['pH'] = 0.1
+    parmax['pH'] = 0.01
     parmax[['mu_H1H2']] = 2.0
+
+    if (lubridate::year(dates[1]) == 2023 & disease == 'influenza') {
+      parmin[c('Beta1')] = 1. * par$gamma
+      parmin[c('Beta2')] = 1.1 * par$gamma
+
+      parmax[c('Beta1')] = 1.1 * par$gamma
+      parmax[c('Beta2')] = 1.3 * par$gamma
+
+      parmin[c('tcng1')] = 45
+      parmax[c('tcng1')] = 90
+
+      parmin['I0'] = 10
+      parmax['I0'] = 1000
+
+    }
     # if user provided values use them
     if (!any(is.na(input_parmax))) {
       ind_opt_input_parmax = which(names(input_parmax) %in% paropt)

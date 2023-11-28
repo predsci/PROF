@@ -868,8 +868,8 @@ td.seirh.ode <- Csnippet("
   beta_cur = beta_cur + (Beta2-Beta1) * tanh((time-tcng1)/wl);
   beta_cur = beta_cur * 0.5;
 
-  DS = -beta_cur*S*I/N;
-  DE = beta_cur*S*I/N - mu_EI*E;
+  DS = -beta_cur*S*I/pop;
+  DE = beta_cur*S*I/pop - mu_EI*E;
   DI = mu_EI*E-gamma*I;
   DR = (1-pH)*gamma*I;
   DH1 = pH*gamma*I - mu_H1H2*H1;

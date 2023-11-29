@@ -41,6 +41,10 @@ with an approximate transition time of ~2L days.
 # Methodology - Fitting, Forecasting, and Combined Burden
 PROF fits each pathogen independently and sequentially.   For each pathogen, we determine the joint posterior distribution of model parameters by fitting the daily confirmed hospital admission time series using an adaptive-step-size MCMC procedure.  Only parameters that govern the time variation of R(t) and the probability of hospitalization are optimized and all other parameters are taken from the literature. By default, a fast Fortran code is used for the MCMC procedure (in the future, we hope to be able to offer a second, slower-but-faster-than-R, option that does not require a Fortran compiler). Once the fitting of one pathogen is completed, PROF proceeds to fit the second pathogen.  The posterior distribution of each fit can be used to (1) Create a probabilistic plot of the fit, (2) Create a probabilistic forecast (and plot thereof) for each pathogen.  The final step for PROF is providing an estimate for the forecast of the combined burden.  Currently, the combined burden is estimated in two ways (1) By summing the sorted trajectories of each pathogen (implying a perfect correlation between the errors of the two forecasts), or (2) By randomly summing the trajectories (implying no correlation between the errors of the two forecasts).  In the near future, we plan to offer a third alternative which is based on an error correlation procedure we are working on.
 
+# Baseline Statistical Model
+
+In addition to fitting and forecasting the data with a compartmental model PROF will fit and forecast the data to a baseline statistical model. For weekly data, the median prediction of the baseline forecast is the corresponding target value observed in the previous week, and noise around the median prediction is generated using positive and negative 1-week differences (that is differences between consecutive reports) for all prior observations.  The resulting sampling distribution is truncated to prevent negative values.  PROF implements this model using daily data. 
+
 
 
 

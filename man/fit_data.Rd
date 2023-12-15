@@ -4,7 +4,7 @@
 \alias{fit_data}
 \title{Fit model(s) to dataset(s)}
 \usage{
-fit_data(prof_data, par_list)
+fit_data(prof_data, par_list, nb_vec = c(2, 2))
 }
 \arguments{
 \item{prof_data}{data structure for diseases
@@ -22,11 +22,14 @@ model - 'seirh' or 'sirh'
 constant_dis_pars - initial values for the compartments of the model
 dis_par_ranges - a list with parameter ranges and starting values
 mcmc_pars}
+
+\item{nb_vec}{- number of values for FOI. Options are 2 or 3}
 }
 \value{
 tab_list - posterior distribution of parameters for each disease
 state0 - the initial conditions for all the compartments
 wl - the parameter used for tanh of beta(t), default 3
+nb_vec - number of values for FOI. Options are 2 or 3
 }
 \description{
 Main driver function for the sequential fitting procedure of one or two

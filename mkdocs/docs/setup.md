@@ -66,7 +66,9 @@ To fit an SEIRH model for both COVID-19 and influenza use:
 
 We can now sequentially fit both pathogens using the compartmental models we selected:
 
->\> fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
+>\> fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
+
+In the example above we chose a 3-value model for the FOI for COVID-19 and a 2-value model for the FOI for Influenza
 
 You can now sit and relax for 10-15 minutes
 

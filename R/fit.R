@@ -18,12 +18,14 @@
 #' constant_dis_pars - initial values for the compartments of the model
 #' dis_par_ranges - a list with parameter ranges and starting values
 #' mcmc_pars
+#' @param nb_vec - number of values for FOI. Options are 2 or 3
 #' @return
 #' tab_list - posterior distribution of parameters for each disease
 #' state0 - the initial conditions for all the compartments
 #' wl - the parameter used for tanh of beta(t), default 3
+#' nb_vec - number of values for FOI. Options are 2 or 3
 #'
-fit_data <- function(prof_data, par_list) {
+fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
   if (is.null(prof_data)) stop('Missing prof_data \n')
   if (is.null(par_list)) stop('Missing par_list \n')
@@ -40,10 +42,13 @@ fit_data <- function(prof_data, par_list) {
   if (length(par_list) != length(prof_data)) stop('Number of diseases in par_list does
                                                   \n not equal the number if prof_data \n')
 
+  if (max(nb_vec) > 3 | min(nb_vec) < 2) stop("Incorrect inputs for the Number of values \n
+                                              FOI can have, check nb_vec \n")
+
   # prepare a list for the Posterior distribution of each disease fit
   # and for the initial conditions
 
-  tab_list = state0_list = list()
+  tab_list = state0_list = param_best_list = list()
 
   # loop on all diseases
   for (ip in 1:npath) {
@@ -69,6 +74,8 @@ fit_data <- function(prof_data, par_list) {
     dates  = mydata$data_fit$date
     if (is.null(dates)) stop('Missing <date> in prof_data structure \n')
 
+    nb = nb_vec[ip]
+
     cat("\nFitting ",toupper(disease), " Data for ", reg_name,'\n')
 
 
@@ -85,6 +92,7 @@ fit_data <- function(prof_data, par_list) {
     model = prof_init_par$model
 
     cat('\nUsing ', toupper(model),' Compartmental Model \n')
+    cat("\nForce of Infection will have ", nb," values\n")
 
     # estimate the initial number of infections - later this will be optimized
 
@@ -187,14 +195,15 @@ fit_data <- function(prof_data, par_list) {
     # define time-dependent FOI
     #
     # We will need to work on this if we allow for more than two values
-    nb = 2
 
+    # works for any number of nb values
     td_foi <- set_td_beta(nb, length(inc), param0$Beta)
 
     # param names is updated to include TD-FOI
 
     par_names = prof_init_par$dis_par_ranges$par_names
 
+    # works correctly for any number of nb values
     param_info_list <- update_par_names(nb, par_names)
 
     nparam = param_info_list$nparam
@@ -214,6 +223,11 @@ fit_data <- function(prof_data, par_list) {
     } else {
       param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0')])
     }
+
+    # since we added pop we have to update nparam and nparamtot
+
+    nparam = nparam + 1
+    nparamtot = nparamtot + 1
 
     par =list()
 
@@ -271,7 +285,7 @@ fit_data <- function(prof_data, par_list) {
     input_parmax = prof_init_par$dis_par_ranges$parmax
 
     parmin = par
-    parmin[ind_opt] <- lapply(par[ind_opt], function(x) x * 0.75)
+    parmin[ind_opt] <- lapply(par[ind_opt], function(x) x * 0.5)
     # hand-tune some min values
     parmin['pH'] = 1e-4
     parmin[['mu_H1H2']] = 0.5
@@ -295,11 +309,34 @@ fit_data <- function(prof_data, par_list) {
       parmax[c('Beta1')] = 1.1 * par$gamma
       parmax[c('Beta2')] = 1.3 * par$gamma
 
-      parmin[c('tcng1')] = 45
-      parmax[c('tcng1')] = 90
+      parmin[c('tcng1')] = 7
+      parmax[c('tcng1')] = (ntimes/2)
 
       parmin['I0'] = 10
       parmax['I0'] = 1000
+      if (nb == 3) {
+        parmin[c('Beta3')] = 1.1 * par$gamma
+        parmax[c('Beta3')] = 1.3 * par$gamma
+        parmin[c('tcng2')] = 7
+        parmax[c('tcng2')] = (ntimes/2)
+      }
+
+    }
+    if (lubridate::year(dates[1]) == 2023 & disease == 'covid19') {
+
+      parmin[c('tcng1')] = 7
+      parmax[c('tcng1')] = (ntimes -14)
+
+      if (nb == 3) {
+          parmin[c('Beta2')] = 1.1 * par$gamma
+          parmin[c('Beta3')] = 1.1 * par$gamma
+          parmin[c('tcng2')] = 7
+          parmax[c('tcng2')] = (ntimes/2)
+      } else {
+        parmin[c('Beta2')] = 1.1 * par$gamma
+        parmin[c('tcng2')] = 7
+        parmax[c('tcng2')] = (ntimes - 14)
+      }
 
     }
     # if user provided values use them
@@ -354,6 +391,8 @@ fit_data <- function(prof_data, par_list) {
 
     param_best = out$param
 
+    param_best_list[[ip]] <- param_best
+
     names(param_best) <- par_names
 
     traj[,'cases'] = rpois(ntimes, traj[,'Ih'] * param_best['rho'] + param_best['baseline'])
@@ -369,7 +408,7 @@ fit_data <- function(prof_data, par_list) {
 
   # Will also need to SAVE all what we are returning
 
-  return(list(tab_list = tab_list, state0_list = state0_list, wl = param0$wl))
+  return(list(tab_list = tab_list, state0_list = state0_list, wl = param0$wl, nb_vec = nb_vec))
 
 }
 

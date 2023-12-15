@@ -43,6 +43,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   wl = fit_list$wl
 
+  nb_vec = fit_list$nb_vec
+
   npath = length(prof_data)
 
   disease_list = names(prof_data)
@@ -113,6 +115,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     ind <- sample(z, round( 1.2* ntraj))
 
+    ind <- order(tab[,'llk'])
+
     simdat <- array(0, c(ntraj, ntimes_frcst))
 
     # retrieve initial conditions for disease
@@ -129,24 +133,28 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     obs_fit = mydata$data_fit$inc
 
+    # number of values for FOI
+
+    nb = nb_vec[ip]
+
     #print information to the User
     cat("\nCreating Forecast: ", nfrcst," ", print_lab, " Forward for ", reg_name, ' ', toupper(disease),'\n')
 
     if (model == 'sirh') {
       # Here using a time-dependent version
-      parnames_td_sirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2",
-                           "pop","pH","S0",'I0',"R0", "rho","baseline")
-
-      pomp(data=data.frame(time = 1:ntimes_frcst),
-           times="time",t0=0,
-           rprocess=euler(step.fun = Csnippet(td.sirh.step),delta.t=1/40.),
-           accumvars = c("Ic", "Ih"),
-           rinit=td.init,
-           rmeasure=rmeas,
-           dmeasure=dmeas,
-           obsnames="cases",
-           statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
-           paramnames=parnames_td_sirh) -> flu_sirh
+      # parnames_td_sirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2",
+      #                      "pop","pH","S0",'I0',"R0", "rho","baseline")
+      #
+      # pomp(data=data.frame(time = 1:ntimes_frcst),
+      #      times="time",t0=0,
+      #      rprocess=euler(step.fun = Csnippet(td.sirh.step),delta.t=1/40.),
+      #      accumvars = c("Ic", "Ih"),
+      #      rinit=td.init,
+      #      rmeasure=rmeas,
+      #      dmeasure=dmeas,
+      #      obsnames="cases",
+      #      statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
+      #      paramnames=parnames_td_sirh) -> flu_sirh
 
 
       icount=0
@@ -155,18 +163,42 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
         mypar <- tab[ii, 1:nparamtot]
         state0["I0"] = mypar['I0']
-        state0["S0"] = mypar['pop'] - state0["I0"]
-        coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
-                            mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
-                            state0["I0"], state0["S0"], state0["R0"],
-                            mypar['rho'], round(mypar['baseline']), wl = wl)
+        state0$S0 = as.numeric(mypar['pop']) - state0$I0
+
+        # coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
+        #                     mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
+        #                     state0["I0"], state0["S0"], state0["R0"],
+        #                     mypar['rho'], round(mypar['baseline']), wl = wl)
+        # # generate simulation data with the parameters defined above
+        #
+        # model.pred <- simulate(flu_sirh, format="data.frame", nsim = 1)
+        #
+        # if (model.pred$cases[which.max(obs)] > round(mypar['baseline']) *2){
+        #   icount = icount + 1
+        #   simdat[icount,] <- model.pred$cases
+        # }
+
+        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        parms = c(mypar, 'wl' =wl)
+
+        if (nb == 2) {
+          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td2_sirh_dynamics, parms = parms)
+        } else {
+          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td3_sirh_dynamics, parms = parms)
+          # calling H2 Ih here
+        }
+
+        model.pred = results[,-1] # remove the time column
+
         # generate simulation data with the parameters defined above
 
-        model.pred <- simulate(flu_sirh, format="data.frame", nsim = 1)
+        Ih = model.pred[,4]
+        cases <- rpois(ntimes_frcst, Ih * mypar[['rho']] + mypar[['baseline']])
 
-        if (model.pred$cases[which.max(obs)] > round(mypar['baseline']) *2){
+        # if (model.pred$cases[which.max(obs)] > round(mypar['baseline'])) {
+        if (cases[which.max(obs)] > round(mypar['baseline'])) {
           icount = icount + 1
-          simdat[icount,] <- model.pred$cases
+          simdat[icount,] <- cases
         }
 
         if (icount == ntraj) break
@@ -175,40 +207,64 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     } else {
 
-      parnames_td_seirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2","mu_EI", "pop","pH","S0","E0",'I0',"R0", "rho","baseline")
-
-      pomp(data=data.frame(time = 1:ntimes_frcst),
-           times="time",t0=0,
-           rprocess=euler(step.fun = Csnippet(td.seirh.step),delta.t=1/40.),
-           accumvars = c("Ic", "Ih"),
-           rinit=td.init.seirh,
-           rmeasure=rmeas,
-           dmeasure=dmeas,
-           obsnames="cases",
-           statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
-           paramnames=parnames_td_seirh) -> covid_seir
+      # parnames_td_seirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2","mu_EI", "pop","pH","S0","E0",'I0',"R0", "rho","baseline")
+      #
+      # pomp(data=data.frame(time = 1:ntimes_frcst),
+      #      times="time",t0=0,
+      #      rprocess=euler(step.fun = Csnippet(td.seirh.step),delta.t=1/40.),
+      #      accumvars = c("Ic", "Ih"),
+      #      rinit=td.init.seirh,
+      #      rmeasure=rmeas,
+      #      dmeasure=dmeas,
+      #      obsnames="cases",
+      #      statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
+      #      paramnames=parnames_td_seirh) -> covid_seir
 
       icount=0
 
       for (ii in ind) {
 
         mypar <- tab[ii, 1:nparamtot]
+
         state0["I0"] = mypar['I0']
-        state0["E0"] = mypar["I0"]
-        state0["S0"] = mypar['pop'] - (state0["I0"] + state0['E0'])
-        coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
-                              mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
-                              state0['I0'], state0['S0'], state0['E0'], state0['R0'],
-                              mypar['rho'], round(mypar['baseline']), wl = wl)
+        state0["E0"] = mypar['I0']
+        state0$S0 = as.numeric(mypar['pop']) - (state0$I0+state0$E0)
+
+        # coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
+        #                       mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
+        #                       state0['I0'], state0['S0'], state0['E0'], state0['R0'],
+        #                       mypar['rho'], round(mypar['baseline']), wl = wl)
+        #
+        # # generate simulation data with the parameters defined above
+        #
+        # model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)
+        #
+        # if (max(model.pred$cases) > mypar['baseline']){
+        #   icount = icount + 1
+        #   simdat[icount,] <- model.pred$cases
+        #
+        # }
+
+        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        parms = c(mypar, 'wl' =wl)
+
+        if (nb == 2) {
+          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td2_seirh_dynamics, parms = parms)
+        } else {
+          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td3_seirh_dynamics, parms = parms)
+          # calling H2 Ih here
+        }
+
+        model.pred = results[,-1] # remove the time column
 
         # generate simulation data with the parameters defined above
 
-        model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)
+        Ih = model.pred[,5]
+        cases <- rpois(ntimes_frcst, Ih * mypar[['rho']] + mypar[['baseline']])
 
-        if (max(model.pred$cases) > mypar['baseline']){
+        if (max(cases) > mypar['baseline']){
           icount = icount + 1
-          simdat[icount,] <- model.pred$cases
-
+          simdat[icount,] <- cases
         }
 
         if (icount == ntraj) break
@@ -305,20 +361,26 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   combined_names <- c('random', 'sorted')
 
-  # find maximum in simdat_both of random and sorted and use
+  # find maximum in quantiles_both of random and sorted and use
 
-  both_max = 0.0
+  both_max = 0
+  quantiles_both_list = list()
   for (ip in 1:npath) {
-    both_max = max(both_max, round(max(simdat_both[[ip]])))
+    apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
+    quantiles_both <- t(quantiles_both)
+    quantiles_both <- as.data.frame(quantiles_both)
+    both_max = max(both_max, round(max(quantiles_both)))
+    quantiles_both_list[[combined_names[[ip]]]] = quantiles_both
   }
 
   for (ip in 1:npath) {
 
-  apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
+  # apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
+  #
+  # quantiles_both <- t(quantiles_both)
+  # quantiles_both <- as.data.frame(quantiles_both)
 
-  quantiles_both <- t(quantiles_both)
-  quantiles_both <- as.data.frame(quantiles_both)
-
+    quantiles_both <- quantiles_both_list[[combined_names[[ip]]]]
   forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
                                                date = as.Date(dates_both, format = '%Y-%m-%d'),
                                                reported_both = reported_both,

@@ -281,7 +281,9 @@ set_td_beta <- function(nb, ntimes, Beta) {
 
   beta_vec = rep(Beta, nb)
   beta_vec = runif(nb,Beta*0.95, Beta*1.05)
-  tcng_vec = rep(round(ntimes/(nb*2)), nb)
+  end_period = ntimes/nb
+  tcng_vec = rep(round(end_period/2), nb)
+
   tcng_vec[nb] = 0.0
 
   list1 = list2 = list()
@@ -313,7 +315,7 @@ set_td_beta <- function(nb, ntimes, Beta) {
 update_par_names <- function(nb, par_names) {
 
 
-  nparam = length(par_names)
+  nparam = length(par_names[!par_names %in% "Beta"])
 
   nparamtot = nparam + nb * 2
 
@@ -784,6 +786,7 @@ sirh.step <- "
 #' Stochastic TD-SIRH Euler Time Step
 #'
 #' Advance TD-SIRH model by one stochastic time step
+#' This version is for a FOI with two values
 #'
 #'@return change in each compartment, real
 #'
@@ -810,6 +813,40 @@ td.sirh.step <- "
   Ih += t3;
   time += dt;
 "
+
+#'
+#' Stochastic TD-SIRH Euler Time Step
+#'
+#' Advance TD-SIRH model by one stochastic time step
+#' This version is for a FOI with three values
+#'
+#'@return change in each compartment, real
+#'
+#'
+td3.sirh.step <- "
+  double P;
+  double beta_cur;
+  P = S + I + H1 + H2 + R;
+
+  beta_cur = Beta1 + Beta3;
+  beta_cur = beta_cur + (Beta2 - Beta1)* tanh((time-tcng1)/wl);
+  beta_cur = beta_cur + (Beta3 - Beta2)* tanh((time-tcng2)/wl);
+  beta_cur = beta_cur * 0.5;
+
+  double t1 = rbinom(S, 1-exp(-beta_cur*I/P*dt));
+  double t2 = rbinom(I, 1-exp(-gamma*dt));
+  double t3 = rbinom(H1, 1-exp(-mu_H1H2*dt));
+
+  S +=-t1;
+  I += t1 - t2;
+  R  += round((1.-pH) * t2);
+  H1 += round(pH * t2) - t3;
+  H2 += t3;
+  Ic += t1;
+  Ih += t3;
+  time += dt;
+"
+
 #'
 #' Deterministic TD-SIRH Euler Time Step
 #'
@@ -857,6 +894,7 @@ seirh.ode <- Csnippet("
 #' Deterministic TD-SEIRH Euler Time Step
 #'
 #' Advance TD-SEIRH model by one deterministic time step
+#' This version is for a two value FOI
 #'
 #'@return change in each compartment, real
 #'
@@ -878,6 +916,32 @@ td.seirh.ode <- Csnippet("
   DIh = mu_H1H2*H1;
   Dtime = 1;")
 
+#'
+#' Deterministic TD-SEIRH Euler Time Step
+#'
+#' Advance TD-SEIRH model by one deterministic time step
+#' This version is for a three value FOI
+#'
+#'@return change in each compartment, real
+#'
+#'
+td3.seirh.ode <- Csnippet("
+  double beta_cur;
+
+  beta_cur = Beta1 + Beta3;
+  beta_cur = beta_cur + (Beta2-Beta1) * tanh((time-tcng1)/wl);
+  beta_cur = beta_cur + (Beta3-Beta2) * tanh((time-(tcng1+tcng2))/wl);
+  beta_cur = beta_cur * 0.5;
+
+  DS = -beta_cur*S*I/pop;
+  DE = beta_cur*S*I/pop - mu_EI*E;
+  DI = mu_EI*E-gamma*I;
+  DR = (1-pH)*gamma*I;
+  DH1 = pH*gamma*I - mu_H1H2*H1;
+  DH2 = mu_H1H2 * H1;
+  DIc = mu_EI*E;
+  DIh = mu_H1H2*H1;
+  Dtime = 1;")
 
 #' Stochastic SEIRH Euler Time Step
 #'
@@ -888,7 +952,7 @@ td.seirh.ode <- Csnippet("
 #'
 seirh.step <- "
   double P;
-  P = S + E + I + H1 + H2 + R;
+  P = pop;
   double t1 = rbinom(S, 1-exp(-Beta*I/P*dt));
   double t2 = rbinom(E, 1-exp(-mu_EI*dt));
   double t3 = rbinom(I, 1-exp(-gamma*dt));
@@ -908,6 +972,7 @@ seirh.step <- "
 #' Stochastic TD-SEIRH Euler Time Step
 #'
 #' Advance TD-SEIRH model by one stochastic time step
+#' This code is for a two value FOI
 #'
 #'@return change in each compartment, integer
 #'
@@ -915,10 +980,45 @@ seirh.step <- "
 td.seirh.step <- "
   double P;
   double beta_cur;
-  P = S + E + I + H1 + H2 + R;
+  P = pop;
 
   beta_cur = Beta1 + Beta2;
   beta_cur = beta_cur + (Beta2-Beta1) * tanh((time-tcng1)/wl);
+  beta_cur = beta_cur * 0.5;
+
+  double t1 = rbinom(S, 1-exp(-beta_cur*I/P*dt));
+  double t2 = rbinom(E, 1-exp(-mu_EI*dt));
+  double t3 = rbinom(I, 1-exp(-gamma*dt));
+  double t4 = rbinom(H1, 1-exp(-mu_H1H2*dt));
+
+  S +=-t1;
+  E +=t1 - t2;
+  I +=t2 - t3;
+  R  += round((1.-pH) * t3);
+  H1 += round(pH * t3) - t4;
+  H2 += t4;
+
+  Ic += t2;
+  Ih += t4;
+  time += dt;
+"
+
+#' Stochastic TD-SEIRH Euler Time Step
+#'
+#' Advance TD-SEIRH model by one stochastic time step
+#' This code is for a 3 value FOI
+#'
+#'@return change in each compartment, integer
+#'
+#'
+td3.seirh.step <- "
+  double P;
+  double beta_cur;
+  P = pop;
+
+  beta_cur = Beta1 + Beta3;
+  beta_cur = beta_cur + (Beta2-Beta1) * tanh((time-tcng1)/wl);
+  beta_cur = beta_cur + (Beta3-Beta2) * tanh((time-(tcng1+tcng2))/wl);
   beta_cur = beta_cur * 0.5;
 
   double t1 = rbinom(S, 1-exp(-beta_cur*I/P*dt));
@@ -1056,5 +1156,125 @@ fromEst <- Csnippet("
  TpH  = expit(pH);
  Tbaseline = exp(baseline);
 ")
+
+#' Deterministic ODEs for SEIRH model with a
+#' 3-value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td3_seirh_dynamics <- function(t, y, parms) {
+
+dy = array(0, length(y))
+
+beta_cur = parms['Beta1'] + parms['Beta3']
+beta_cur = beta_cur + (parms['Beta2'] - parms['Beta1']) * tanh((t-parms['tcng1'])/parms['wl'])
+beta_cur = beta_cur + (parms['Beta3'] - parms['Beta2']) * tanh((t-(parms['tcng1']+parms['tcng2']))/parms['wl'])
+beta_cur = beta_cur * 0.5
+
+rate = beta_cur * y[1] * y[3] /parms['pop']
+# S, E, I, R H1, H2
+dy[1] = -rate
+dy[2] = rate - parms['mu_EI'] * y[2]
+dy[3] = parms['mu_EI'] * y[2] - parms['gamma'] * y[3]
+dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3]
+dy[5] = parms['pH'] * parms['gamma'] * y[3] - parms['mu_H1H2'] * y[5]
+dy[6] = parms['mu_H1H2'] * y[5]
+
+res = list(dy)
+return(res)
+
+}
+
+#' Deterministic ODEs for SEIRH model with a
+#' 2-value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td2_seirh_dynamics <- function(t, y, parms) {
+
+  dy = array(0, length(y))
+
+  beta_cur = parms['Beta1'] + parms['Beta2']
+  beta_cur = beta_cur + (parms['Beta2'] - parms['Beta1']) * tanh((t-parms['tcng1'])/parms['wl'])
+  beta_cur = beta_cur * 0.5
+
+  rate = beta_cur * y[1] * y[3] /parms['pop']
+  dy[1] = -rate
+  dy[2] = rate - parms['mu_EI'] * y[2]
+  dy[3] = parms['mu_EI'] * y[2] - parms['gamma'] * y[3]
+  dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3]
+  dy[5] = parms['pH'] * parms['gamma'] * y[3] - parms['mu_H1H2'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[5]
+
+  res = list(dy)
+  return(res)
+
+}
+
+#' Deterministic ODEs for SIRH model with a
+#' 3-value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td3_sirh_dynamics <- function(t, y, parms) {
+
+  dy = array(0, length(y))
+
+  beta_cur = parms['Beta1'] + parms['Beta3']
+  beta_cur = beta_cur + (parms['Beta2'] - parms['Beta1']) * tanh((t-parms['tcng1'])/parms['wl'])
+  beta_cur = beta_cur + (parms['Beta3'] - parms['Beta2']) * tanh((t-(parms['tcng1']+parms['tcng2']))/parms['wl'])
+  beta_cur = beta_cur * 0.5
+
+  rate = beta_cur * y[1] * y[2] /parms['pop']
+  # S, I, R H1, H2
+  rate = beta_cur * y[1] * y[2] /parms['pop']
+  dy[1] = -rate
+  dy[2] = rate - parms['gamma'] * y[2]
+  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2]
+  dy[4] = parms['pH'] * parms['gamma'] * y[2] - parms['mu_H1H2'] * y[4]
+  dy[5] = parms['mu_H1H2'] * y[4]
+
+  res = list(dy)
+  return(res)
+
+}
+
+#' Deterministic ODEs for SIRH model with a
+#' 2-value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td2_sirh_dynamics <- function(t, y, parms) {
+
+  dy = array(0, length(y))
+
+  beta_cur = parms['Beta1'] + parms['Beta2']
+  beta_cur = beta_cur + (parms['Beta2'] - parms['Beta1']) * tanh((t-parms['tcng1'])/parms['wl'])
+  beta_cur = beta_cur * 0.5
+
+  rate = beta_cur * y[1] * y[2] /parms['pop']
+  dy[1] = -rate
+  dy[2] = rate - parms['gamma'] * y[2]
+  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2]
+  dy[4] = parms['pH'] * parms['gamma'] * y[2] - parms['mu_H1H2'] * y[4]
+  dy[5] = parms['mu_H1H2'] * y[4]
+
+  res = list(dy)
+  return(res)
+
+}
+
 
 

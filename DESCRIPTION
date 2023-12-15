@@ -18,6 +18,7 @@ Imports:
   lubridate,
   EpiEstim,
   pomp,
+  deSolve,
   stats,
   graphics,
   grDevices,

@@ -3,6 +3,8 @@
 # Fitting and forecasting 2022-23 covid19 and influenza data for  CA 2022-23
 
 library(PROF)
+library(plotly)
+library(deSolve)
 
 # set path to location of example.R script
 
@@ -42,7 +44,7 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
 
 # to fit both pathogens use:
 
-fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
+fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
 
 # you can now seat and relax for 10-15 minutes
 

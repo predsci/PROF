@@ -46,6 +46,8 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
   wl = fit_list$wl
 
+  nb_vec = fit_list$nb_vec
+
   npath = length(prof_data)
 
   disease_list = names(prof_data)
@@ -97,6 +99,7 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
     z <- round(nlines*2/3):nlines
     ind <- sample(z, round( 1.2* ntraj))
 
+    ind <- order(tab[,'llk'])
     # retrieve initial conditions for disease
 
     state0 = state0_list[[disease]]
@@ -109,44 +112,94 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
     obs = mydata$data_fit$inc
 
+    # number of values for FOI
+
+    nb = nb_vec[ip]
+
     # print information for the User
 
     cat("\nCreating Fit Plots For", reg_name, ' ', toupper(disease),'\n')
 
     if (model == 'sirh') {
       # Here using a time-dependent version
-      parnames_td_sirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2",
-                           "pop","pH","S0",'I0',"R0", "rho","baseline")
-
-      pomp(data=data.frame(time = 1:ntimes),
-           times="time",t0=0,
-           rprocess=euler(step.fun = Csnippet(td.sirh.step),delta.t=1/40.),
-           accumvars = c("Ic", "Ih"),
-           rinit=td.init,
-           rmeasure=rmeas,
-           dmeasure=dmeas,
-           obsnames="cases",
-           statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
-           paramnames=parnames_td_sirh) -> flu_sirh
-
+      # if (nb == 2) {
+      #   parnames_td_sirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2",
+      #                        "pop","pH","S0",'I0',"R0", "rho","baseline")
+      #
+      #   pomp(data=data.frame(time = 1:ntimes),
+      #        times="time",t0=0,
+      #        rprocess=euler(step.fun = Csnippet(td.sirh.step),delta.t=1/40.),
+      #        accumvars = c("Ic", "Ih"),
+      #        rinit=td.init,
+      #        rmeasure=rmeas,
+      #        dmeasure=dmeas,
+      #        obsnames="cases",
+      #        statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
+      #        paramnames=parnames_td_sirh) -> flu_sirh
+      # } else {
+      #   parnames_td_sirh = c("Beta1","Beta2", "Beta3","tcng1","tcng2","wl",
+      #                        "gamma","mu_H1H2","pop","pH","S0",'I0',"R0", "rho",
+      #                        "baseline")
+      #   pomp(data=data.frame(time = 1:ntimes),
+      #        times="time",t0=0,
+      #        rprocess=euler(step.fun = Csnippet(td3.sirh.step),delta.t=1/40.),
+      #        accumvars = c("Ic", "Ih"),
+      #        rinit=td.init,
+      #        rmeasure=rmeas,
+      #        dmeasure=dmeas,
+      #        obsnames="cases",
+      #        statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
+      #        paramnames=parnames_td_sirh) -> flu_sirh
+      # }
 
       icount=0
 
       for (ii in ind) {
 
         mypar <- tab[ii, 1:nparamtot]
+
         state0["I0"] = mypar['I0']
-        state0["S0"] = mypar['pop'] - state0["I0"]
-        coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
-                        mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
-                        state0["I0"], state0["S0"], state0["R0"],
-                        mypar['rho'], round(mypar['baseline']), wl = wl)
+        state0$S0 = as.numeric(mypar['pop']) - state0$I0
+
+        # if (nb == 2) {
+        #   coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
+        #                       mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
+        #                       state0["I0"], state0["S0"], state0["R0"],
+        #                       mypar['rho'], round(mypar['baseline']), wl = wl)
+        # } else {
+        #   coef(flu_sirh) <- c(mypar['Beta1'], mypar['Beta2'], mypar['Beta3'], mypar['tcng1'],
+        #                       mypar['tcng2'],mypar['gamma'],
+        #                       mypar['mu_H1H2'], mypar['pH'], mypar['pop'],
+        #                       state0["I0"], state0["S0"], state0["R0"],
+        #                       mypar['rho'], round(mypar['baseline']), wl = wl)
+        # }
+        #
+        # # generate simulation data with the parameters defined above
+        #
+        # model.pred <- simulate(flu_sirh, format="data.frame", nsim = 1)
+
+
+        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        parms = c(mypar, 'wl' =wl)
+
+        if (nb == 2) {
+          results <- ode(y=yinit, t = times, method='rk4', func=td2_sirh_dynamics, parms = parms)
+        } else {
+          results <- ode(y=yinit, t = times, method='rk4', func=td3_sirh_dynamics, parms = parms)
+          # calling H2 Ih here
+        }
+
+        model.pred = results[,-1] # remove the time column
+
         # generate simulation data with the parameters defined above
 
-        model.pred <- simulate(flu_sirh, format="data.frame", nsim = 1)
-        if (model.pred$cases[which.max(obs)] > round(mypar['baseline'])) {
+        Ih = model.pred[,4]
+        cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
+
+        # if (model.pred$cases[which.max(obs)] > round(mypar['baseline'])) {
+          if (cases[which.max(obs)] > round(mypar['baseline'])) {
           icount = icount + 1
-          simdat[icount,] <- model.pred$cases
+          simdat[icount,] <- cases
         }
 
         if (icount == ntraj) break
@@ -157,18 +210,34 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
     } else {
 
-      parnames_td_seirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2","mu_EI", "pop","pH","S0","E0",'I0',"R0", "rho","baseline")
+      # if (nb == 2) {
+      #   parnames_td_seirh = c("Beta1","Beta2", "tcng1","wl","gamma","mu_H1H2",
+      #                         "mu_EI", "pop","pH","S0","E0",'I0',"R0", "rho","baseline")
+      #   pomp(data=data.frame(time = 1:ntimes),
+      #        times="time",t0=0,
+      #        rprocess=euler(step.fun = Csnippet(td.seirh.step),delta.t=1/40.),
+      #        accumvars = c("Ic", "Ih"),
+      #        rinit=td.init.seirh,
+      #        rmeasure=rmeas,
+      #        dmeasure=dmeas,
+      #        obsnames="cases",
+      #        statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
+      #        paramnames=parnames_td_seirh) -> covid_seir
+      # } else {
+      #   parnames_td_seirh = c("Beta1","Beta2","Beta3","tcng1","tcng2","wl",
+      #                         "gamma","mu_H1H2","mu_EI", "pop","pH",
+      #                         "S0","E0",'I0',"R0", "rho","baseline")
+      #   pomp(data=data.frame(time = 1:ntimes),
+      #        times="time",t0=0,
+      #        rprocess=euler(step.fun = Csnippet(td3.seirh.step),delta.t=1/40.),
+      #        accumvars = c("Ic", "Ih"),
+      #        rinit=td.init.seirh,
+      #        rmeasure=rmeas,
+      #        dmeasure=dmeas,
+      #        obsnames="cases",
+      #        statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
+      #        paramnames=parnames_td_seirh) -> covid_seir
 
-      pomp(data=data.frame(time = 1:ntimes),
-           times="time",t0=0,
-           rprocess=euler(step.fun = Csnippet(td.seirh.step),delta.t=1/40.),
-           accumvars = c("Ic", "Ih"),
-           rinit=td.init.seirh,
-           rmeasure=rmeas,
-           dmeasure=dmeas,
-           obsnames="cases",
-           statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
-           paramnames=parnames_td_seirh) -> covid_seir
 
       icount=0
 
@@ -177,19 +246,47 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
         mypar <- tab[ii, 1:nparamtot]
 
         state0["I0"] = mypar['I0']
-        state0["E0"] = mypar["I0"]
-        state0["S0"] = mypar['pop'] - (state0["I0"] + state0['E0'])
-        coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
-                         mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
-                         state0['I0'], state0['S0'], state0['E0'], state0['R0'],
-                         mypar['rho'], round(mypar['baseline']), wl = wl)
+        state0["E0"] = mypar['I0']
+        state0$S0 = as.numeric(mypar['pop']) - (state0$I0+state0$E0)
+
+        # if (nb == 2) {
+        #   coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
+        #                         mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
+        #                         state0['I0'], state0['S0'], state0['E0'], state0['R0'],
+        #                         mypar['rho'], round(mypar['baseline']), wl = wl)
+        # } else {
+        #
+        #   coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['Beta3'],
+        #                         mypar['tcng1'], mypar['tcng2'], mypar['gamma'],
+        #                         mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
+        #                         state0['I0'], state0['S0'], state0['E0'], state0['R0'],
+        #                         mypar['rho'], round(mypar['baseline']), wl = wl)
+        # }
+
+        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        parms = c(mypar, 'wl' =wl)
+
+        if (nb == 2) {
+          results <- ode(y=yinit, t = times, method='rk4', func=td2_seirh_dynamics, parms = parms)
+        } else {
+          results <- ode(y=yinit, t = times, method='rk4', func=td3_seirh_dynamics, parms = parms)
+          # calling H2 Ih here
+        }
+
+        model.pred = results[,-1] # remove the time column
 
         # generate simulation data with the parameters defined above
 
-        model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)
-        if (max(model.pred$cases) > mypar['baseline']){
+        Ih = model.pred[,5]
+        cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
+
+        # model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)
+        # model.pred$cases <- rpois(ntimes, model.pred[,'Ih'] * mypar[['rho']] + mypar[['baseline']])
+
+        # if (max(model.pred$cases) > mypar['baseline']){
+          if (max(cases) > mypar['baseline']){
           icount = icount + 1
-          simdat[icount,] <- model.pred$cases
+          simdat[icount,] <- cases
          }
 
         if (icount == ntraj) break

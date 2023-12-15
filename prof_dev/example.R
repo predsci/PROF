@@ -43,6 +43,7 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
                           models=c("seirh", "sirh"))
 
 # to fit both pathogens use:
+# Here we use a 3-values model for the FOI for COVID19 and a 2-value for influenza
 
 fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
 

@@ -44,10 +44,9 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
 
 # to fit both pathogens use:
 # Here we use a 3-values model for the FOI for COVID19 and a 2-value for influenza
+# you can now seat and relax for 10-15 minutes
 
 fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
-
-# you can now seat and relax for 10-15 minutes
 
 # to save the results of the fit (posterior distribution and initial state)
 
@@ -61,6 +60,7 @@ plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list =
 # fit_traj - a list for each disease containing: model fit mechanistic trajectories,
 # dates, and reported incidence
 # pl - a list of ggplot2 objects one for each disease for the mechanistic plots
+
 
 # We can also fit a baseline statistical model to the data.
 # We start by adding the fit-stat data structure to each pathogen - this is the data
@@ -80,8 +80,7 @@ stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NU
 # dates and reported incidence
 # pl_stat - a list of ggplot2 objects one for each disease for the statistical plots
 
-
-# to use the posterior distributions of the compartmental fits to create individual forecasts
+# To use the posterior distributions of the compartmental fits to create individual forecasts
 # `nfrcst'` days forward and combined burden forecasts use:
 
 forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list,
@@ -110,6 +109,27 @@ stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 35)
 # For the combined burden of the baseline statistical model we offer the same two
 # options (random and sorted). The statistical plotting routine returns a list with the
 # same four elements as the one for the mechanistic forecasts
+
+
+# If you would like to fit and forecst only a single pathogen please follow the steps below
+# After loading and plotting the data set the parameter list, and model to the single pathogen
+# you would like to fit and forecast ('covid19' or 'influenza'), here we chose 'covid19'
+
+par_list = init_par_list(diseases=c("covid19"),
+                         models=c("seirh"))
+
+# perform a fit on 'covid19' onlye using an SEIRH model and three values for the FOI:
+
+fit_list <- fit_data(prof_data = prof_data['covid19'], par_list = par_list, nb_vec=c(3))
+
+# Plot the results of the fit to 'covid'19 data
+
+plot_fit_list <- plot_fit(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)
+
+# Perform and plot a forecast for 'covid19' only:
+
+forecast_list <- plot_forecast(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list,
+                               nfrcst = 35)
 
 # Add example of combining mechanistic for COVID-19 and statistical for influenza
 ###############

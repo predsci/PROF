@@ -325,7 +325,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     if (lubridate::year(dates[1]) == 2023 & disease == 'covid19') {
 
       parmin[c('tcng1')] = 7
-      parmax[c('tcng1')] = (ntimes -14)
+      parmax[c('tcng1')] = (ntimes -21)
 
       if (nb == 3) {
           parmin[c('Beta2')] = 1.1 * par$gamma
@@ -335,7 +335,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
       } else {
         parmin[c('Beta2')] = 1.1 * par$gamma
         parmin[c('tcng2')] = 7
-        parmax[c('tcng2')] = (ntimes - 14)
+        parmax[c('tcng2')] = (ntimes - 21)
       }
 
     }

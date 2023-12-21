@@ -344,7 +344,7 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(pl[[1]])
+    suppressWarnings(print(pl[[1]]))
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Fit Plot to: ", filename,'\n')

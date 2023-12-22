@@ -121,7 +121,7 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
       cat("\n Saving Forecast Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(pl[[1]])
+    suppressWarnings(print(pl[[1]]))
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')

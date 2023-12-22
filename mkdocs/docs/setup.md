@@ -66,9 +66,7 @@ To fit an SEIRH model for both COVID-19 and influenza use:
 
 We can now sequentially fit both pathogens using the compartmental models we selected:
 
->\> fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
-
-In the example above we chose a 3-value model for the FOI for COVID-19 and a 2-value model for the FOI for Influenza
+>\> fit_list <- fit_data(prof_data = prof_data, par_list = par_list)
 
 You can now sit and relax for 10-15 minutes
 
@@ -117,15 +115,15 @@ PROF can also be used to fit and forecast using a fast baseline statistical mode
 First, we add 'fit-stat data ' structure to each pathogen - this is the data that will be fitted using a baseline statistical model.
 NULL values for start/end dates mean set to start/end of the season data, and fit all available data:
 
-prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
+>\> prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 
 To fit and plot the results we use:
 
-stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NULL)
+>\> stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NULL)
 
 Here we have set the number of trajectories to 10,000 (default is 1,000).  To save the plots to a file use:
 
-stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = 'path/to/filename')
+>\> stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = 'path/to/filename')
 
 To use the baseline statistical model to create a 42 day forward forecast and the two estimates for the combined burden use:
 >\> stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 42)
@@ -135,6 +133,35 @@ same four elements as the one for the mechanistic forecasts
 
 For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 35.  The cadence (i.e., units)
 of this parameter are assumed to be the same as that of the incidence data.
+
+For both the mechanistic and statistical models you can fit and forecast a single pathogen.  
+If for example you would like to only fit the 'covid19' data you should follow these steps:
+
+Load an initial guess for the parameters and set the model only for 'covid19'
+
+>\> par_list = init_par_list(diseases=c("covid19"), models=c("seirh"))
+
+Fit only the covid19 data using:
+
+>\> fit_list <- fit_data(prof_data = prof_data['covid19'], par_list = par_list)
+
+Plot the single pathogen fit results:
+
+>\> fit_traj <- plot_fit(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)
+
+Use the posterior distribution of the single pathogen fit to perform and plot the forecast:
+
+>\> forecast_traj <- plot_forecast(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)
+
+Since only one pathogen was modeled there is no estimate for a combined burden
+
+To plot the results of fitting a baseline statistical model only to covid19 use:
+
+>\> stat_fit_list <- plot_stat_fit(prof_data = prof_data['covid19'])
+
+And for the forecast: 
+
+>\> stat_forecast_list <- plot_stat_forecast(prof_data = prof_data['covid19'], nfrcst = 42)
 
 
 

@@ -71,7 +71,7 @@ prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=N
 # Running and plotting the fitting of a simple statistical baseline model will only take a
 # few seconds:
 
-stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NULL)
+stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntraj = 1e4, filename = NULL)
 
 # in the above call we set the number of trajectories to 1e4 and we do not save the plots
 # to a file (to save to a file set a value to the filename)
@@ -130,6 +130,11 @@ plot_fit_list <- plot_fit(prof_data = prof_data['covid19'], par_list = par_list,
 
 forecast_list <- plot_forecast(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list,
                                nfrcst = 35)
+
+# For the statistical model it is easy to fit and forecast a single pathogen:
+stat_fit_list <- plot_stat_fit(prof_data = prof_data['covid19'], ntraj = 1e4, filename = NULL)
+
+stat_forecast_list <- plot_stat_forecast(prof_data = prof_data['covid19'], nfrcst = 35)
 
 # Add example of combining mechanistic for COVID-19 and statistical for influenza
 ###############

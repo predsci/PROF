@@ -123,8 +123,9 @@ init_param <- function(mymodel, mydisease, inc) {
     pH = 0.001
     rho = 0.95
     wl = 3.0
+    time0 = 14
     param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
-                 wl = wl)
+                 wl = wl, time0 = time0)
   } else if (mymodel == 'seirh' & mydisease == 'covid19') { # covid19 and SEIRH
     gamma = 4.0
     mu_H1H2 = 1.0
@@ -139,8 +140,9 @@ init_param <- function(mymodel, mydisease, inc) {
     pH = 0.01
     rho = 0.95
     wl = 3.0
+    time0 = 14
     param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
-                 pH = pH, rho = rho, wl = wl)
+                 pH = pH, rho = rho, wl = wl, time0 = time0)
   } else if (mymodel == 'seirh' & mydisease == 'influenza') { #influenza  and SEIRH
     gamma = 2.6
     mu_H1H2 = 1.0
@@ -149,8 +151,9 @@ init_param <- function(mymodel, mydisease, inc) {
     pH = 0.001
     rho = 0.95
     wl = 3.0
+    time0 = 14
     param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
-                 pH = pH, rho = rho, wl = wl)
+                 pH = pH, rho = rho, wl = wl, time0 = time0)
   } else if (mymodel == 'sirh' & mydisease == 'covid19') { # covid19 and SIRH
     if (max(inc) <= 15) {
       Beta = 1.05 / gamma
@@ -163,8 +166,9 @@ init_param <- function(mymodel, mydisease, inc) {
     pH = 0.01
     rho = 0.95
     wl = 3.0
+    time0 = 14
     param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
-                 wl = wl)
+                 wl = wl, time0 = time0)
   } else {
     stop('Can not Find Model or Disease \n')
   }
@@ -364,7 +368,6 @@ plot_prof_data <- function(prof_data, filename = NULL) {
 
   col = c('salmon', 'cornflowerblue')
   pl = list()
-
 
   for (ip in 1:npath) {
 
@@ -1217,6 +1220,33 @@ td2_seirh_dynamics <- function(t, y, parms) {
 
 }
 
+#' Deterministic ODEs for SEIRH model with a
+#' single value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td_seirh_dynamics <- function(t, y, parms) {
+
+  dy = array(0, length(y))
+
+  beta_cur = parms['Beta1']
+
+  rate = beta_cur * y[1] * y[3] /parms['pop']
+  dy[1] = -rate
+  dy[2] = rate - parms['mu_EI'] * y[2]
+  dy[3] = parms['mu_EI'] * y[2] - parms['gamma'] * y[3]
+  dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3]
+  dy[5] = parms['pH'] * parms['gamma'] * y[3] - parms['mu_H1H2'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[5]
+
+  res = list(dy)
+  return(res)
+
+}
+
 #' Deterministic ODEs for SIRH model with a
 #' 3-value FOI
 #' @param t - array of times
@@ -1277,4 +1307,28 @@ td2_sirh_dynamics <- function(t, y, parms) {
 }
 
 
+#' Deterministic ODEs for SIRH model with a
+#' single value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td_sirh_dynamics <- function(t, y, parms) {
 
+  dy = array(0, length(y))
+
+  beta_cur = parms['Beta1']
+
+  rate = beta_cur * y[1] * y[2] /parms['pop']
+  dy[1] = -rate
+  dy[2] = rate - parms['gamma'] * y[2]
+  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2]
+  dy[4] = parms['pH'] * parms['gamma'] * y[2] - parms['mu_H1H2'] * y[4]
+  dy[5] = parms['mu_H1H2'] * y[4]
+
+  res = list(dy)
+  return(res)
+
+}

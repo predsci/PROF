@@ -118,7 +118,7 @@ stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 35)
 par_list = init_par_list(diseases=c("covid19"),
                          models=c("seirh"))
 
-# perform a fit on 'covid19' onlye using an SEIRH model and three values for the FOI:
+# perform a fit on 'covid19' only using an SEIRH model and three values for the FOI:
 
 fit_list <- fit_data(prof_data = prof_data['covid19'], par_list = par_list, nb_vec=c(3))
 

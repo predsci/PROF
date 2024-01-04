@@ -179,14 +179,16 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
         # model.pred <- simulate(flu_sirh, format="data.frame", nsim = 1)
 
 
-        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        yinit = c(state0$S0, state0$I0, 0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
-
+        time0 = parms['time0']
+        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_sirh_dynamics, parms = parms)
+        results0 <- results0[,-1]
+        yinit0 <- as.numeric(results0[nrow(results0),])
         if (nb == 2) {
-          results <- ode(y=yinit, t = times, method='rk4', func=td2_sirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = times, method='rk4', func=td2_sirh_dynamics, parms = parms)
         } else {
-          results <- ode(y=yinit, t = times, method='rk4', func=td3_sirh_dynamics, parms = parms)
-          # calling H2 Ih here
+          results <- ode(y=yinit0, t = times, method='rk4', func=td3_sirh_dynamics, parms = parms)
         }
 
         model.pred = results[,-1] # remove the time column
@@ -265,11 +267,14 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
         yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
-
+        time0 = parms['time0']
+        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_seirh_dynamics, parms = parms)
+        results0 <- results0[,-1]
+        yinit0 <- as.numeric(results0[nrow(results0),])
         if (nb == 2) {
-          results <- ode(y=yinit, t = times, method='rk4', func=td2_seirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = times, method='rk4', func=td2_seirh_dynamics, parms = parms)
         } else {
-          results <- ode(y=yinit, t = times, method='rk4', func=td3_seirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = times, method='rk4', func=td3_seirh_dynamics, parms = parms)
           # calling H2 Ih here
         }
 

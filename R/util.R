@@ -137,7 +137,7 @@ init_param <- function(mymodel, mydisease, inc) {
       Beta = 0.5
     }
     mu_EI = 1.0
-    pH = 0.01
+    pH = 0.005
     rho = 0.95
     wl = 3.0
     time0 = 14
@@ -163,7 +163,7 @@ init_param <- function(mymodel, mydisease, inc) {
       Beta = 0.5
     }
     mu_EI = 1.0
-    pH = 0.01
+    pH = 0.005
     rho = 0.95
     wl = 3.0
     time0 = 14

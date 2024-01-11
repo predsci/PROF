@@ -164,7 +164,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
       # param0 will now include the following
       # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline" "I0" "time0"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param_optim['I0'], param0['time0'], param0['wl'])
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param_optim['I0'], param0['time0'], param0['mu_HR'], param0['immn_wn'], param0['wl'])
       # caution!! will need to check for unreasonable parameter values
     } else {
       # construct a parameter list as needed by run_optim
@@ -175,7 +175,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
       # param0 will now inlcude the following
       # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline" "I0" "time0"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['I0'], param0['time0'], param0['wl'])
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['I0'], param0['time0'],param0['mu_HR'], param0['immn_wn'], param0['wl'])
     }
 
     # Define all the states that will be integrated/accumulated
@@ -219,9 +219,9 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     # need to add a test that sum(state0 == population)
 
     if (model == 'sirh') {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline', 'I0', 'time0')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline', 'I0', 'time0', 'mu_HR', 'immn_wn')])
     } else {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0', 'time0')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0', 'time0', 'mu_HR', 'immn_wn')])
     }
 
     # since we added pop we have to update nparam and nparamtot
@@ -341,7 +341,6 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     }
 
-    parmax['time0'] = 7 * 4 # for now
     # if user provided values use them
     if (!any(is.na(input_parmax))) {
       ind_opt_input_parmax = which(names(input_parmax) %in% paropt)

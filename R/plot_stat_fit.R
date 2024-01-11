@@ -55,9 +55,7 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
 
     ntimes = length(times)
 
-    # observations - all data stream
-
-    obs = mydata$data$inc
+    # observations - fitted only
 
     obs_fit = mydata$data_fit$inc
 
@@ -67,13 +65,11 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
 
     simdat_list[[ip]] = simdat
 
-    reported = obs
-
     reported_fit = obs_fit
 
     fit_traj[[disease]] = list(traj = simdat,
                                     date = as.Date(dates, format = '%Y-%m-%d'),
-                                    reported = reported, reported_fit = reported_fit)
+                                    reported_fit = reported_fit)
 
     apply(simdat,2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles
 
@@ -81,7 +77,7 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
     quantiles <- as.data.frame(quantiles)
 
     total=cbind(date = as.Date(dates, format = '%Y-%m-%d'),time = 1:ntimes,quantiles,
-                reported = reported, reported_fit = reported_fit)
+                reported_fit = reported_fit)
 
     total = as.data.frame(total)
 
@@ -102,7 +98,6 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
                                         geom_line(aes(y=`50%`),color='red')+
                                         geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
                                         geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-                                        geom_point(aes(y=reported),color='black', alpha = 0.4)+
                                         geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
                                         geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
                                         labs(y=ylab,x=xlab) + ggtitle(title))

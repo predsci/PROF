@@ -9,8 +9,8 @@ hhs_set_fitdates(prof_data = NULL, fit_start = NULL, fit_end = NULL)
 \arguments{
 \item{prof_data}{list. Generally the output from PROF::hhs_2_PROF().}
 
-\item{fit_start}{Date. The lower limit (inclusive) of the data range to
-be fit.}
+\item{fit_start}{list. Each element is a Date or NULL with the lower limit
+(inclusive) of the data range to be fit.}
 
 \item{fit_end}{Date. The upper limit (inclusive) of the data range to
 be fit.}

@@ -46,13 +46,13 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
     inc = mydata$data_fit$inc
 
     # dates - fitted
-    dates  = mydata$data_fit$date
+    dates_fit  = mydata$data_fit$date
 
-    ndates = length(dates)
+    ndates = length(dates_fit)
 
     # using the date array build an integer day array
 
-    times = dates_to_int(dates)
+    times = dates_to_int(dates_fit)
 
     ntimes = length(times)
 
@@ -64,22 +64,26 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
     if (cadence == 1) {
       cadence_lab = paste0(cadence, ' day')
       print_lab = 'Days'
-      dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 day')
+      dates_frcst = seq(from = dates_fit[1], length = ntimes_frcst, by = '1 day')
     }
 
     if (cadence == 7) {
       cadence_lab = paste0(cadence, ' week')
       print_lab = 'Weeks'
-      dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 week')
+      dates_frcst = seq(from = dates_fit[1], length = ntimes_frcst, by = '1 week')
     }
 
-
     dates_frcst_list[[ip]] = dates_frcst
-
 
     # observations - all data stream
 
     obs = mydata$data$inc
+
+    # obs may not have the sam start date as obs_fit hence need to trim
+    keep_ind = which(mydata$data$date >= dates_fit[1])
+
+    obs = obs[keep_ind]
+    dates = mydata$data$date[keep_ind]
 
     obs_fit = mydata$data_fit$inc
 

@@ -15,20 +15,22 @@
       real*8 dydx(nstates), dyt(nstates), dym(nstates)
       real*8 hh, h6, xh, tiny, myt
       real*8 beta(nb), ts(nb)
-      real*8 pop, gamma, pH, mu_H1H2, sI0
+      real*8 pop, gamma, pH, mu_H1H2, sI0, time0
       integer icount, k
       real*8 mu
       
 !     States will be orderes as: sS, sI, sR, sH, Ic, Ih
 !     Ic and Ih will be zeroed at the begining of each time step
 
-!     order of parameters is  pop, gamma, pH, mu_H1H2, rho, baseline, I0, all beta 
-!                              1     2     3     4      5     6       7        8      
+!     order of parameters is  pop, gamma, pH, mu_H1H2, rho, baseline, I0, time0, all beta 
+!                              1     2     3     4      5     6       7      8      
       pop   = param(1)
       gamma = param(2)
       pH    = param(3)
       mu_H1H2 = param(4)
       sI0     = param(7)
+      time0 = param(8)
+      
       trajectory = 0.0d0
 
       yt = 0.0d0
@@ -42,14 +44,12 @@
       y(1) = pop - sI0
       y(2) = sI0
       y(3) = pop - (y(1) + y(2))
-      myt = t0
+     
 
       hh = dt * 0.5
       h6 = dt/6.0d0
       xh = t0 + hh
 
-      tiny = 1.e-12
-      icount = 1
 
       
       do k = 1, nb
@@ -62,7 +62,37 @@
       do k = 2, (nb-1)
          ts(k) = ts((k-1)) + ts(k)
       enddo
-         
+
+      !     propagate states without recording of data until 'time0' which is the start
+!     of observations and fitting
+
+      myt = 0.0d0
+
+      do while (myt <= nint(time0))
+         beta_cur = beta(1)
+         call derivs_sirh(y, nstates, pop, gamma, pH, mu_H1H2,
+     $        beta_cur, dydx)
+         yt = y + hh *dydx
+         call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
+     $        beta_cur, dyt)
+         yt = y + hh * dyt
+         call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
+     $        beta_cur, dym)
+         yt = y + dt * dym
+         dym = dyt + dym
+         call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
+     $        beta_cur, dyt)
+         y = y + h6 *(dydx + dyt + 2.0d0 * dym)
+         myt = myt + dt
+!     it is OK to simply zero Ic and Ih since time0 is rounded to the nearest integer                 
+         y(iaccum) = 0.0d0
+             
+      enddo
+
+      myt = t0
+      tiny = 1.e-12
+      icount = 1
+      
       do while (icount <= ntimes)
 
          beta_cur = (beta(1) + beta(nb))

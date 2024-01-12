@@ -373,10 +373,6 @@ hhs_2_PROF <- function(hhs_path=NULL, season = NULL, state=NULL) {
   start_date = as.Date(paste0(season,'-09-01'))
   end_date   = as.Date(paste0(season+1,'-06-01'))
 
-  if (season == 2023) {
-    start_date = as.Date(paste0(season,'-07-01'))
-  }
-
   keep_cols = c("previous_day_admission_influenza_confirmed",
                 "previous_day_admission_influenza_confirmed_coverage",
                 "previous_day_deaths_influenza",
@@ -400,7 +396,7 @@ hhs_2_PROF <- function(hhs_path=NULL, season = NULL, state=NULL) {
   end_date   = as.Date(paste0(season+1,'-06-01'))
 
   if (season == 2023) {
-    start_date = as.Date(paste0(season,'-06-01'))
+    start_date = as.Date(paste0(season,'-07-01'))
   }
 
   keep_cols = c("previous_day_admission_adult_covid_confirmed",
@@ -438,8 +434,8 @@ hhs_2_PROF <- function(hhs_path=NULL, season = NULL, state=NULL) {
 #' routine.  This allows the user to exclude data from the begining or end
 #' of the season in the model fit.
 #' @param prof_data list. Generally the output from PROF::hhs_2_PROF().
-#' @param fit_start Date. The lower limit (inclusive) of the data range to
-#' be fit.
+#' @param fit_start list. Each element is a Date or NULL with the lower limit
+#'  (inclusive) of the data range to be fit.
 #' @param fit_end Date. The upper limit (inclusive) of the data range to
 #' be fit.
 #'
@@ -453,6 +449,11 @@ hhs_set_fitdates <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) {
   # determine all pathogens
   pathogens = names(prof_data)
 
+  if (is.null(fit_start)) {
+    fit_start = list()
+    for (pathog in pathogens) fit_start[[pathog]] = NULL
+  }
+
   for (pathog in pathogens) {
     if(!is.null(fit_end)) {
       if (!(fit_end<=max(prof_data[[pathog]]$data$date) &&
@@ -464,10 +465,10 @@ hhs_set_fitdates <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) {
       fit_end_use = max(max(prof_data[[pathog]]$data$date))
     }
 
-    if (is.null(fit_start)) {
+    if (is.null(fit_start[[pathog]])) {
       fit_start_use = min(prof_data[[pathog]]$data$date)
     } else {
-      fit_start_use = fit_start
+      fit_start_use = fit_start[[pathog]]
     }
 
     # set fit data entry
@@ -487,8 +488,8 @@ hhs_set_fitdates <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) {
 #' fitting routine.  This allows the user to exclude data from the beginning or end
 #' of the season in the model fit.
 #' @param prof_data list. Generally the output from PROF::hhs_2_PROF().
-#' @param fit_start Date. The lower limit (inclusive) of the data range to
-#' be fit.
+#' @param fit_start list. Each element is a Date or NULL with the lower limit
+#'  (inclusive) of the data range to be fit.
 #' @param fit_end Date. The upper limit (inclusive) of the data range to
 #' be fit.
 #'
@@ -502,6 +503,11 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
   # determine all pathogens
   pathogens = names(prof_data)
 
+  if (is.null(fit_start)) {
+    fit_start = list()
+    for (pathog in pathogens) fit_start[[pathog]] = NULL
+  }
+
   for (pathog in pathogens) {
     if(!is.null(fit_end)) {
       if (!(fit_end<=max(prof_data[[pathog]]$data$date) &&
@@ -513,10 +519,10 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
       fit_end_use = max(max(prof_data[[pathog]]$data$date))
     }
 
-    if (is.null(fit_start)) {
+    if (is.null(fit_start[[pathog]])) {
       fit_start_use = min(prof_data[[pathog]]$data$date)
     } else {
-      fit_start_use = fit_start
+      fit_start_use = fit_start[[pathog]]
     }
 
     # set fit data entry

@@ -163,8 +163,8 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
       param_optim <- run_optim(param_optim, inc)
 
       # param0 will now include the following
-      # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param_optim['I0'], param0['wl'])
+      # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline" "I0" "time0"
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param_optim['I0'], param0['time0'], param0['mu_HR'], param0['immn_wn'], param0['wl'])
       # caution!! will need to check for unreasonable parameter values
     } else {
       # construct a parameter list as needed by run_optim
@@ -174,8 +174,8 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
       param_optim <- c(list1, list2, 'pop' = pop)
 
       # param0 will now inlcude the following
-      # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['I0'], param0['wl'])
+      # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline" "I0" "time0"
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['I0'], param0['time0'],param0['mu_HR'], param0['immn_wn'], param0['wl'])
     }
 
     # Define all the states that will be integrated/accumulated
@@ -219,9 +219,9 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     # need to add a test that sum(state0 == population)
 
     if (model == 'sirh') {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline', 'I0')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline', 'I0', 'time0', 'mu_HR', 'immn_wn')])
     } else {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0', 'time0', 'mu_HR', 'immn_wn')])
     }
 
     # since we added pop we have to update nparam and nparamtot
@@ -242,10 +242,10 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     # imodel is Needed by Fortran code to select between SEIRH and SIRH models
     if (model == 'seirh') {
       imodel = 1
-      paropt = c('mu_H1H2', 'mu_EI', 'pH', 'baseline', 'I0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
+      paropt = c('mu_H1H2', 'mu_EI', 'pH', 'baseline', 'I0', 'time0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
     } else {
       imodel = 2
-      paropt = c('mu_H1H2', 'pH', 'baseline', 'I0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
+      paropt = c('mu_H1H2', 'pH', 'baseline', 'I0', 'time0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
     }
 
 
@@ -290,6 +290,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     parmin['pH'] = 1e-4
     parmin[['mu_H1H2']] = 0.5
     parmin[['baseline']] = max(parmin[['baseline']], 1)
+
     # if user provided values use them
     if (!any(is.na(input_parmin))) {
       ind_opt_input_parmin = which(names(input_parmin) %in% paropt)
@@ -339,10 +340,11 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
       }
 
     }
+
     # if user provided values use them
     if (!any(is.na(input_parmax))) {
       ind_opt_input_parmax = which(names(input_parmax) %in% paropt)
-      parmin[ind_opt_input_parmax] = input_parmin[ind_opt_input_parmax]
+      parmax[ind_opt_input_parmax] = input_parmax[ind_opt_input_parmax]
     }
 
     # sanity check - ensure that initial guesses for Beta/time of change are within

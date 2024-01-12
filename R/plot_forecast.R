@@ -73,13 +73,13 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     inc = mydata$data_fit$inc
 
     # dates - fitted
-    dates  = mydata$data_fit$date
+    dates_fit  = mydata$data_fit$date
 
-    ndates = length(dates)
+    ndates = length(dates_fit)
 
     # using the date array build an integer day array
 
-    times = dates_to_int(dates)
+    times = dates_to_int(dates_fit)
 
     ntimes = length(times)
 
@@ -87,17 +87,17 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
     # build also the arrays for the forecasts
 
-    cadence = as.numeric(dates[2]-dates[1])
+    cadence = as.numeric(dates_fit[2]-dates_fit[1])
     if (cadence == 1) {
       cadence_lab = paste0(cadence, ' day')
       print_lab = 'Days'
-      dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 day')
+      dates_frcst = seq(from = dates_fit[1], length = ntimes_frcst, by = '1 day')
     }
 
     if (cadence == 7) {
       cadence_lab = paste0(cadence, ' week')
       print_lab = 'Weeks'
-      dates_frcst = seq(from = dates[1], length = ntimes_frcst, by = '1 week')
+      dates_frcst = seq(from = dates_fit[1], length = ntimes_frcst, by = '1 week')
     }
 
 
@@ -130,6 +130,16 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     # observations - all data stream
 
     obs = mydata$data$inc
+
+    dates = mydata$data$date
+
+    # start date of obs may not be the same as start date of obs_fit
+
+    keep_ind = which(dates >= dates_fit[1])
+
+    # trim
+    obs = obs[keep_ind]
+    dates = dates[keep_ind]
 
     obs_fit = mydata$data_fit$inc
 
@@ -178,14 +188,16 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
         #   simdat[icount,] <- model.pred$cases
         # }
 
-        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        yinit = c(state0$S0, state0$I0, 0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
-
+        time0 = parms['time0']
+        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_sirh_dynamics, parms = parms)
+        results0 <- results0[,-1]
+        yinit0 <- as.numeric(results0[nrow(results0),])
         if (nb == 2) {
-          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td2_sirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = 1:ntimes_frcst, method='lsoda', func=td2_sirh_dynamics, parms = parms)
         } else {
-          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td3_sirh_dynamics, parms = parms)
-          # calling H2 Ih here
+          results <- ode(y=yinit0, t = 1:ntimes_frcst, method='lsoda', func=td3_sirh_dynamics, parms = parms)
         }
 
         model.pred = results[,-1] # remove the time column
@@ -247,12 +259,15 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
         yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
+        time0 = parms['time0']
+        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_seirh_dynamics, parms = parms)
+        results0 <- results0[,-1]
+        yinit0 <- as.numeric(results0[nrow(results0),])
 
         if (nb == 2) {
-          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td2_seirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = 1:ntimes_frcst, method='lsoda', func=td2_seirh_dynamics, parms = parms)
         } else {
-          results <- ode(y=yinit, t = 1:ntimes_frcst, method='lsoda', func=td3_seirh_dynamics, parms = parms)
-          # calling H2 Ih here
+          results <- ode(y=yinit0, t = 1:ntimes_frcst, method='lsoda', func=td3_seirh_dynamics, parms = parms)
         }
 
         model.pred = results[,-1] # remove the time column
@@ -345,18 +360,15 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   obs_fit_both = combined_frcst$obs_fit_both
 
-  npad = nfrcst - length(obs_both)
+  npad = length(dates_both) - length(obs_both)
   if (npad > 0) {
-    reported_both = c(obs_both[1:length(dates_frcst)], rep(NA, npad))
-  } else {
-    reported_both = obs_both[1:length(dates_frcst)]
+    reported_both = c(obs_both, rep(NA, npad))
   }
 
-  npad_fit = nfrcst - length(obs_fit_both)
+  npad_fit = length(dates_both) - length(obs_fit_both)
+
   if (npad_fit > 0) {
-    reported_fit_both = c(obs_fit_both[1:length(dates_frcst)], rep(NA, npad))
-  } else {
-    reported_fit_both = obs_fit_both[1:length(dates_frcst)]
+    reported_fit_both = c(obs_fit_both, rep(NA, npad))
   }
 
   combined_names <- c('random', 'sorted')

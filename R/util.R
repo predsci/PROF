@@ -123,8 +123,11 @@ init_param <- function(mymodel, mydisease, inc) {
     pH = 0.001
     rho = 0.95
     wl = 3.0
+    time0 = 14
+    mu_HR = 1./7.
+    immn_wn = 0.0 # no waning of immunity
     param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
-                 wl = wl)
+                 wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
   } else if (mymodel == 'seirh' & mydisease == 'covid19') { # covid19 and SEIRH
     gamma = 4.0
     mu_H1H2 = 1.0
@@ -136,11 +139,14 @@ init_param <- function(mymodel, mydisease, inc) {
       Beta = 0.5
     }
     mu_EI = 1.0
-    pH = 0.01
+    pH = 0.005
     rho = 0.95
     wl = 3.0
+    time0 = 14
+    mu_HR = 1./14. # rate of going from H to R days-1
+    immn_wn = 1./(3*30) # rate of waning of immunity in days-1
     param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
-                 pH = pH, rho = rho, wl = wl)
+                 pH = pH, rho = rho, wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
   } else if (mymodel == 'seirh' & mydisease == 'influenza') { #influenza  and SEIRH
     gamma = 2.6
     mu_H1H2 = 1.0
@@ -149,8 +155,11 @@ init_param <- function(mymodel, mydisease, inc) {
     pH = 0.001
     rho = 0.95
     wl = 3.0
+    time0 = 14
+    mu_HR = 1./7.
+    immn_wn = 0.0 # no waning of immunity
     param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
-                 pH = pH, rho = rho, wl = wl)
+                 pH = pH, rho = rho, wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
   } else if (mymodel == 'sirh' & mydisease == 'covid19') { # covid19 and SIRH
     if (max(inc) <= 15) {
       Beta = 1.05 / gamma
@@ -160,11 +169,14 @@ init_param <- function(mymodel, mydisease, inc) {
       Beta = 0.5
     }
     mu_EI = 1.0
-    pH = 0.01
+    pH = 0.005
     rho = 0.95
     wl = 3.0
+    time0 = 14
+    mu_HR = 1./14. # rate of going from H to R days-1
+    immn_wn = 1./(3*30) # rate of waning of immunity in days-1
     param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
-                 wl = wl)
+                 wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
   } else {
     stop('Can not Find Model or Disease \n')
   }
@@ -365,7 +377,6 @@ plot_prof_data <- function(prof_data, filename = NULL) {
   col = c('salmon', 'cornflowerblue')
   pl = list()
 
-
   for (ip in 1:npath) {
 
     mydata = prof_data[[ip]]
@@ -464,7 +475,6 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
   if (is.null(dates_frcst_list)) stop('Missing dates_frcst_list in combined_foreccasts')
   if (is.null(simdat_list)) stop('Missing simdat_list in in combined_foreccasts')
 
-
   npath = length(names(prof_data))
 
   # find dates that are common to both diseases
@@ -485,7 +495,7 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
   # Dates array for both pathogens
   dates_both = seq(start_date, end_date, by = '1 day')
 
-  ntraj_both = min(ntraj_both)
+  ntraj_both = min(ntraj_both)[1]
 
   # subset each pathogen using start/end dates
 
@@ -494,10 +504,10 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
     mydata = prof_data[[ip]]
 
     # hospitalization incidence - fitted
-    inc = mydata$data_fit$inc
+    inc_fit = mydata$data_fit$inc
 
-    # dates
-    dates  = mydata$data_fit$date
+    # dates - fitted
+    dates_fit  = mydata$data_fit$date
 
     # complete hospitalization incidence and dates
 
@@ -509,19 +519,10 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
     ind0 = which(dates_frcst == start_date)
     ind1 = which(dates_frcst ==   end_date)
 
-    if (length(inc_all) >= length(dates_frcst)) {
-      inc = inc_all[ind0:ind1]
-    }  else {
-      inc = inc_all[ind0:length(inc_all)]
-    }
+    keep_ind = which(dates_fit >= start_date & dates_fit <= end_date)
 
-    inc_fit_all =  mydata$data_fit$inc
-
-    if (length(inc_fit_all) >= length(dates_frcst)) {
-      inc_fit = inc_fit_all[ind0:ind1]
-    }  else {
-      inc_fit = inc_fit_all[ind0:length(inc_fit_all)]
-    }
+    inc_fit_trmd = inc_fit[keep_ind]
+    dates_fit_trmd = dates_fit[keep_ind]
 
     simdat = simdat_list[[ip]]
 
@@ -529,16 +530,23 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 
     simdat_list[[ip]] = simdat
 
+    # observations may need to be trimmed at start to ensure
+    # they start at the same date as the fitted data
+
+    keep_ind = which(mydata$data$date >= start_date)
+
+    inc = mydata$data$inc[keep_ind]
+
     if (ip == 1) {
       rand_simdat_both = ordered_simdat_both = simdat * 0.0
       obs_both = inc * 0.0
-      obs_fit_both = inc_fit * 0.0
+      obs_fit_both = inc_fit_trmd * 0.0
     }
 
     rand_simdat_both = rand_simdat_both + simdat
     obs_both = obs_both + inc
 
-    obs_fit_both = obs_fit_both + inc_fit
+    obs_fit_both = obs_fit_both + inc_fit_trmd
 
     # now order also
 
@@ -1217,6 +1225,33 @@ td2_seirh_dynamics <- function(t, y, parms) {
 
 }
 
+#' Deterministic ODEs for SEIRH model with a
+#' single value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td_seirh_dynamics <- function(t, y, parms) {
+
+  dy = array(0, length(y))
+
+  beta_cur = parms['Beta1']
+
+  rate = beta_cur * y[1] * y[3] /parms['pop']
+  dy[1] = -rate
+  dy[2] = rate - parms['mu_EI'] * y[2]
+  dy[3] = parms['mu_EI'] * y[2] - parms['gamma'] * y[3]
+  dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3]
+  dy[5] = parms['pH'] * parms['gamma'] * y[3] - parms['mu_H1H2'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[5]
+
+  res = list(dy)
+  return(res)
+
+}
+
 #' Deterministic ODEs for SIRH model with a
 #' 3-value FOI
 #' @param t - array of times
@@ -1277,4 +1312,28 @@ td2_sirh_dynamics <- function(t, y, parms) {
 }
 
 
+#' Deterministic ODEs for SIRH model with a
+#' single value FOI
+#' @param t - array of times
+#' @param y - array of states
+#' @param parms - array of paramters inclucing 'wl'
+#'
+#' @return res - an array with the derivatives of y
+#'
+td_sirh_dynamics <- function(t, y, parms) {
 
+  dy = array(0, length(y))
+
+  beta_cur = parms['Beta1']
+
+  rate = beta_cur * y[1] * y[2] /parms['pop']
+  dy[1] = -rate
+  dy[2] = rate - parms['gamma'] * y[2]
+  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2]
+  dy[4] = parms['pH'] * parms['gamma'] * y[2] - parms['mu_H1H2'] * y[4]
+  dy[5] = parms['mu_H1H2'] * y[4]
+
+  res = list(dy)
+  return(res)
+
+}

@@ -31,7 +31,15 @@ plot_prof_data(prof_data = prof_data)
 # be fitted with a mechanistic compartmental model
 # NULL values for start/end dates mean set to start/end of the season data
 
-prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
+# to set the start dates for the fits of each pathogen set fit_start
+fit_start = list('covid19'=as.Date('2023-10-01'), 'influenza'= as.Date("2023-10-01"))
+
+prof_data = hhs_set_fitdates(prof_data=prof_data,
+                             fit_start=fit_start, fit_end=NULL)
+
+# to fit from the first data point shown use this default call:
+prof_data = hhs_set_fitdates(prof_data=prof_data,
+                             fit_start=NULL, fit_end=NULL)
 
 # To plot the data to the screen and save to a file use
 # plot_prof_data(prof_data = prof_data, filename = '/path/to/filename')
@@ -65,6 +73,7 @@ plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list =
 # We can also fit a baseline statistical model to the data.
 # We start by adding the fit-stat data structure to each pathogen - this is the data
 # that will be fitted with a simple baseline statistical model
+
 
 prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 
@@ -118,7 +127,7 @@ stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 35)
 par_list = init_par_list(diseases=c("covid19"),
                          models=c("seirh"))
 
-# perform a fit on 'covid19' onlye using an SEIRH model and three values for the FOI:
+# perform a fit on 'covid19' only using an SEIRH model and three values for the FOI:
 
 fit_list <- fit_data(prof_data = prof_data['covid19'], par_list = par_list, nb_vec=c(3))
 

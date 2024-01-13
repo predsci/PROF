@@ -1,0 +1,171 @@
+# This example YAML parameter file shows the parameter configuration for both model
+# types currently available in PROF: SEIRH and SIRH.  The parameter list is structured
+# first by disease—in this case covid19 and then influenza.  Within each disease
+# list are specifications for model type (model), constant parameters 
+# (constant_dis_pars), fit parameters (dis_par_ranges), and MCMC parameters (mcmc_pars).
+# This structure is the same for all model types, where possible consistency has been
+# maintained in parameter names from model-to-model, however parameters are added and
+# subtracted when changing model type, so it is recommended to use this file or the
+# PROF::init_par_list() function as a template when constructing a parameter list.
+
+# The parameter list is organized by disease so as to match the data list format.
+covid19:
+  # Model (seirh or sirh)
+  model: seirh
+
+  # Fixed value parameters.  If left as NA, PROF will insert default values.
+  constant_dis_pars:
+
+    # Initial state parameters (S0, E0, I0, R0, H0) should sum to population size N.
+    # All initial states should be >= to 0 and <= N.
+    # If left as NAs, PROF will attempt to estimate I0 using PROF::est_I0() and then
+    # set S0 = N-I0, leaving E0, R0, and H0 as zero.
+    S0: .na
+    E0: .na
+    I0: .na
+    R0: .na
+    H0: .na
+
+  # Fit parameter specifications.  When left as NAs, PROF will use the values from
+  # PROF::init_param to run the fitting procedure.  When setting these manually,
+  # fit parameters can be set as fixed values by ...TTT...  All parameters must be
+  # non-negative.
+  dis_par_ranges:
+    par_names:
+    # The transmission rate.  Specifically, Beta is the transmissible contact rate
+    # (per day).
+    - Beta
+    # The infectious recovery time (days).
+    - gamma
+    # Proportion hospitalized.  Must be <= 1.0
+    - pH
+    # The H2 compartment is introduced for mathematical reasons.  As a result,
+    # time from infectious onset to hospitalization is gamma + mu_H1H2. (days)
+    - mu_H1H2
+    # Incubation time (days)
+    - mu_EI
+    # Hospitalization reporting rate.
+    - rho
+    # The model assumes a baseline number of infections/hospitalizations per 
+    # day—outside the dynamics of the SEIHR model.  
+    # Daily infectious = baseline + I-state from SEIHR model.
+    - baseline
+    # Initial number of infectious individuals at time=0.
+    - I0
+    # The model can start simulations prior to the start of incidence data. To
+    # allow this, set time0 ...TTT...
+    - time0
+    # time in hospital (1/days)
+    - mu_HR
+    # Immunity waning time for ...TTT... in units 1/days.
+    - immn_wn
+
+    # Minimum values for parameter fit range.
+    parmin:
+      Beta: .na
+      gamma: .na
+      pH: .na
+      mu_H1H2: .na
+      mu_EI: .na
+      rho: .na
+      baseline: .na
+      I0: .na
+      time0: .na
+      mu_HR: .na
+      immn_wn: .na
+
+    # Maximum values for parameter fit range.
+    parmax:
+      Beta: .na
+      gamma: .na
+      pH: .na
+      mu_H1H2: .na
+      mu_EI: .na
+      rho: .na
+      baseline: .na
+      I0: .na
+      time0: .na
+      mu_HR: .na
+      immn_wn: .na
+
+    # Initial guess for parameter fitting procedure.
+    par:
+      Beta: .na
+      gamma: .na
+      pH: .na
+      mu_H1H2: .na
+      mu_EI: .na
+      rho: .na
+      baseline: .na
+      I0: .na
+      time0: .na
+      mu_HR: .na
+      immn_wn: .na
+
+  # MCMC parameter settings
+  mcmc_pars:
+    # Number of MCMC steps to take.
+    nMCMC: 1000000.0
+    # Number of MCMC steps to sample for output.
+    nlines: 10000.0
+
+# Example parameter list for SIRH model.  Comments have been added where this differs 
+# from the seirh model.
+influenza:
+  model: sirh
+  constant_dis_pars:
+    # Initial state parameters now exclude E0.  S0 + I0 + R0 + H0 must equal N.
+    S0: .na
+    I0: .na
+    R0: .na
+    H0: .na
+  dis_par_ranges:
+    par_names:
+    - Beta
+    # Infectious duration (days). With no incubation time, gamma is now the full 
+    # generation time.
+    - gamma
+    - pH
+    - mu_H1H2
+    - rho
+    - baseline
+    - I0
+    - time0
+    - mu_HR
+    - immn_wn
+    parmin:
+      Beta: .na
+      gamma: .na
+      pH: .na
+      mu_H1H2: .na
+      rho: .na
+      baseline: .na
+      I0: .na
+      time0: .na
+      mu_HR: .na
+      immn_wn: .na
+    parmax:
+      Beta: .na
+      gamma: .na
+      pH: .na
+      mu_H1H2: .na
+      rho: .na
+      baseline: .na
+      I0: .na
+      time0: .na
+      mu_HR: .na
+      immn_wn: .na
+    par:
+      Beta: .na
+      gamma: .na
+      pH: .na
+      mu_H1H2: .na
+      rho: .na
+      baseline: .na
+      I0: .na
+      time0: .na
+      mu_HR: .na
+      immn_wn: .na
+  mcmc_pars:
+    nMCMC: 1000000.0
+    nlines: 10000.0

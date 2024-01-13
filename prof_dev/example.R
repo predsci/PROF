@@ -52,7 +52,7 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
 
 # to fit both pathogens use:
 # Here we use a 3-values model for the FOI for COVID19 and a 2-value for influenza
-# you can now seat and relax for 10-15 minutes
+# you can now sit and relax for 10-15 minutes
 
 fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
 

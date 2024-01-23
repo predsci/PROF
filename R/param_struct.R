@@ -5,9 +5,9 @@
 
 
 #' Produce an empty parameter list for the SEIRH model.
-#' 
+#'
 #' Each pathogen to be fit/forecast requires a set of model and fit parameters.
-#' This function produces an empty list of lists with the structure and entries 
+#' This function produces an empty list of lists with the structure and entries
 #' required by the fitting function(s) for an SEIRH model.
 #'
 #' @return A list of lists for modeling and fitting parameters
@@ -30,19 +30,19 @@ init_model_seirh <- function() {
   # recovery time, Infection-Hospitalization-Rate, etc
   # set parameter ranges and starting values for fitting
   out[['dis_par_ranges']] = list(
-    par_names=c('Beta', 'gamma', 'pH', 'mu_H1H2', 'mu_EI', 'rho', 'baseline', 
+    par_names=c('Beta', 'gamma', 'pH', 'mu_H1H2', 'mu_EI', 'rho', 'baseline',
                 'I0', 'time0','mu_HR', 'immn_wn'),
-    parmin=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'mu_EI'= NA, 
-                'rho'=NA, 'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA, 
+    parmin=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'mu_EI'= NA,
+                'rho'=NA, 'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA,
                 'immn_wn' = NA),
-    parmax=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'mu_EI'= NA, 
-                'rho'=NA, 'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA, 
+    parmax=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'mu_EI'= NA,
+                'rho'=NA, 'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA,
                 'immn_wn' = NA),
-    par=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'mu_EI'= NA, 
-             'rho'=NA, 'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA, 
+    par=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'mu_EI'= NA,
+             'rho'=NA, 'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA,
              'immn_wn' = NA)
   )
-  
+
   # Set which parameters will be optimized.  The functional form of Beta(t)
   # is multi-parameter.  'Beta' appearing in this vector simply implies
   # that the Beta(t) parameters should be optimized (rather than the user
@@ -52,7 +52,7 @@ init_model_seirh <- function() {
 
   # Set parameters for fitting routine
   out[['mcmc_pars']] = list(nMCMC = 1e6,
-                         nlines = 1e4)
+                            nlines = 1e4)
 
 
   return(out)
@@ -60,9 +60,9 @@ init_model_seirh <- function() {
 
 
 #' Produce an empty parameter list for the SIRH model.
-#' 
+#'
 #' Each pathogen to be fit/forecast requires a set of model and fit parameters.
-#' This function produces an empty list of lists with the structure and entries 
+#' This function produces an empty list of lists with the structure and entries
 #' required by the fitting function(s) for an SIRH model.
 #'
 #' @return A list of lists for modeling and fitting parameters
@@ -84,16 +84,16 @@ init_model_sirh <- function() {
   # recovery time, Infection-Hospitalization-Rate, etc
   # set parameter ranges and starting values for fitting
   out[['dis_par_ranges']] = list(
-    par_names=c('Beta', 'gamma', 'pH', 'mu_H1H2', 'rho', 'baseline', 'I0', 
+    par_names=c('Beta', 'gamma', 'pH', 'mu_H1H2', 'rho', 'baseline', 'I0',
                 'time0','mu_HR', 'immn_wn'),
-    parmin=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA, 
-                'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA, 
+    parmin=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA,
+                'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA,
                 'immn_wn' = NA),
-    parmax=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA, 
-                'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA, 
+    parmax=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA,
+                'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA,
                 'immn_wn' = NA),
-    par=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA, 
-             'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA, 
+    par=list('Beta'=NA, 'gamma'=NA, 'pH'=NA, 'mu_H1H2'=NA, 'rho'=NA,
+             'baseline'=NA, 'I0' = NA, 'time0' = NA, 'mu_HR' = NA,
              'immn_wn' = NA)
   )
 
@@ -102,7 +102,7 @@ init_model_sirh <- function() {
   # that the Beta(t) parameters should be optimized (rather than the user
   # setting Beta to a single fixed value in out$dis_par_ranges$par above.)
   out[['par_opt']] = c('mu_H1H2', 'pH', 'baseline', 'I0', 'time0', 'Beta')
-  
+
   # Set parameters for fitting routine
   out[['mcmc_pars']] = list(nMCMC  = 1e6,
                             nlines = 1e4)
@@ -113,7 +113,7 @@ init_model_sirh <- function() {
 
 
 #' Full parameter list structure for multiple diseases.
-#' 
+#'
 #' Each disease to be fit must have an entry in the parameter list. This
 #' function simply loops through pathogens and populates its list entry
 #' with the appropriate model structure.
@@ -170,10 +170,10 @@ write_par_list_yaml <- function(par_list=NULL, file_path=NULL) {
 
 
 #' Read parameter list from YAML file.
-#' 
+#'
 #' The fitting function requires a specific list structure for the parameters.
-#' See PROF/parameters/param_exmpl.yml for an example YAML file with 
-#' documentation. Or use PROF::init_pars_list() to generate an appropriate 
+#' See PROF/parameters/param_exmpl.yml for an example YAML file with
+#' documentation. Or use PROF::init_pars_list() to generate an appropriate
 #' structure in R.
 #' @param file_path Full path for file to be read.
 #'
@@ -195,5 +195,4 @@ check_par_list <- function(par_list) {
   # to catch formatting issues.
 
 }
-
 

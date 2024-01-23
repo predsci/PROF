@@ -11,6 +11,6 @@ A list of lists for modeling and fitting parameters
 }
 \description{
 Each pathogen to be fit/forecast requires a set of model and fit parameters.
-This function produces an empty list of lists with the structure and entries 
+This function produces an empty list of lists with the structure and entries
 required by the fitting function(s) for an SIRH model.
 }

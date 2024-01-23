@@ -14,7 +14,7 @@ List of parameter lists
 }
 \description{
 The fitting function requires a specific list structure for the parameters.
-See PROF/parameters/param_exmpl.yml for an example YAML file with 
-documentation. Or use PROF::init_pars_list() to generate an appropriate 
+See PROF/parameters/param_exmpl.yml for an example YAML file with
+documentation. Or use PROF::init_pars_list() to generate an appropriate
 structure in R.
 }

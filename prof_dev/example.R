@@ -6,9 +6,8 @@ library(PROF)
 library(plotly)
 library(deSolve)
 
-# set path to location of example.R script
-
-setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
+# set path to location of example.R script, for example:
+# setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 
 # download HHS Hospitalization file
 
@@ -32,7 +31,7 @@ plot_prof_data(prof_data = prof_data)
 # NULL values for start/end dates mean set to start/end of the season data
 
 # to set the start dates for the fits of each pathogen set fit_start
-fit_start = list('covid19'=as.Date('2023-10-01'), 'influenza'= as.Date("2023-10-01"))
+fit_start = list('covid19'=as.Date('2023-10-01'), 'influenza'= as.Date("2023-09-01"))
 
 prof_data = hhs_set_fitdates(prof_data=prof_data,
                              fit_start=fit_start, fit_end=NULL)
@@ -52,7 +51,7 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
 
 # to fit both pathogens use:
 # Here we use a 3-values model for the FOI for COVID19 and a 2-value for influenza
-# you can now sit and relax for 10-15 minutes
+# you can now seat and relax for 10-15 minutes
 
 fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
 

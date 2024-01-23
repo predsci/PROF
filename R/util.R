@@ -10,8 +10,6 @@
 #'
 est_I0 <- function(inc, mydisease) {
 
-  ind = grep(mydisease, 'covid19', ignore.case = TRUE)
-
   # calculate 1-week moving average and rm NAs from time-series
 
   rolling_avg = zoo::rollmean(inc, k = 7, fill = NA, align = 'center')
@@ -20,7 +18,7 @@ est_I0 <- function(inc, mydisease) {
 
   I0_min = 10
 
-  if (length(ind) == 1) { # covid
+  if (tolower(mydisease) == 'covid19') { # covid
 
     ## we choose to draw:
 
@@ -124,10 +122,10 @@ init_param <- function(mymodel, mydisease, inc) {
     rho = 0.95
     wl = 3.0
     time0 = 14
-    mu_HR = 1./7.
+    mu_rec = 1./7. # may even be closer to six
     immn_wn = 0.0 # no waning of immunity
     param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
-                 wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
+                 wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else if (mymodel == 'seirh' & mydisease == 'covid19') { # covid19 and SEIRH
     gamma = 4.0
     mu_H1H2 = 1.0
@@ -136,17 +134,17 @@ init_param <- function(mymodel, mydisease, inc) {
     } else if ( max(inc) < 35 & max(inc) > 15) {
       Beta = 1.2/ gamma
     } else {
-      Beta = 0.5
+      Beta = 1.5/gamma
     }
     mu_EI = 1.0
     pH = 0.005
     rho = 0.95
     wl = 3.0
     time0 = 14
-    mu_HR = 1./14. # rate of going from H to R days-1
-    immn_wn = 1./(3*30) # rate of waning of immunity in days-1
+    mu_rec = 1./15. # rate of going from H to R days-1
+    immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
     param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
-                 pH = pH, rho = rho, wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
+                 pH = pH, rho = rho, wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else if (mymodel == 'seirh' & mydisease == 'influenza') { #influenza  and SEIRH
     gamma = 2.6
     mu_H1H2 = 1.0
@@ -156,27 +154,27 @@ init_param <- function(mymodel, mydisease, inc) {
     rho = 0.95
     wl = 3.0
     time0 = 14
-    mu_HR = 1./7.
+    mu_rec = 1./7.
     immn_wn = 0.0 # no waning of immunity
     param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
-                 pH = pH, rho = rho, wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
+                 pH = pH, rho = rho, wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else if (mymodel == 'sirh' & mydisease == 'covid19') { # covid19 and SIRH
     if (max(inc) <= 15) {
       Beta = 1.05 / gamma
     } else if ( max(inc) < 35 & max(inc) > 15) {
       Beta = 1.2/ gamma
     } else {
-      Beta = 0.5
+      Beta = 2.0/gamma
     }
     mu_EI = 1.0
     pH = 0.005
     rho = 0.95
     wl = 3.0
     time0 = 14
-    mu_HR = 1./14. # rate of going from H to R days-1
-    immn_wn = 1./(3*30) # rate of waning of immunity in days-1
+    mu_rec = 1./15. # rate of going from H to R days-1
+    immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
     param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
-                 wl = wl, time0 = time0, mu_HR = mu_HR, immn_wn = immn_wn)
+                 wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else {
     stop('Can not Find Model or Disease \n')
   }
@@ -237,10 +235,9 @@ run_optim <- function(param0, inc) {
   pomp(data=data,
        times="time",t0=0,
        skeleton = vectorfield(sirh.ode),
-       accumvars = c("Ic", "Ih"),
+       accumvars = c("Ih"),
        rinit=init,
        obsnames="cases",
-       statenames=c("S","I","R","H1","H2","Ic","Ih"),
        paramnames=names(param0)) -> flu2
 
   f1 <- function (par) {
@@ -719,7 +716,6 @@ sir.ode <- Csnippet("
   DR = (1-pH)*gamma*I;
   DH1 = pH*gamma*I - mu_H1H2*H1;
   DH2 = mu_H1H2 * H1;
-  DIc = Beta*S*I/N;
   DIh = mu_H1H2*H1;
 ")
 
@@ -742,8 +738,6 @@ sir.step <- "
   R  += round((1.-pH) * t2);
   H1 += round(pH * t2) - t3;
   H2 += t3;
-
-  Ic += t1;
   Ih += t3;
 "
 
@@ -761,7 +755,6 @@ sirh.ode <- Csnippet("
   DR = (1-pH)*gamma*I;
   DH1 = pH*gamma*I - mu_H1H2*H1;
   DH2 = mu_H1H2 * H1;
-  DIc = Beta*S*I/pop;
   DIh = mu_H1H2*H1;
 ")
 
@@ -785,8 +778,6 @@ sirh.step <- "
   R  += round((1.-pH) * t2);
   H1 += round(pH * t2) - t3;
   H2 += t3;
-
-  Ic += t1;
   Ih += t3;
 "
 
@@ -817,7 +808,6 @@ td.sirh.step <- "
   R  += round((1.-pH) * t2);
   H1 += round(pH * t2) - t3;
   H2 += t3;
-  Ic += t1;
   Ih += t3;
   time += dt;
 "
@@ -850,7 +840,6 @@ td3.sirh.step <- "
   R  += round((1.-pH) * t2);
   H1 += round(pH * t2) - t3;
   H2 += t3;
-  Ic += t1;
   Ih += t3;
   time += dt;
 "
@@ -875,7 +864,6 @@ td.sirh.ode <- Csnippet("
   DR = (1-pH)*gamma*I;
   DH1 = pH*gamma*I - mu_H1H2*H1;
   DH2 = mu_H1H2 * H1;
-  DIc = beta_cur*S*I/pop;
   DIh = mu_H1H2*H1;
   Dtime  = 1;
 ")
@@ -895,7 +883,6 @@ seirh.ode <- Csnippet("
   DR = (1-pH)*gamma*I;
   DH1 = pH*gamma*I - mu_H1H2*H1;
   DH2 = mu_H1H2 * H1;
-  DIc = mu_EI*E;
   DIh = mu_H1H2*H1;")
 
 #'
@@ -920,7 +907,6 @@ td.seirh.ode <- Csnippet("
   DR = (1-pH)*gamma*I;
   DH1 = pH*gamma*I - mu_H1H2*H1;
   DH2 = mu_H1H2 * H1;
-  DIc = mu_EI*E;
   DIh = mu_H1H2*H1;
   Dtime = 1;")
 
@@ -947,7 +933,6 @@ td3.seirh.ode <- Csnippet("
   DR = (1-pH)*gamma*I;
   DH1 = pH*gamma*I - mu_H1H2*H1;
   DH2 = mu_H1H2 * H1;
-  DIc = mu_EI*E;
   DIh = mu_H1H2*H1;
   Dtime = 1;")
 
@@ -972,8 +957,6 @@ seirh.step <- "
   R  += round((1.-pH) * t3);
   H1 += round(pH * t3) - t4;
   H2 += t4;
-
-  Ic += t2;
   Ih += t4;
 "
 
@@ -1005,8 +988,6 @@ td.seirh.step <- "
   R  += round((1.-pH) * t3);
   H1 += round(pH * t3) - t4;
   H2 += t4;
-
-  Ic += t2;
   Ih += t4;
   time += dt;
 "
@@ -1040,8 +1021,6 @@ td3.seirh.step <- "
   R  += round((1.-pH) * t3);
   H1 += round(pH * t3) - t4;
   H2 += t4;
-
-  Ic += t2;
   Ih += t4;
   time += dt;
 "
@@ -1060,7 +1039,6 @@ init <- Csnippet("
   R = round(R0);
   H1 = 0;
   H2 = 0;
-  Ic = 0;
   Ih = 0;
   ")
 
@@ -1076,7 +1054,6 @@ td.init <- Csnippet("
   R = round(R0);
   H1 = 0;
   H2 = 0;
-  Ic = 0;
   Ih = 0;
   time = 0;
   ")
@@ -1094,7 +1071,6 @@ init.seirh <- Csnippet("
   R = round(R0);
   H1 = 0;
   H2 = 0;
-  Ic = 0;
   Ih = 0;
   ")
 
@@ -1111,7 +1087,6 @@ td.init.seirh <- Csnippet("
   R = round(R0);
   H1 = 0;
   H2 = 0;
-  Ic = 0;
   Ih = 0;
   time = 0;
   ")
@@ -1183,14 +1158,14 @@ beta_cur = beta_cur + (parms['Beta3'] - parms['Beta2']) * tanh((t-(parms['tcng1'
 beta_cur = beta_cur * 0.5
 
 rate = beta_cur * y[1] * y[3] /parms['pop']
-# S, E, I, R H1, H2
-dy[1] = -rate
+# S, E, I, R H1, H2, Ih
+dy[1] = -rate + parms['immn_wn'] * y[4]
 dy[2] = rate - parms['mu_EI'] * y[2]
 dy[3] = parms['mu_EI'] * y[2] - parms['gamma'] * y[3]
-dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3]
+dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3] + parms['mu_rec'] * y[6] - parms['immn_wn'] * y[4]
 dy[5] = parms['pH'] * parms['gamma'] * y[3] - parms['mu_H1H2'] * y[5]
-dy[6] = parms['mu_H1H2'] * y[5]
-
+dy[6] = parms['mu_H1H2'] * y[5] - parms['mu_rec'] * y[6]
+dy[7] = parms['mu_H1H2'] * y[5]
 res = list(dy)
 return(res)
 
@@ -1213,12 +1188,13 @@ td2_seirh_dynamics <- function(t, y, parms) {
   beta_cur = beta_cur * 0.5
 
   rate = beta_cur * y[1] * y[3] /parms['pop']
-  dy[1] = -rate
+  dy[1] = -rate  + parms['immn_wn'] * y[4]
   dy[2] = rate - parms['mu_EI'] * y[2]
   dy[3] = parms['mu_EI'] * y[2] - parms['gamma'] * y[3]
-  dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3]
+  dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3] + parms['mu_rec'] * y[6] - parms['immn_wn'] * y[4]
   dy[5] = parms['pH'] * parms['gamma'] * y[3] - parms['mu_H1H2'] * y[5]
-  dy[6] = parms['mu_H1H2'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[5] - parms['mu_rec'] * y[6]
+  dy[7] = parms['mu_H1H2'] * y[5]
 
   res = list(dy)
   return(res)
@@ -1240,12 +1216,14 @@ td_seirh_dynamics <- function(t, y, parms) {
   beta_cur = parms['Beta1']
 
   rate = beta_cur * y[1] * y[3] /parms['pop']
-  dy[1] = -rate
+
+  dy[1] = -rate  + parms['immn_wn'] * y[4]
   dy[2] = rate - parms['mu_EI'] * y[2]
   dy[3] = parms['mu_EI'] * y[2] - parms['gamma'] * y[3]
-  dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3]
+  dy[4] = (1.0 - parms['pH']) * parms['gamma'] * y[3] + parms['mu_rec'] * y[6] - parms['immn_wn'] * y[4]
   dy[5] = parms['pH'] * parms['gamma'] * y[3] - parms['mu_H1H2'] * y[5]
-  dy[6] = parms['mu_H1H2'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[5] - parms['mu_rec'] * y[6]
+  dy[7] = parms['mu_H1H2'] * y[5]
 
   res = list(dy)
   return(res)
@@ -1270,13 +1248,14 @@ td3_sirh_dynamics <- function(t, y, parms) {
   beta_cur = beta_cur * 0.5
 
   rate = beta_cur * y[1] * y[2] /parms['pop']
-  # S, I, R H1, H2
-  rate = beta_cur * y[1] * y[2] /parms['pop']
-  dy[1] = -rate
+  # S, I, R H1, H2, Ih
+
+  dy[1] = -rate + parms['immn_wn'] * y[3]
   dy[2] = rate - parms['gamma'] * y[2]
-  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2]
+  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2] + parms['mu_rec'] * y[5] - parms['immn_wn'] * y[3]
   dy[4] = parms['pH'] * parms['gamma'] * y[2] - parms['mu_H1H2'] * y[4]
-  dy[5] = parms['mu_H1H2'] * y[4]
+  dy[5] = parms['mu_H1H2'] * y[4] - parms['mu_rec'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[4]
 
   res = list(dy)
   return(res)
@@ -1300,11 +1279,13 @@ td2_sirh_dynamics <- function(t, y, parms) {
   beta_cur = beta_cur * 0.5
 
   rate = beta_cur * y[1] * y[2] /parms['pop']
-  dy[1] = -rate
+
+  dy[1] = -rate + parms['immn_wn'] * y[3]
   dy[2] = rate - parms['gamma'] * y[2]
-  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2]
+  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2] + parms['mu_rec'] * y[5] - parms['immn_wn'] * y[3]
   dy[4] = parms['pH'] * parms['gamma'] * y[2] - parms['mu_H1H2'] * y[4]
-  dy[5] = parms['mu_H1H2'] * y[4]
+  dy[5] = parms['mu_H1H2'] * y[4] - parms['mu_rec'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[4]
 
   res = list(dy)
   return(res)
@@ -1327,11 +1308,13 @@ td_sirh_dynamics <- function(t, y, parms) {
   beta_cur = parms['Beta1']
 
   rate = beta_cur * y[1] * y[2] /parms['pop']
-  dy[1] = -rate
+
+  dy[1] = -rate + parms['immn_wn'] * y[3]
   dy[2] = rate - parms['gamma'] * y[2]
-  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2]
+  dy[3] = (1.0 - parms['pH']) * parms['gamma'] * y[2] + parms['mu_rec'] * y[5] - parms['immn_wn'] * y[3]
   dy[4] = parms['pH'] * parms['gamma'] * y[2] - parms['mu_H1H2'] * y[4]
-  dy[5] = parms['mu_H1H2'] * y[4]
+  dy[5] = parms['mu_H1H2'] * y[4] - parms['mu_rec'] * y[5]
+  dy[6] = parms['mu_H1H2'] * y[4]
 
   res = list(dy)
   return(res)

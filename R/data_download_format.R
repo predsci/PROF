@@ -246,8 +246,8 @@ hhs_data_ex <- function(season = NULL, state=NULL, fit_end = NULL) {
   fit_start = as.Date(paste0(season,'-09-01'))
 
   if (season == 2023) {
-    start_date = as.Date(paste0(season,'-07-01'))
-    fit_start = as.Date(paste0(season,'-07-01'))
+    start_date = as.Date(paste0(season,'-08-01'))
+    fit_start = as.Date(paste0(season,'-08-01'))
   }
 
   if (is.null(fit_end)) {
@@ -284,8 +284,8 @@ hhs_data_ex <- function(season = NULL, state=NULL, fit_end = NULL) {
   end_date   = as.Date(paste0(season+1,'-06-01'))
 
   if (season == 2023) {
-    start_date = as.Date(paste0(season,'-06-01'))
-    fit_start = as.Date(paste0(season,'-06-01'))
+    start_date = as.Date(paste0(season,'-07-01'))
+    fit_start = as.Date(paste0(season,'-07-01'))
   }
 
   if (is.null(fit_end)) {

@@ -1,7 +1,7 @@
 # This example YAML parameter file shows the parameter configuration for both model
 # types currently available in PROF: SEIRH and SIRH.  The parameter list is structured
 # first by disease—in this case covid19 and then influenza.  Within each disease
-# list are specifications for model type (model), constant parameters 
+# list are specifications for model type (model), constant parameters
 # (constant_dis_pars), fit parameters (dis_par_ranges), and MCMC parameters (mcmc_pars).
 # This structure is the same for all model types, where possible consistency has been
 # maintained in parameter names from model-to-model, however parameters are added and
@@ -20,7 +20,7 @@ covid19:
     # All initial states should be >= to 0 and <= N.
     # If left as NAs, PROF will attempt to estimate I0 using PROF::est_I0() and then
     # set S0 = N-I0, leaving E0, R0, and H0 as zero.
-    # Note: I0 can also be a fit parameter.  When I0 is varied by the optimizer steps, 
+    # Note: I0 can also be a fit parameter.  When I0 is varied by the optimizer steps,
     # S0 is adjusted such that S0 = N - E0 - I0 - R0 - H0.  As with other fit parameters,
     # to keep I0 fixed, remove it from the dis_par_ranges$par_opt vector.
     S0: .na
@@ -29,11 +29,11 @@ covid19:
     R0: .na
     H0: .na
 
-  # Fit parameter specifications (initial guess and range).  When left as NAs, PROF 
+  # Fit parameter specifications (initial guess and range).  When left as NAs, PROF
   # will use the values from
   # PROF::init_param to run the fitting procedure.  When setting these manually,
   # fit parameters can be set as fixed values by removing them from par_opt (below)
-  # and setting the fixed value in dis_par_ranges$par.  
+  # and setting the fixed value in dis_par_ranges$par.
   # Note: All parameters must be non-negative.
   dis_par_ranges:
     par_names:
@@ -51,18 +51,18 @@ covid19:
     - mu_EI
     # Hospitalization reporting rate.
     - rho
-    # The model assumes a baseline number of infections/hospitalizations per 
-    # day—outside the dynamics of the SEIHR model.  
+    # The model assumes a baseline number of infections/hospitalizations per
+    # day—outside the dynamics of the SEIHR model.
     # Daily infectious = baseline + I-state from SEIHR model.
     - baseline
     # Initial number of infectious individuals at time=0.
     - I0
     # The model can start simulations prior to the start of incidence data. time0 is a
-    # fit parameter that determines how long the simulation should run prior to the 
+    # fit parameter that determines how long the simulation should run prior to the
     # first data point.
     - time0
     # time in hospital (1/days)
-    - mu_HR
+    - mu_rec
     # Immunity waning time for transition from Recovered to Susceptible in units 1/days.
     - immn_wn
 
@@ -77,9 +77,8 @@ covid19:
       baseline: .na
       I0: .na
       time0: .na
-      mu_HR: .na
+      mu_rec: .na
       immn_wn: .na
-
     # Maximum values for parameter fit range.
     parmax:
       Beta: .na
@@ -91,9 +90,8 @@ covid19:
       baseline: .na
       I0: .na
       time0: .na
-      mu_HR: .na
+      mu_rec: .na
       immn_wn: .na
-
     # Initial guess for parameter fitting procedure.
     par:
       Beta: .na
@@ -105,9 +103,8 @@ covid19:
       baseline: .na
       I0: .na
       time0: .na
-      mu_HR: .na
+       mu_rec: .na
       immn_wn: .na
-
   # A character vector designating which parameters should be fit.
   par_opt:
   - mu_H1H2
@@ -125,7 +122,7 @@ covid19:
     # Number of MCMC steps to sample for output.
     nlines: 10000.0
 
-# Example parameter list for SIRH model.  Comments have been added where this differs 
+# Example parameter list for SIRH model.  Comments have been added where this differs
 # from the seirh model.
 influenza:
   model: sirh
@@ -138,7 +135,7 @@ influenza:
   dis_par_ranges:
     par_names:
     - Beta
-    # Infectious duration (days). With no incubation time, gamma is now the full 
+    # Infectious duration (days). With no incubation time, gamma is now the full
     # generation time.
     - gamma
     - pH
@@ -147,7 +144,7 @@ influenza:
     - baseline
     - I0
     - time0
-    - mu_HR
+    - mu_rec
     - immn_wn
     parmin:
       Beta: .na
@@ -158,7 +155,7 @@ influenza:
       baseline: .na
       I0: .na
       time0: .na
-      mu_HR: .na
+      mu_rec: .na
       immn_wn: .na
     parmax:
       Beta: .na
@@ -169,7 +166,7 @@ influenza:
       baseline: .na
       I0: .na
       time0: .na
-      mu_HR: .na
+      mu_rec: .na
       immn_wn: .na
     par:
       Beta: .na
@@ -180,7 +177,7 @@ influenza:
       baseline: .na
       I0: .na
       time0: .na
-      mu_HR: .na
+      mu_rec: .na
       immn_wn: .na
   # mu_EI has been removed from the vector because it does not appear in this model.
   par_opt:

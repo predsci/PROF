@@ -399,9 +399,9 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     param_best = out$param
 
-    param_best_list[[ip]] <- param_best
-
     names(param_best) <- par_names
+
+    param_best_list[[ip]] <- param_best
 
     traj[,'cases'] = rpois(ntimes, traj[,'Ih'] * param_best['rho'] + param_best['baseline'])
 

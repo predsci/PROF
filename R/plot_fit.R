@@ -129,12 +129,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       #   pomp(data=data.frame(time = 1:ntimes),
       #        times="time",t0=0,
       #        rprocess=euler(step.fun = Csnippet(td.sirh.step),delta.t=1/40.),
-      #        accumvars = c("Ic", "Ih"),
+      #        accumvars = c(Ih"),
       #        rinit=td.init,
       #        rmeasure=rmeas,
       #        dmeasure=dmeas,
       #        obsnames="cases",
-      #        statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
+      #        statenames=c("S","I","R","H1","H2","Ih","time"),
       #        paramnames=parnames_td_sirh) -> flu_sirh
       # } else {
       #   parnames_td_sirh = c("Beta1","Beta2", "Beta3","tcng1","tcng2","wl",
@@ -143,12 +143,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       #   pomp(data=data.frame(time = 1:ntimes),
       #        times="time",t0=0,
       #        rprocess=euler(step.fun = Csnippet(td3.sirh.step),delta.t=1/40.),
-      #        accumvars = c("Ic", "Ih"),
+      #        accumvars = c("Ih"),
       #        rinit=td.init,
       #        rmeasure=rmeas,
       #        dmeasure=dmeas,
       #        obsnames="cases",
-      #        statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
+      #        statenames=c("S","I","R","H1","H2","Ih","time"),
       #        paramnames=parnames_td_sirh) -> flu_sirh
       # }
 
@@ -182,20 +182,21 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
         yinit = c(state0$S0, state0$I0, 0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
         time0 = parms['time0']
-        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_sirh_dynamics, parms = parms)
+        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'lsoda', func=td_sirh_dynamics, parms = parms)
         results0 <- results0[,-1]
         yinit0 <- as.numeric(results0[nrow(results0),])
         if (nb == 2) {
-          results <- ode(y=yinit0, t = times, method='rk4', func=td2_sirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = times, method='lsoda', func=td2_sirh_dynamics, parms = parms)
         } else {
-          results <- ode(y=yinit0, t = times, method='rk4', func=td3_sirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = times, method='lsoda', func=td3_sirh_dynamics, parms = parms)
         }
 
         model.pred = results[,-1] # remove the time column
+        colnames(model.pred) = c('S', 'I', 'R', 'H1', 'H2', 'Ih')
 
         # generate simulation data with the parameters defined above
 
-        Ih = model.pred[,4]
+        Ih = c(0, diff(model.pred[,'Ih']))
         cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
 
         # if (model.pred$cases[which.max(obs)] > round(mypar['baseline'])) {
@@ -218,12 +219,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       #   pomp(data=data.frame(time = 1:ntimes),
       #        times="time",t0=0,
       #        rprocess=euler(step.fun = Csnippet(td.seirh.step),delta.t=1/40.),
-      #        accumvars = c("Ic", "Ih"),
+      #        accumvars = c("Ih"),
       #        rinit=td.init.seirh,
       #        rmeasure=rmeas,
       #        dmeasure=dmeas,
       #        obsnames="cases",
-      #        statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
+      #        statenames=c("S","E","I","R","H1","H2","Ih", 'time'),
       #        paramnames=parnames_td_seirh) -> covid_seir
       # } else {
       #   parnames_td_seirh = c("Beta1","Beta2","Beta3","tcng1","tcng2","wl",
@@ -232,12 +233,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       #   pomp(data=data.frame(time = 1:ntimes),
       #        times="time",t0=0,
       #        rprocess=euler(step.fun = Csnippet(td3.seirh.step),delta.t=1/40.),
-      #        accumvars = c("Ic", "Ih"),
+      #        accumvars = c("Ih"),
       #        rinit=td.init.seirh,
       #        rmeasure=rmeas,
       #        dmeasure=dmeas,
       #        obsnames="cases",
-      #        statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
+      #        statenames=c("S","E","I","R","H1","H2","Ih", 'time'),
       #        paramnames=parnames_td_seirh) -> covid_seir
 
 
@@ -265,24 +266,26 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
         #                         mypar['rho'], round(mypar['baseline']), wl = wl)
         # }
 
-        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        yinit = c(state0$S0, state0$E0, state0$I0, 0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
         time0 = parms['time0']
-        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_seirh_dynamics, parms = parms)
+        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'lsoda', func=td_seirh_dynamics, parms = parms)
         results0 <- results0[,-1]
         yinit0 <- as.numeric(results0[nrow(results0),])
         if (nb == 2) {
-          results <- ode(y=yinit0, t = times, method='rk4', func=td2_seirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = times, method='lsoda', func=td2_seirh_dynamics, parms = parms)
         } else {
-          results <- ode(y=yinit0, t = times, method='rk4', func=td3_seirh_dynamics, parms = parms)
+          results <- ode(y=yinit0, t = times, method='lsoda', func=td3_seirh_dynamics, parms = parms)
           # calling H2 Ih here
         }
 
         model.pred = results[,-1] # remove the time column
+        colnames(model.pred) = c('S', 'E', 'I', 'R', 'H1', 'H2', 'Ih')
 
         # generate simulation data with the parameters defined above
 
-        Ih = model.pred[,5]
+        Ih = c(0, diff(model.pred[,'Ih']))
+
         cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
 
         # model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)

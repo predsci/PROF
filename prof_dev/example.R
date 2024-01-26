@@ -6,9 +6,8 @@ library(PROF)
 library(plotly)
 library(deSolve)
 
-# set path to location of example.R script
-
-setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
+# set path to location of example.R script, for example:
+# setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
 
 # download HHS Hospitalization file
 
@@ -32,7 +31,7 @@ plot_prof_data(prof_data = prof_data)
 # NULL values for start/end dates mean set to start/end of the season data
 
 # to set the start dates for the fits of each pathogen set fit_start
-fit_start = list('covid19'=as.Date('2023-10-01'), 'influenza'= as.Date("2023-10-01"))
+fit_start = list('covid19'=as.Date('2023-10-01'), 'influenza'= as.Date("2023-09-01"))
 
 prof_data = hhs_set_fitdates(prof_data=prof_data,
                              fit_start=fit_start, fit_end=NULL)

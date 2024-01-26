@@ -106,8 +106,9 @@
       
       
 !     cases = Ih * rho + 1e-6
-!     order of parameters is  pop, gamma, pH, mu_H1H2, mu_EI, rho, baseline, I0, all beta 
-!                              1     2     3     4      5     6      7        8
+!     order of parameters is  pop, gamma, pH, mu_H1H2, mu_EI, rho, baseline, I0, time0, mu_rec, immn_wn all beta 
+!                              1     2     3     4      5     6      7        8   9      10       11
+      
       do ii = 1, ntimes
          mu = trajectory(ii,nstates) * param(ind_rho)  +
      $        1.e-6 + param(ind_bsln)
@@ -122,8 +123,6 @@
       obsLLK = calcfit(obs,gamaObs,obs+1e-6,wght,ntimes)
 !     Initial LLK     
       curLLK = calcfit(obs,gamaObs,cases+1e-6,wght,ntimes)
-
-c$$$      print*, 'Initial LLK',curLLK
       
 !
 ! MCMC loop starts here 
@@ -199,11 +198,12 @@ c$$$      print*, 'Initial LLK',curLLK
 
          if (mod(ii, 100000) .eq. 0) Then
             print*,int(real(ii)/real(nMCMC) * 100.0),'% MCMC Completed'
+c$$$            print*, real(curLLK)
+c$$$            print*, real(curpars(ind_opt))
+c$$$            print *, nint(obs)
+c$$$            print *, nint(cases)
          endif
          
-c$$$         if (mod(ii, 100000) .eq. 0) then
-c$$$            print *, ii, iaccept, real(curLLK), real(curpars(ind_opt))
-c$$$         end if
          
          if (mod(ii,ionep) .eq. 0) Then
             

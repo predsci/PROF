@@ -129,11 +129,20 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
       end_of_season = FALSE
 
-      if (disease == 'influenza') {
-        if(length(prof_data$influenza$data_fit$inc) > 200) end_of_season = TRUE
-      } else {
-        if(length(prof_data$covid19$data_fit$inc) > 220) end_of_season = TRUE
+      # use the date to determine if we are at the end of the season or not
+
+      month_end_numeric = lubridate::month(max(dates))
+      month_start_numeric = lubridate::month(min(dates))
+      year_end_numeric = lubridate::year(max(dates))
+      year_start_numeric = lubridate::year(min(dates))
+
+      # This criteria is season specific
+      if (year_end_numeric > year_start_numeric) {
+        # for 2021 =2022 do not change
+        if (year_start_numeric == 2022) if (month_end_numeric >= 5) end_of_season = TRUE
+        if (year_start_numeric == 2023) if (month_end_numeric >= 4) end_of_season = TRUE
       }
+
 
       baseline <- get_baseline(inc, end_of_season)
 
@@ -160,11 +169,12 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
       list1 <- param0[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')]
       list2 <- state0[c('S0', 'I0','R0')]
       param_optim <- c(list1, list2, 'pop' = pop)
-      param_optim <- run_optim(param_optim, inc)
+      # for now comment this call
+      # param_optim <- run_optim(param_optim, inc)
 
       # param0 will now include the following
       # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline" "I0" "time0"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param_optim['I0'], param0['time0'], param0['mu_HR'], param0['immn_wn'], param0['wl'])
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'rho', 'pH','baseline')], param_optim['I0'], param0['time0'], param0['mu_rec'], param0['immn_wn'], param0['wl'])
       # caution!! will need to check for unreasonable parameter values
     } else {
       # construct a parameter list as needed by run_optim
@@ -175,19 +185,19 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
       # param0 will now inlcude the following
       # "Beta" "mu_H1H2"  "pH"  "gamma"  "pop" "S0" "I0"  "R0"  "rho"  "baseline" "I0" "time0"
-      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['I0'], param0['time0'],param0['mu_HR'], param0['immn_wn'], param0['wl'])
+      param0 <- c(param_optim[c('Beta', 'gamma','mu_H1H2', 'mu_EI', 'rho', 'pH','baseline')], param0['I0'], param0['time0'],param0['mu_rec'], param0['immn_wn'], param0['wl'])
     }
 
     # Define all the states that will be integrated/accumulated
     # Define initial values for all the states
     if (model == 'sirh') {
-      states <- c('S','I','R','H1','H2','Ic','Ih')
+      states <- c('S','I','R','H1','H2','Ih')
       init_states <- c(state0[c('S0','I0','R0')],
-                       H10 = 0, H20 = 0, Ic0 = 0,Ih0 = 0)
+                       H10 = 0, H20 = 0,Ih0 = 0)
     } else {
-      states <- c('S','E','I','R','H1','H2','Ic','Ih')
+      states <- c('S','E','I','R','H1','H2','Ih')
       init_states <- c(state0[c('S0', 'E0','I0','R0')],
-                       H10 = 0, H20 = 0, Ic0 = 0, Ih0 = 0)
+                       H10 = 0, H20 = 0, Ih0 = 0)
     }
 
     nstates = length(states)
@@ -219,9 +229,9 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     # need to add a test that sum(state0 == population)
 
     if (model == 'sirh') {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline', 'I0', 'time0', 'mu_HR', 'immn_wn')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'rho', 'baseline', 'I0', 'time0', 'mu_rec', 'immn_wn')])
     } else {
-      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0', 'time0', 'mu_HR', 'immn_wn')])
+      param_sml = c(pop = pop, param0[c('gamma','pH','mu_H1H2', 'mu_EI','rho', 'baseline', 'I0', 'time0', 'mu_rec', 'immn_wn')])
     }
 
     # since we added pop we have to update nparam and nparamtot
@@ -235,14 +245,14 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     # state variables that will be accumulated
 
-    accum = c('Ic', 'Ih')
+    accum = c('Ih')
     iaccum = which(states %in% accum)
     naccum = length(accum)
 
     # imodel is Needed by Fortran code to select between SEIRH and SIRH models
     if (model == 'seirh') {
       imodel = 1
-      paropt = c('mu_H1H2', 'mu_EI', 'pH', 'baseline', 'I0', 'time0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
+      paropt = c('mu_H1H2', 'mu_EI', 'pH', 'baseline', 'I0', 'time0', 'immn_wn', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
     } else {
       imodel = 2
       paropt = c('mu_H1H2', 'pH', 'baseline', 'I0', 'time0', names(td_foi$beta), names(td_foi$tcng[1:(nb-1)]))
@@ -251,9 +261,10 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     dt = 1./20.0
 
+    dt = 1./10.
     t0 = 0
 
-    accum = c('Ic', 'Ih')
+    accum = c('Ih')
     iaccum = which(states %in% accum)
     naccum = length(accum)
 
@@ -288,7 +299,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     parmin[ind_opt] <- lapply(par[ind_opt], function(x) x * 0.5)
     # hand-tune some min values
     parmin['pH'] = 1e-4
-    parmin[['mu_H1H2']] = 0.5
+    # parmin[['mu_H1H2']] = 0.5
     parmin[['baseline']] = max(parmin[['baseline']], 1)
 
     # if user provided values use them
@@ -304,42 +315,37 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     parmax[['mu_H1H2']] = 2.0
 
     if (lubridate::year(dates[1]) == 2023 & disease == 'influenza') {
-      parmin[c('Beta1')] = 1. * par$gamma
-      parmin[c('Beta2')] = 1.1 * par$gamma
+      parmin[c('Beta1')] = 0.8 * par$gamma
+      parmin[c('Beta2')] = 0.8 * par$gamma
 
       parmax[c('Beta1')] = 1.1 * par$gamma
-      parmax[c('Beta2')] = 1.3 * par$gamma
+      parmax[c('Beta2')] = 1.8 * par$gamma
 
-      parmin[c('tcng1')] = 7
-      parmax[c('tcng1')] = (ntimes/2)
+      parmin[c('tcng1')] = 28
+      parmax[c('tcng1')] = (ntimes -28)
 
       parmin['I0'] = 10
       parmax['I0'] = 1000
       if (nb == 3) {
-        parmin[c('Beta3')] = 1.1 * par$gamma
-        parmax[c('Beta3')] = 1.3 * par$gamma
+        parmin[c('Beta3')] = 0.8 * par$gamma
+        parmax[c('Beta3')] = 1.8 * par$gamma
         parmin[c('tcng2')] = 7
+        parmax[c('tcng1')] = (ntimes/2)
         parmax[c('tcng2')] = (ntimes/2)
       }
 
     }
+
+    # TEST THIS
     if (lubridate::year(dates[1]) == 2023 & disease == 'covid19') {
-
-      parmin[c('tcng1')] = 7
-      parmax[c('tcng1')] = (ntimes -21)
-
-      if (nb == 3) {
-          parmin[c('Beta2')] = 1.1 * par$gamma
-          parmin[c('Beta3')] = 1.1 * par$gamma
-          parmin[c('tcng2')] = 7
-          parmax[c('tcng2')] = (ntimes/2)
-      } else {
-        parmin[c('Beta2')] = 1.1 * par$gamma
-        parmin[c('tcng2')] = 7
-        parmax[c('tcng2')] = (ntimes - 21)
-      }
-
+     par['Beta1'] = 0.8*par$Beta1
+     # par['Beta2'] = 0.6
+     #
+     # parmin[c('tcng1')] = 28
+     # parmax[c('tcng1')] = (ntimes -28)
+     parmax['time0'] = 100.0
     }
+
 
     # if user provided values use them
     if (!any(is.na(input_parmax))) {
@@ -393,9 +399,9 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     param_best = out$param
 
-    param_best_list[[ip]] <- param_best
-
     names(param_best) <- par_names
+
+    param_best_list[[ip]] <- param_best
 
     traj[,'cases'] = rpois(ntimes, traj[,'Ih'] * param_best['rho'] + param_best['baseline'])
 

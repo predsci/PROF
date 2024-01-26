@@ -158,12 +158,12 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
       # pomp(data=data.frame(time = 1:ntimes_frcst),
       #      times="time",t0=0,
       #      rprocess=euler(step.fun = Csnippet(td.sirh.step),delta.t=1/40.),
-      #      accumvars = c("Ic", "Ih"),
+      #      accumvars = c("Ih"),
       #      rinit=td.init,
       #      rmeasure=rmeas,
       #      dmeasure=dmeas,
       #      obsnames="cases",
-      #      statenames=c("S","I","R","H1","H2","Ic","Ih","time"),
+      #      statenames=c("S","I","R","H1","H2","Ih","time"),
       #      paramnames=parnames_td_sirh) -> flu_sirh
 
 
@@ -191,7 +191,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
         yinit = c(state0$S0, state0$I0, 0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
         time0 = parms['time0']
-        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_sirh_dynamics, parms = parms)
+        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'lsoda', func=td_sirh_dynamics, parms = parms)
         results0 <- results0[,-1]
         yinit0 <- as.numeric(results0[nrow(results0),])
         if (nb == 2) {
@@ -201,10 +201,10 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
         }
 
         model.pred = results[,-1] # remove the time column
-
+        colnames(model.pred) = c('S', 'I', 'R', 'H1', 'H2', 'Ih')
         # generate simulation data with the parameters defined above
 
-        Ih = model.pred[,4]
+        Ih = c(0, diff(model.pred[,'Ih']))
         cases <- rpois(ntimes_frcst, Ih * mypar[['rho']] + mypar[['baseline']])
 
         # if (model.pred$cases[which.max(obs)] > round(mypar['baseline'])) {
@@ -224,12 +224,12 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
       # pomp(data=data.frame(time = 1:ntimes_frcst),
       #      times="time",t0=0,
       #      rprocess=euler(step.fun = Csnippet(td.seirh.step),delta.t=1/40.),
-      #      accumvars = c("Ic", "Ih"),
+      #      accumvars = c("Ih"),
       #      rinit=td.init.seirh,
       #      rmeasure=rmeas,
       #      dmeasure=dmeas,
       #      obsnames="cases",
-      #      statenames=c("S","E","I","R","H1","H2","Ic","Ih", 'time'),
+      #      statenames=c("S","E","I","R","H1","H2","Ih", 'time'),
       #      paramnames=parnames_td_seirh) -> covid_seir
 
       icount=0
@@ -257,7 +257,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
         #
         # }
 
-        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0)
+        yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0, 0)
         parms = c(mypar, 'wl' =wl)
         time0 = parms['time0']
         results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'rk4', func=td_seirh_dynamics, parms = parms)
@@ -271,10 +271,10 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
         }
 
         model.pred = results[,-1] # remove the time column
-
+        colnames(model.pred) = c('S', 'E', 'I', 'R', 'H1', 'H2', 'Ih')
         # generate simulation data with the parameters defined above
 
-        Ih = model.pred[,5]
+        Ih = c(0, diff(model.pred[,'Ih']))
         cases <- rpois(ntimes_frcst, Ih * mypar[['rho']] + mypar[['baseline']])
 
         if (max(cases) > mypar['baseline']){

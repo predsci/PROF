@@ -16,20 +16,24 @@
       real*8 hh, h6, xh, tiny, myt
       real*8 beta(nb), ts(nb)
       real*8 pop, gamma, pH, mu_H1H2, sI0, time0
+      real*8 mu_rec, immn_wn
+      
       integer icount, k
       real*8 mu
       
-!     States will be orderes as: sS, sI, sR, sH, Ic, Ih
-!     Ic and Ih will be zeroed at the begining of each time step
+!     States will be orderes as: sS, sI, sR, sH, Ih
+!     Ih will be zeroed at the begining of each time window
 
-!     order of parameters is  pop, gamma, pH, mu_H1H2, rho, baseline, I0, time0, all beta 
-!                              1     2     3     4      5     6       7      8      
+!     order of parameters is  pop, gamma, pH, mu_H1H2, rho, baseline, I0, time0, mu_rec, immn_wn, all beta and tcng 
+!                              1     2     3     4      5     6       7      8      9      10
       pop   = param(1)
       gamma = param(2)
       pH    = param(3)
       mu_H1H2 = param(4)
       sI0     = param(7)
       time0 = param(8)
+      mu_rec = param(9)
+      immn_wn = param(10)
       
       trajectory = 0.0d0
 
@@ -45,13 +49,10 @@
       y(2) = sI0
       y(3) = pop - (y(1) + y(2))
      
-
       hh = dt * 0.5
       h6 = dt/6.0d0
       xh = t0 + hh
-
-
-      
+   
       do k = 1, nb
          beta(k) = param(nparam+k)
          ts(k)   = param(nparam+nb +k)
@@ -71,17 +72,17 @@
       do while (myt <= nint(time0))
          beta_cur = beta(1)
          call derivs_sirh(y, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dydx)
+     $       mu_rec, immn_wn, beta_cur, dydx)
          yt = y + hh *dydx
          call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dyt)
+     $        mu_rec, immn_wn, beta_cur, dyt)
          yt = y + hh * dyt
          call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dym)
+     $        mu_rec, immn_wn, beta_cur, dym)
          yt = y + dt * dym
          dym = dyt + dym
          call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dyt)
+     $        mu_rec, immn_wn, beta_cur, dyt)
          y = y + h6 *(dydx + dyt + 2.0d0 * dym)
          myt = myt + dt
 !     it is OK to simply zero Ic and Ih since time0 is rounded to the nearest integer                 
@@ -104,17 +105,17 @@
          beta_cur = beta_cur * 0.5
          
          call derivs_sirh(y, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dydx)
+     $        mu_rec, immn_wn, beta_cur, dydx)
          yt = y + hh *dydx
          call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dyt)
+     $        mu_rec, immn_wn, beta_cur, dyt)
          yt = y + hh * dyt
          call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dym)
+     $        mu_rec, immn_wn, beta_cur, dym)
          yt = y + dt * dym
          dym = dyt + dym
          call derivs_sirh(yt, nstates, pop, gamma, pH, mu_H1H2,
-     $        beta_cur, dyt)
+     $        mu_rec, immn_wn, beta_cur, dyt)
          y = y + h6 *(dydx + dyt + 2.0d0 * dym)
          myt = myt + dt
          if ((myt + dt) > times((icount))) Then           
@@ -130,32 +131,30 @@
       end subroutine detsirh
 
       subroutine derivs_sirh(y, nstates, pop, gamma, pH, mu_H1H2,
-     $     Beta, dy)
+     $     mu_rec, immn_wn, Beta, dy)
 
       implicit none
       integer nstates
       real*8 y(nstates)
       real*8 dy(nstates)
-      real*8 pop, gamma, pH, Beta, mu_H1H2
+      real*8 pop, gamma, pH, Beta, mu_H1H2, mu_rec, immn_wn
       real*8 rate
       
      
       rate = Beta * y(1) * y(2) /pop
 
       ! S
-      dy(1) = -rate
+      dy(1) = -rate + immn_wn * y(3) 
       ! I
       dy(2) = rate - gamma*y(2)
       ! R
-      dy(3) = (1.0d0-pH)*gamma*y(2) 
+      dy(3) = (1.0d0-pH)*gamma*y(2) + mu_rec * y(5) - immn_wn * y(3)
       ! H1
       dy(4) = pH * gamma * y(2) - mu_H1H2 * y(4)      
       ! H2 
-      dy(5) =  mu_H1H2 * y(4)
-      ! Ic
-      dy(6) = rate
+      dy(5) =  mu_H1H2 * y(4) - mu_rec * y(5)
       ! Ih
-      dy(7) = mu_H1H2 * y(4)
+      dy(6) = mu_H1H2 * y(4)
 
       return
 

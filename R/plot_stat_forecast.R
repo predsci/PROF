@@ -60,7 +60,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
 
     # build also the arrays for the forecasts
 
-    cadence = as.numeric(dates[2]-dates[1])
+    cadence = as.numeric(dates_fit[2]-dates_fit[1])
     if (cadence == 1) {
       cadence_lab = paste0(cadence, ' day')
       print_lab = 'Days'

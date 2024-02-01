@@ -4,9 +4,9 @@ Title: Package for Respiratory disease Open-source Forecasting
 Version: 0.0.1000
 Author: Drs. Michal Ben-Nun, James Turtle, Pete Riley
 Maintainer: The package maintainer <mbennun@predsci.com>
-Description: A Package for fitting publicly available (or user provided) 
-    confirmed hospital admission data and short term probabilistic
-    forecasts.  PROF supports two respiratory viruses: influenza and COVID-19 and 
+Description: A Package for fitting publicly available confirmed hospital 
+    admission data and short term probabilistic forecasts.  
+    PROF supports two respiratory viruses: influenza and COVID-19 and 
     when requested will provide an estimate of the combined burden of both. 
 Imports:
   utils,

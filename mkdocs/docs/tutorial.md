@@ -14,7 +14,7 @@ You can continue to work in the shiny window or select to open it in a browser. 
 
 ## 1. Explore Incidence 
 
-To proceed to the ``Explore Incidence`` Tab you can either click on the cartoon data image or click on the ``1. Explore Incidence`` tab. Here, the two dropdown menus allow you to select a location and a season. (We support all seasons covered by the HHS dataset.)  Before you make your selection please read the message about the local PROF-Shiny data file.  If the message indicates that the datafile is up-to-date there is no need for any action but if it indicates that there may be newer data we recommend that you update the data file using the Download button.  Once you have read the message, and acted if recommended, proceed to make you selections for a location and a season and press the ``Plot Incidence Data`` button.  Two plots will appear showing daily new hospital admission for COVID-19 and Influenza (top and bottom plots, respectively).  As you hover over each plot, you can inspect specific dates/values. Each plot can be saved as a png file using the camera icon and the data associated with the plots can be saved by clicking the ``Save Incidence Data`` button.  To view another location and/or season make your new selections and press the ``Plot Incidence Data` button. The current plots will be greyed-out while the new request is processed.  Once you are satisfied with your selections for location and season you can proceed the Tab number 2, ``Fit Incidence``.
+To proceed to the ``Explore Incidence`` Tab you can either click on the cartoon data image or click on the tab itself. Here, the two dropdown menus allow you to select a location and a season. (We support all seasons covered by the HHS dataset.)  Before you make your selection please read the message about the local PROF-Shiny data file.  If the message indicates that the datafile is up-to-date there is no need for any action but if it indicates that there may be newer data we recommend that you update the data file using the Download button.  Once you have read the message, and acted if recommended, proceed to make you selections for a location and a season and press the ``Plot Incidence Data`` button.  Two plots will appear showing daily new hospital admission for COVID-19 and Influenza (top and bottom plots, respectively).  As you hover over each plot, you can inspect specific dates/values. Each plot can be saved as a png file using the camera icon and the data associated with the plots can be saved by clicking the ``Save Incidence Data`` button.  To view another location and/or season make your new selections and press the ``Plot Incidence Data`` button. The current plots will be greyed-out while the new request is processed.  Once you are satisfied with your selections for location and season you can proceed the Tab number 2, ``Fit Incidence``.
 
 ## 2. Fit Incidence
 
@@ -37,17 +37,17 @@ The simple baseline statistical model is designed to reproduce all the data poin
 Forecasting will always be done on the currently selected location and season. 
 
 ### Mechanistic Forecast
-
-A mechanistic forecast is based on the posterior distribution of the parameters coming out of the fit. This means that only pathogens that you selected for a mechanistic fit will be forecasted and the only selection you need to make now the number of days for the forecast. By default this is set to 35 days and you can move the slider to modify this.  Once you made you selection press the ``Mechanistic Forecast'' button.  The plots will appear after less than a minute.  The top left/right plots show the forecast for COVID-19/Influenza (median, 75 and 95 confidence intervals).  The bottom plot shows our estimate for the combined burden calculated either by selecting random realizations from each forecast (left panel) or by sorting the realizations (right panel).  Here too, you can save the plots as a png file and download the data as a csv file. Please note that the combined burden plots will appear only if you selected to fit and forecast both pathogens. 
+The mechanistic forecast is based on the posterior distribution of the parameters coming out of the fit. This means that only pathogens that you selected for a mechanistic fit will be forecasted and the only selection you need to make now the number of days for the forecast. By default this is set to 35 days and you can move the slider to modify this.  Once you made you selection press the ``Mechanistic Forecast'' button.  The plots will appear after less than a minute.  The top left/right plots show the forecast for COVID-19/Influenza (median, 75 and 95 confidence intervals).  The bottom plot shows our estimate for the combined burden calculated either by selecting random realizations from each forecast (left panel) or by sorting the realizations (right panel).  Here too, you can save the plots as a png file and download the data as a csv file. Please note that the combined burden plots will appear only if you selected to fit and forecast both pathogens. 
 
 ### Statistical Forecast
 
 Here we use the baseline statistical model for the forecast with all other details being the same as in the Mechanistic Forecast tab. 
 
-## About
+## About Tab
 
-The ``About'' tab provides background information about PROF as well as an Acknowledgement and a link to our web documentation. 
+The ``About`` tab provides background information about PROF as well as an Acknowledgement and a link to our web documentation. 
 For questions/comments/suggestions/bugs please email us at:
+
 * *Michal Ben-Nun* *: <mbennun@predsci.com>
 * *James Turtle* *: <jturtle@predsci.com>
 

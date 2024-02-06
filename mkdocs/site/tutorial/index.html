@@ -77,7 +77,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#about">About</a>
+    <li class="toctree-l2"><a class="reference internal" href="#about-tab">About Tab</a>
     </li>
     </ul>
                 </li>
@@ -118,7 +118,7 @@
 <p><img alt="PROF-shiny-landing" src="../img/prof_shiny_landing.png" /></p>
 <p>You can continue to work in the shiny window or select to open it in a browser. The landing page provides links to all our documentation and repositories (bottom left) and is the gateway to the Incidence page.</p>
 <h2 id="1-explore-incidence">1. Explore Incidence</h2>
-<p>To proceed to the <code>Explore Incidence</code> Tab you can either click on the cartoon data image or click on the <code>1. Explore Incidence</code> tab. Here, the two dropdown menus allow you to select a location and a season. (We support all seasons covered by the HHS dataset.)  Before you make your selection please read the message about the local PROF-Shiny data file.  If the message indicates that the datafile is up-to-date there is no need for any action but if it indicates that there may be newer data we recommend that you update the data file using the Download button.  Once you have read the message, and acted if recommended, proceed to make you selections for a location and a season and press the <code>Plot Incidence Data</code> button.  Two plots will appear showing daily new hospital admission for COVID-19 and Influenza (top and bottom plots, respectively).  As you hover over each plot, you can inspect specific dates/values. Each plot can be saved as a png file using the camera icon and the data associated with the plots can be saved by clicking the <code>Save Incidence Data</code> button.  To view another location and/or season make your new selections and press the <code>Plot Incidence Data` button. The current plots will be greyed-out while the new request is processed.  Once you are satisfied with your selections for location and season you can proceed the Tab number 2,</code>Fit Incidence``.</p>
+<p>To proceed to the <code>Explore Incidence</code> Tab you can either click on the cartoon data image or click on the tab itself. Here, the two dropdown menus allow you to select a location and a season. (We support all seasons covered by the HHS dataset.)  Before you make your selection please read the message about the local PROF-Shiny data file.  If the message indicates that the datafile is up-to-date there is no need for any action but if it indicates that there may be newer data we recommend that you update the data file using the Download button.  Once you have read the message, and acted if recommended, proceed to make you selections for a location and a season and press the <code>Plot Incidence Data</code> button.  Two plots will appear showing daily new hospital admission for COVID-19 and Influenza (top and bottom plots, respectively).  As you hover over each plot, you can inspect specific dates/values. Each plot can be saved as a png file using the camera icon and the data associated with the plots can be saved by clicking the <code>Save Incidence Data</code> button.  To view another location and/or season make your new selections and press the <code>Plot Incidence Data</code> button. The current plots will be greyed-out while the new request is processed.  Once you are satisfied with your selections for location and season you can proceed the Tab number 2, <code>Fit Incidence</code>.</p>
 <h2 id="2-fit-incidence">2. Fit Incidence</h2>
 <p>Fitting will always be done on the currently selected location and season. You can select to fit the data with a mechanistic compartmental model and/or a baseline statistical model.  The latter fit is basically instantaneous whereas the mechanistic fit(s) will take 5-10 minutes (depending on the details of the fit).  </p>
 <h3 id="mechanistic-fit">Mechanistic Fit</h3>
@@ -131,14 +131,16 @@ Please not that while the mechanistic fit is in progress you can not execute any
 <h2 id="3-forecast-incidence">3. Forecast Incidence</h2>
 <p>Forecasting will always be done on the currently selected location and season. </p>
 <h3 id="mechanistic-forecast">Mechanistic Forecast</h3>
-<p>A mechanistic forecast is based on the posterior distribution of the parameters coming out of the fit. This means that only pathogens that you selected for a mechanistic fit will be forecasted and the only selection you need to make now the number of days for the forecast. By default this is set to 35 days and you can move the slider to modify this.  Once you made you selection press the ``Mechanistic Forecast'' button.  The plots will appear after less than a minute.  The top left/right plots show the forecast for COVID-19/Influenza (median, 75 and 95 confidence intervals).  The bottom plot shows our estimate for the combined burden calculated either by selecting random realizations from each forecast (left panel) or by sorting the realizations (right panel).  Here too, you can save the plots as a png file and download the data as a csv file. Please note that the combined burden plots will appear only if you selected to fit and forecast both pathogens. </p>
+<p>The mechanistic forecast is based on the posterior distribution of the parameters coming out of the fit. This means that only pathogens that you selected for a mechanistic fit will be forecasted and the only selection you need to make now the number of days for the forecast. By default this is set to 35 days and you can move the slider to modify this.  Once you made you selection press the ``Mechanistic Forecast'' button.  The plots will appear after less than a minute.  The top left/right plots show the forecast for COVID-19/Influenza (median, 75 and 95 confidence intervals).  The bottom plot shows our estimate for the combined burden calculated either by selecting random realizations from each forecast (left panel) or by sorting the realizations (right panel).  Here too, you can save the plots as a png file and download the data as a csv file. Please note that the combined burden plots will appear only if you selected to fit and forecast both pathogens. </p>
 <h3 id="statistical-forecast">Statistical Forecast</h3>
 <p>Here we use the baseline statistical model for the forecast with all other details being the same as in the Mechanistic Forecast tab. </p>
-<h2 id="about">About</h2>
-<p>The ``About'' tab provides background information about PROF as well as an Acknowledgement and a link to our web documentation. 
-For questions/comments/suggestions/bugs please email us at:
-* <em>Michal Ben-Nun</em> <em>: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#98;&#101;&#110;&#110;&#117;&#110;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;">&#109;&#98;&#101;&#110;&#110;&#117;&#110;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;</a>
-* </em>James Turtle<em> </em>: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#106;&#116;&#117;&#114;&#116;&#108;&#101;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;">&#106;&#116;&#117;&#114;&#116;&#108;&#101;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;</a></p>
+<h2 id="about-tab">About Tab</h2>
+<p>The <code>About</code> tab provides background information about PROF as well as an Acknowledgement and a link to our web documentation. 
+For questions/comments/suggestions/bugs please email us at:</p>
+<ul>
+<li><em>Michal Ben-Nun</em> *: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#98;&#101;&#110;&#110;&#117;&#110;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;">&#109;&#98;&#101;&#110;&#110;&#117;&#110;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;</a></li>
+<li><em>James Turtle</em> *: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#106;&#116;&#117;&#114;&#116;&#108;&#101;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;">&#106;&#116;&#117;&#114;&#116;&#108;&#101;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;</a></li>
+</ul>
               
             </div>
           </div><footer>

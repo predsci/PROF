@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="PROF Team" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>PROF Tutorial - PROF</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "PROF Tutorial";
+        var mkdocs_page_input_path = "tutorial.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../img/psi.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Install</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../setup.md">Setup</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">PROF</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li class="breadcrumb-item active">PROF Tutorial</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/tutorial.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="prof-tutorial">PROF Tutorial</h1>
+<p>This tutorial is configured assuming an Rstudio session with the PROF-Shiny-app GUI. It assumes that PROF has been successfully installed and that the PROF-shiny-app has been cloned.</p>
+<h2 id="opening-the-app">Opening the App</h2>
+<p>We will start by opening an Rstudio session and opening the PROF shiny app.   To open the app open the ui.R file downloaded when you cloned the shiny-app and click on the green<code>Run App</code> icon.</p>
+<p>At this stage R may install packages that are required by the shiny-app but once this is completed a shiny window will open with the landing page of the application</p>
+<p><img alt="PROF-shiny-landing" src="../img/prof_shiny_landing.png" /></p>
+<p>You can continue to work in the shiny window or select to open it in a browser. The landing page provides links to all our documentation and repositories (bottom left) and is the gateway to the Incidence page.</p>
+<h2 id="1-explore-incidence">1. Explore Incidence</h2>
+<p>To proceed to the <code>Explore Incidence</code> Tab you can either click on the cartoon data image or click on the <code>1. Explore Incidence</code> tab. Here, the two dropdown menus allow you to select a location and a season. (We support all seasons covered by the HHS dataset.)  Before you make your selection please read the message about the local PROF-Shiny data file.  If the message indicates that the datafile is up-to-date there is no need for any action but if it indicates that there may be newer data we recommend that you update the data file using the Download button.  Once you have read the message, and acted if recommended, proceed to make you selections for a location and a season and press the <code>Plot Incidence Data</code> button.  Two plots will appear showing daily new hospital admission for COVID-19 and Influenza (top and bottom plots, respectively).  As you hover over each plot, you can inspect specific dates/values. Each plot can be saved as a png file using the camera icon and the data associated with the plots can be saved by clicking the <code>Save Incidence Data</code> button.  To view another location and/or season make your new selections and press the <code>Plot Incidence Data` button. The current plots will be greyed-out while the new request is processed.  Once you are satisfied with your selections for location and season you can proceed the Tab number 2,</code>Fit Incidence``.</p>
+<h2 id="2-fit-incidence">2. Fit Incidence</h2>
+<p>Fitting will always be done on the currently selected location and season. You can select to fit the data with a mechanistic compartmental model and/or a baseline statistical model.  The latter fit is basically instantaneous whereas the mechanistic fit(s) will take 5-10 minutes (depending on the details of the fit).  </p>
+<h3 id="mechanistic-fit">Mechanistic Fit</h3>
+<p>In the case of a Mechanistic fit you must first decide which pathogens you want to fit. Once you click on a pathogen you are prompted to define the model. This includes selecting a compartmental model (SEIRH or SIRH), the number of values for the time-dependent force of infection (FOI) and the start date for the fit. We recommend using the SEIHR/SIRH models for COVID-19/Influenza respectively.  The choice of the number of values for the FOI depends on the complexity of the time-series you are fitting.  As a rule-of-thumb, we recommend using the 3-value option only if the time series exhibits more than one peak.  In all other cases we recommend using the 2-value option.  Note that the complexity of the time-series may depend on your selection for the start-date for the fit.  By default, this date is set for both pathogens to the start of the season but you can change that. When fitting both pathogens, the start date for the fit does not need to be the same for both pathogens but the end date must be. By default the end date is set to the last date with reported data but you can modify that to an earlier date.   If you do that, then at the forecasting step you will be able to compare the forecast to the observations.  The Figure below shows an example of the shiny window when all the selections have been made</p>
+<p><img alt="PROF-shiny-fitting-mech" src="../img/prof_shiny_fitting_mech.png" /></p>
+<p>Once you have made all your selections you can press the <code>Mechanistic Fit to Incidence</code> button.  A message will appear indicating that the fitting has started and will take 10-15 minutes.  You can follow the progress of the fitting in the console window of you Shiny session.  When the fitting is complete either one or two plots will appear showing the results of the fit along with the data.  We show the median, 75 and 95 confidence intervals. As in the case of the incidence plots here too you can click on the camera icon to save each plot or on the <code>Save Plots Data</code> button to download the plots data as a csv file. 
+Please not that while the mechanistic fit is in progress you can not execute any other command in the Shiny app.  When the fitting is complete you can proceed to either the <code>Statistical</code> option of to the Tab 3: ``Create Forecast''.</p>
+<h3 id="statistical-fit">Statistical Fit</h3>
+<p>The simple baseline statistical model is designed to reproduce all the data points and create an uncertainty based on day-to-day variations in the data. Here we only ask the User to select which pathogen they would like to fit, what is the start date for each fit and what is the end date for the fit(s).  Here too we support individual start dates but require the same end date.  When you have made your selection press the <code>Statistical Fit to Incidence Button</code> and after a few seconds one or two plots will appear (based on the number of pathogens you selected to fit). As always,  you can click on the camera icon to save each plot or on the <code>Save Plots Data</code> button to download the plots data as a csv file. </p>
+<h2 id="3-forecast-incidence">3. Forecast Incidence</h2>
+<p>Forecasting will always be done on the currently selected location and season. </p>
+<h3 id="mechanistic-forecast">Mechanistic Forecast</h3>
+<p>A mechanistic forecast is based on the posterior distribution of the parameters coming out of the fit. This means that only pathogens that you selected for a mechanistic fit will be forecasted and the only selection you need to make now the number of days for the forecast. By default this is set to 35 days and you can move the slider to modify this.  Once you made you selection press the ``Mechanistic Forecast'' button.  The plots will appear after less than a minute.  The top left/right plots show the forecast for COVID-19/Influenza (median, 75 and 95 confidence intervals).  The bottom plot shows our estimate for the combined burden calculated either by selecting random realizations from each forecast (left panel) or by sorting the realizations (right panel).  Here too, you can save the plots as a png file and download the data as a csv file. Please note that the combined burden plots will appear only if you selected to fit and forecast both pathogens. </p>
+<h3 id="statistical-forecast">Statistical Forecast</h3>
+<p>Here we use the baseline statistical model for the forecast with all other details being the same as in the Mechanistic Forecast tab. </p>
+<h2 id="about">About</h2>
+<p>The ``About'' tab provides background information about PROF as well as an Acknowledgement and a link to our web documentation. 
+For questions/comments/suggestions/bugs please email us at:
+* <em>Michal Ben-Nun</em> <em>: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#98;&#101;&#110;&#110;&#117;&#110;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;">&#109;&#98;&#101;&#110;&#110;&#117;&#110;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;</a>
+* </em>James Turtle<em> </em>: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#106;&#116;&#117;&#114;&#116;&#108;&#101;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;">&#106;&#116;&#117;&#114;&#116;&#108;&#101;&#64;&#112;&#114;&#101;&#100;&#115;&#99;&#105;&#46;&#99;&#111;&#109;</a></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/predsci/PROF" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      <script src="../javascripts/config.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -13,7 +13,7 @@
       <script>
         // Current page data
         var mkdocs_page_name = "Setup";
-        var mkdocs_page_input_path = "setup.md";
+        var mkdocs_page_input_path = "example.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -54,10 +54,8 @@
                 <li class="toctree-l1"><a class="reference internal" href="../install/">Install</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">Setup</a>
-    <ul class="current">
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../setup.md">Setup</a>
                 </li>
               </ul>
       </div>
@@ -76,7 +74,7 @@
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
       <li class="breadcrumb-item active">Setup</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/setup.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/example.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -88,7 +86,7 @@
 <p>We have setup an example.R script and suggest that you give it a try after installing the package.</p>
 <p>This example has been configured for fitting and forecasting influenza and COVID-19 data for any of the 50 states D.C. and Puerto Rico for the 2021-22, 2022-23, or 2023-24 seasons.</p>
 <p>All available data is first downloaded and then the data for the requested location is retrieved and processed. You can fit the entire requested season or just part of it.  Below we demonstrate both options.  </p>
-<p>We start by opening an R or RStudio session and loading the PROF package:</p>
+<p>We start by opening an R or Rstudio session and loading the PROF package:</p>
 <blockquote>
 <p>&gt; library(PROF)</p>
 </blockquote>
@@ -177,11 +175,17 @@ pl_stat - a list of ggplot2 objects one for each disease for the statistical plo
 <p>PROF can also be used to fit and forecast using a fast baseline statistical model.  The procedure follows the steps we have taken for the compartmental mechanistic model. </p>
 <p>First, we add 'fit-stat data ' structure to each pathogen - this is the data that will be fitted using a baseline statistical model.
 NULL values for start/end dates mean set to start/end of the season data, and fit all available data:</p>
-<p>prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)</p>
+<blockquote>
+<p>&gt; prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)</p>
+</blockquote>
 <p>To fit and plot the results we use:</p>
-<p>stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NULL)</p>
+<blockquote>
+<p>&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = NULL)</p>
+</blockquote>
 <p>Here we have set the number of trajectories to 10,000 (default is 1,000).  To save the plots to a file use:</p>
-<p>stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = 'path/to/filename')</p>
+<blockquote>
+<p>&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = 'path/to/filename')</p>
+</blockquote>
 <p>To use the baseline statistical model to create a 42 day forward forecast and the two estimates for the combined burden use:</p>
 <blockquote>
 <p>&gt; stat_forecast_list &lt;- plot_stat_forecast(prof_data = prof_data, nfrcst = 42)</p>
@@ -190,12 +194,36 @@ NULL values for start/end dates mean set to start/end of the season data, and fi
 same four elements as the one for the mechanistic forecasts</p>
 <p>For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 35.  The cadence (i.e., units)
 of this parameter are assumed to be the same as that of the incidence data.</p>
+<p>For both the mechanistic and statistical models you can fit and forecast a single pathogen.<br />
+If for example you would like to only fit the 'covid19' data you should follow these steps:</p>
+<p>Load an initial guess for the parameters and set the model only for 'covid19'</p>
+<blockquote>
+<p>&gt; par_list = init_par_list(diseases=c("covid19"), models=c("seirh"))</p>
+</blockquote>
+<p>Fit only the covid19 data using:</p>
+<blockquote>
+<p>&gt; fit_list &lt;- fit_data(prof_data = prof_data['covid19'], par_list = par_list)</p>
+</blockquote>
+<p>Plot the single pathogen fit results:</p>
+<blockquote>
+<p>&gt; fit_traj &lt;- plot_fit(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)</p>
+</blockquote>
+<p>Use the posterior distribution of the single pathogen fit to perform and plot the forecast:</p>
+<blockquote>
+<p>&gt; forecast_traj &lt;- plot_forecast(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)</p>
+</blockquote>
+<p>Since only one pathogen was modeled there is no estimate for a combined burden</p>
+<p>To plot the results of fitting a baseline statistical model only to covid19 use:</p>
+<blockquote>
+<p>&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data['covid19'])</p>
+</blockquote>
+<p>And for the forecast: </p>
+<blockquote>
+<p>&gt; stat_forecast_list &lt;- plot_stat_forecast(prof_data = prof_data['covid19'], nfrcst = 42)</p>
+</blockquote>
               
             </div>
           </div><footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../install/" class="btn btn-neutral float-left" title="Install"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-    </div>
 
   <hr/>
 
@@ -220,8 +248,6 @@ of this parameter are assumed to be the same as that of the incidence data.</p>
           <a href="https://github.com/predsci/PROF" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
         </span>
     
-    
-      <span><a href="../install/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
   </span>

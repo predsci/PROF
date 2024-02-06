@@ -57,11 +57,13 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#cloning-through-github">Cloning through GitHub</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shiny-app-prof-installation">Shiny-app PROF installation</a>
+    </li>
     </ul>
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                <li class="toctree-l1"><a class="" href="../setup.md">Setup</a>
                 </li>
               </ul>
       </div>
@@ -89,7 +91,8 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="prof-installation-instructions">PROF Installation Instructions</h1>
-<p>This R package requires an R or RStudio installation and Fortran/GCC compilers.</p>
+<p>This R package requires an R or Rstudio installation and Fortran/GCC compilers. We strongly recommend using the package with its
+user friends Shiny-app GUI (see below).</p>
 <h2 id="using-devtools-in-an-r-console">Using 'devtools' in an R console</h2>
 <blockquote>
 <p>&gt; library(devtools)<br />
@@ -98,13 +101,16 @@
 <h2 id="cloning-through-github">Cloning through GitHub</h2>
 <p>Users are also welcome to directly download the package either as a zip or by cloning the repository.</p>
 <p>To clone: <code>git clone https://github.com/predsci/PROF.git</code></p>
-<p>Then Open an R or RStudio session.  Navigate to the location of the cloned project, open the PROF.Rproj file and install the package.</p>
+<p>Then Open an R or Rstudio session.  Navigate to the location of the cloned project, open the PROF.Rproj file and install the package.</p>
+<h2 id="shiny-app-prof-installation">Shiny-app PROF installation</h2>
+<p>After successfully installing the PROF package please proceed to clone the GUI for it:</p>
+<p><code>git clone https://github.com/predsci/PROF-shiny-app.git</code></p>
+<p>To launch the GUI open the <code>ui.R</code> file within PRO-shiny-app</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../about/" class="btn btn-neutral float-left" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../setup/" class="btn btn-neutral float-right" title="Setup">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -133,8 +139,6 @@
     
       <span><a href="../about/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
-    
-      <span><a href="../setup/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

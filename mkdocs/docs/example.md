@@ -8,7 +8,7 @@ All available data is first downloaded and then the data for the requested locat
 
 
 
-We start by opening an R or RStudio session and loading the PROF package:
+We start by opening an R or Rstudio session and loading the PROF package:
 
 >\> library(PROF)
 

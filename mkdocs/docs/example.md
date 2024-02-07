@@ -148,7 +148,7 @@ To use the baseline statistical model to create a 28 day forward forecast and th
 For the combined burden of the baseline statistical model we offer the same two options (random and sorted). The statistical plotting routine returns a list with the
 same four elements as the one for the mechanistic forecasts
 
-For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 35.  The cadence (i.e., units)
+For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 28.  The cadence (i.e., units)
 of this parameter are assumed to be the same as that of the incidence data.
 
 For both the mechanistic and statistical models you can fit and forecast a single pathogen.  

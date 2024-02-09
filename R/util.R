@@ -495,6 +495,8 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 
   ntraj_both = min(ntraj_both)[1]
 
+  obs_each_list = obs_fit_each_list = list()
+
   # subset each pathogen using start/end dates
 
   for (ip in 1:npath) {
@@ -526,8 +528,6 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 
     simdat = simdat[1:ntraj_both, ind0:ind1]
 
-    simdat_list[[ip]] = simdat
-
     # observations may need to be trimmed at start to ensure
     # they start at the same date as the fitted data
 
@@ -553,13 +553,21 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
     ordered_simdat <- simdat[order(max_values),]
     ordered_simdat_both = ordered_simdat_both + ordered_simdat
 
+    # for stacked barplot we need to have the individual pathogen information also
+
+    obs_each_list[[ip]] = inc
+    obs_fit_each_list[[ip]] = inc_fit_trmd
+
   }
 
   simdat_both = list()
   simdat_both[['random']]  = rand_simdat_both
   simdat_both[['ordered']] = ordered_simdat_both
 
-  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both))
+
+
+  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both,
+              obs_each_list = obs_each_list, obs_fit_each_list = obs_fit_each_list))
 }
 
 #'

@@ -338,7 +338,8 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     # TEST THIS
     if (lubridate::year(dates[1]) == 2023 & disease == 'covid19') {
-     par['Beta1'] = 0.8*par$Beta1
+     par['Beta1'] = 0.7*par$Beta1
+     if(nb == 3) parmax['Beta3'] = 1.0
      # par['Beta2'] = 0.6
      #
      # parmin[c('tcng1')] = 28
@@ -416,7 +417,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
   # Will also need to SAVE all what we are returning
 
-  return(list(tab_list = tab_list, state0_list = state0_list, wl = param0$wl, nb_vec = nb_vec))
+  return(list(tab_list = tab_list, state0_list = state0_list, wl = param0$wl, nb_vec = nb_vec, traj = traj))
 
 }
 

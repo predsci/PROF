@@ -32,6 +32,7 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
 
   fit_traj = list()
 
+  default_colors <- c("#F8766D", "#00BFC4")
   # loop on all diseases
   for (ip in 1:npath) {
 
@@ -95,11 +96,11 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
 
     pl[[disease]] <- suppressMessages(ggplot(data=total,
                                              mapping=aes(x=date))+
-                                        geom_line(aes(y=`50%`),color='red')+
-                                        geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
-                                        geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
+                                        geom_line(aes(y=`50%`),color=default_colors[ip])+
+                                        geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill=default_colors[ip],alpha=0.4)+
+                                        geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill=default_colors[ip],alpha=0.7)+
                                         geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
-                                        geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
+                                        # geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
                                         labs(y=ylab,x=xlab) + ggtitle(title))
 
   } #end of loop over diseases

@@ -112,7 +112,7 @@ forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_l
 # to use a baseline statistical model and create individual forecasts 35 days forward
 # and combined burden forecasts use:
 
-stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 35)
+stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 28)
 
 # For the combined burden of the baseline statistical model we offer the same two
 # options (random and sorted). The statistical plotting routine returns a list with the

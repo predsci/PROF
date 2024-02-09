@@ -129,11 +129,20 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
       end_of_season = FALSE
 
-      if (disease == 'influenza') {
-        if(length(prof_data$influenza$data_fit$inc) > 200) end_of_season = TRUE
-      } else {
-        if(length(prof_data$covid19$data_fit$inc) > 220) end_of_season = TRUE
+      # use the date to determine if we are at the end of the season or not
+
+      month_end_numeric = lubridate::month(max(dates))
+      month_start_numeric = lubridate::month(min(dates))
+      year_end_numeric = lubridate::year(max(dates))
+      year_start_numeric = lubridate::year(min(dates))
+
+      # This criteria is season specific
+      if (year_end_numeric > year_start_numeric) {
+        # for 2021 =2022 do not change
+        if (year_start_numeric == 2022) if (month_end_numeric >= 5) end_of_season = TRUE
+        if (year_start_numeric == 2023) if (month_end_numeric >= 4) end_of_season = TRUE
       }
+
 
       baseline <- get_baseline(inc, end_of_season)
 
@@ -329,23 +338,15 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     # TEST THIS
     if (lubridate::year(dates[1]) == 2023 & disease == 'covid19') {
-     par['Beta1'] = 0.8*par$Beta1
+     par['Beta1'] = 0.7*par$Beta1
+     if(nb == 3) parmax['Beta3'] = 1.0
+     # par['Beta2'] = 0.6
+     #
+     # parmin[c('tcng1')] = 28
+     # parmax[c('tcng1')] = (ntimes -28)
+     parmax['time0'] = 100.0
     }
-    # if (lubridate::year(dates[1]) == 2023 & disease == 'covid19') {
-    #
-    #   parmin[c('tcng1')] = 7
-    #   parmax[c('tcng1')] = (ntimes -21)
-    #
-    #   if (nb == 3) {
-    #       parmin[c('Beta2')] = 1.1 * par$gamma
-    #       parmin[c('Beta3')] = 1.1 * par$gamma
-    #       parmin[c('tcng2')] = 7
-    #       parmax[c('tcng2')] = (ntimes/2)
-    #   } else {
-    #     parmin[c('Beta2')] = 1.1 * par$gamma
-    #   }
-    #
-    # }
+
 
     # if user provided values use them
     if (!any(is.na(input_parmax))) {
@@ -416,7 +417,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
   # Will also need to SAVE all what we are returning
 
-  return(list(tab_list = tab_list, state0_list = state0_list, wl = param0$wl, nb_vec = nb_vec))
+  return(list(tab_list = tab_list, state0_list = state0_list, wl = param0$wl, nb_vec = nb_vec, traj = traj))
 
 }
 

@@ -115,26 +115,26 @@ set_init_states <- function(pop, I0, mymodel) {
 init_param <- function(mymodel, mydisease, inc) {
 
   if (mymodel == 'sirh' & mydisease == 'influenza') { #influenza  and SIRH
-    gamma = 2.6
+    gamma = 1.0/2.6
     mu_H1H2 = 1.0
-    Beta = 1.3 / gamma
+    Beta = 1.3 * gamma
     pH = 0.001
     rho = 0.95
     wl = 3.0
     time0 = 14
     mu_rec = 1./7. # may even be closer to six
     immn_wn = 0.0 # no waning of immunity
-    param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
+    param = list(gamma = gamma, mu_H1H2 = mu_H1H2, Beta = Beta, pH = pH, rho = rho,
                  wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else if (mymodel == 'seirh' & mydisease == 'covid19') { # covid19 and SEIRH
-    gamma = 4.0
+    gamma = 1.0/4.0
     mu_H1H2 = 1.0
     if (max(inc) <= 15) {
-      Beta = 1.05 / gamma
+      Beta = 1.05 * gamma
     } else if ( max(inc) < 35 & max(inc) > 15) {
-      Beta = 1.2/ gamma
+      Beta = 1.2 * gamma
     } else {
-      Beta = 1.5/gamma
+      Beta = 1.6 * gamma
     }
     mu_EI = 1.0
     pH = 0.005
@@ -143,12 +143,12 @@ init_param <- function(mymodel, mydisease, inc) {
     time0 = 14
     mu_rec = 1./15. # rate of going from H to R days-1
     immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
-    param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
+    param = list(gamma = gamma, mu_H1H2 = mu_H1H2, mu_EI = mu_EI, Beta = Beta,
                  pH = pH, rho = rho, wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else if (mymodel == 'seirh' & mydisease == 'influenza') { #influenza  and SEIRH
     gamma = 2.6
     mu_H1H2 = 1.0
-    Beta = 1.2/gamma
+    Beta = 1.2 * gamma
     mu_EI = 1.0
     pH = 0.001
     rho = 0.95
@@ -156,15 +156,15 @@ init_param <- function(mymodel, mydisease, inc) {
     time0 = 14
     mu_rec = 1./7.
     immn_wn = 0.0 # no waning of immunity
-    param = list(gamma = 1./gamma, mu_H1H2 = 1./mu_H1H2, mu_EI = 1./mu_EI, Beta = Beta,
+    param = list(gamma = gamma, mu_H1H2 = mu_H1H2, mu_EI = mu_EI, Beta = Beta,
                  pH = pH, rho = rho, wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else if (mymodel == 'sirh' & mydisease == 'covid19') { # covid19 and SIRH
     if (max(inc) <= 15) {
-      Beta = 1.05 / gamma
+      Beta = 1.05 * gamma
     } else if ( max(inc) < 35 & max(inc) > 15) {
-      Beta = 1.2/ gamma
+      Beta = 1.2 * gamma
     } else {
-      Beta = 2.0/gamma
+      Beta = 1.6 * gamma
     }
     mu_EI = 1.0
     pH = 0.005
@@ -173,7 +173,7 @@ init_param <- function(mymodel, mydisease, inc) {
     time0 = 14
     mu_rec = 1./15. # rate of going from H to R days-1
     immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
-    param = list(gamma = 1./ gamma, mu_H1H2 = 1./mu_H1H2, Beta = Beta, pH = pH, rho = rho,
+    param = list(gamma = gamma, mu_H1H2 = mu_H1H2, Beta = Beta, pH = pH, rho = rho,
                  wl = wl, time0 = time0, mu_rec = mu_rec, immn_wn = immn_wn)
   } else {
     stop('Can not Find Model or Disease \n')
@@ -291,7 +291,8 @@ set_td_beta <- function(nb, ntimes, Beta) {
   beta_vec = rep(Beta, nb)
   beta_vec = runif(nb,Beta*0.95, Beta*1.05)
   end_period = ntimes/nb
-  tcng_vec = rep(round(end_period/2), nb)
+  #tcng_vec = rep(round(end_period/2), nb)
+  tcng_vec = rep(round(ntimes/nb), nb)
 
   tcng_vec[nb] = 0.0
 
@@ -494,6 +495,8 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 
   ntraj_both = min(ntraj_both)[1]
 
+  obs_each_list = obs_fit_each_list = list()
+
   # subset each pathogen using start/end dates
 
   for (ip in 1:npath) {
@@ -525,8 +528,6 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 
     simdat = simdat[1:ntraj_both, ind0:ind1]
 
-    simdat_list[[ip]] = simdat
-
     # observations may need to be trimmed at start to ensure
     # they start at the same date as the fitted data
 
@@ -552,13 +553,21 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
     ordered_simdat <- simdat[order(max_values),]
     ordered_simdat_both = ordered_simdat_both + ordered_simdat
 
+    # for stacked barplot we need to have the individual pathogen information also
+
+    obs_each_list[[ip]] = inc
+    obs_fit_each_list[[ip]] = inc_fit_trmd
+
   }
 
   simdat_both = list()
   simdat_both[['random']]  = rand_simdat_both
   simdat_both[['ordered']] = ordered_simdat_both
 
-  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both))
+
+
+  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both,
+              obs_each_list = obs_each_list, obs_fit_each_list = obs_fit_each_list))
 }
 
 #'

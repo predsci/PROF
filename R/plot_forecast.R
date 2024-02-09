@@ -53,6 +53,13 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   forecast_traj = list()
 
+  # https://www.statology.org/ggplot-default-colors/#:~:text=By%20default%2C%20ggplot2%20chooses%20to,and%20blue%20for%20the%20bars.&text=Here's%20how%20to%20interpret%20the,in%20the%20plot%20is%20%2300BA38.
+
+  default_colors <- c("#F8766D", "#00BFC4") #c('#F8766D','#619CFF','#00BA38','#FF00FF ')
+
+  reported_list = reported_fit_list = list()
+   # colors are red, blue, green, orange
+
   # loop on all diseases
   for (ip in 1:npath) {
 
@@ -318,6 +325,13 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     total=cbind(date = as.Date(dates_frcst, format = '%Y-%m-%d'),time = 1:ntimes_frcst,quantiles,
                 reported = reported, reported_fit = reported_fit)
 
+    reported_list[[disease]] = reported
+    reported_fit_list[[disease]] = reported_fit
+
+    copy_total = total
+
+    total[1:ndates, c('2.5%','25%','50%','75%','97.5')] <- NA
+
     # Remove 'X' from column names
     #colnames(total) <- gsub("X", "", colnames(total))
 
@@ -334,23 +348,47 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     end_year   = lubridate::year(range(dates)[2])
     xlab = paste0(start_year,' - ', end_year)
 
-    pl[[disease]] <- suppressMessages(ggplot(data=total,
-                             mapping=aes(x=date))+
-      geom_line(aes(y=`50%`),color='red')+
-      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
-      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-      geom_point(aes(y=reported),color='black', alpha = 0.4)+
-      geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
-      geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
+    pl[[disease]] <- suppressMessages(ggplot(data=total,aes(x=date))+
+      geom_col(aes(y=reported_fit), fill = default_colors[(ip)], alpha = 1.) +
+      # geom_col(aes(y=reported), stat = "identity", fill = default_colors[(ip)], alpha = 0.4) +
+      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='darkgrey',alpha=0.5)+
+      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='darkgrey',alpha=0.8)+
+      geom_line(aes(y=`50%`),color='black')+
+      # geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
       labs(y=ylab,x=xlab) + ggtitle(title))
+
+    # pl[[disease]] <- suppressMessages(ggplot(data=total,
+    #                                          mapping=aes(x=date))+
+    #   geom_line(aes(y=`50%`),color='red')+
+    #   geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
+    #   geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
+    #   geom_point(aes(y=reported),color='black', alpha = 0.4)+
+    #   geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
+    #   geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
+    #   labs(y=ylab,x=xlab) + ggtitle(title))
 
   } #end of loop over diseases
 
+
+  if (npath == 1) {
+
+    suppressWarnings(print(pl[[1]]))
+
+    if (!is.null(filename)) {
+      ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
+      cat("\n Saving Forecast Plots to: ", filename,'\n')
+    }
+    return(forecast_traj)
+  }
 
   # Combine forecasts
   cat("Combining Forecasts \n")
 
   combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
+
+  obs_each_list = combined_frcst$obs_each_list
+
+  obs_fit_each_list = combined_frcst$obs_fit_each_list
 
   simdat_both = combined_frcst$simdat_both
 
@@ -373,6 +411,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   combined_names <- c('random', 'sorted')
 
+
   # find maximum in quantiles_both of random and sorted and use
 
   both_max = 0
@@ -383,14 +422,20 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
     quantiles_both <- as.data.frame(quantiles_both)
     both_max = max(both_max, round(max(quantiles_both)))
     quantiles_both_list[[combined_names[[ip]]]] = quantiles_both
+
   }
+
+  # create a long data-frame with the reported values for both pathogens
+  data_df_list = list()
+ for (ip in 1:npath) {
+   data_df_list[[ip]] = data.frame(date = as.Date(dates_both, format = '%Y-%m-%d'),disease = rep(disease_list[[ip]], length(dates_both)),
+                                   reported = c(obs_each_list[[ip]], rep(NA, length(dates_both)-length(obs_both))))
+ }
+  data_df = rbind(data_df_list[[1]], data_df_list[[2]])
+
 
   for (ip in 1:npath) {
 
-  # apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
-  #
-  # quantiles_both <- t(quantiles_both)
-  # quantiles_both <- as.data.frame(quantiles_both)
 
     quantiles_both <- quantiles_both_list[[combined_names[[ip]]]]
   forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
@@ -402,17 +447,21 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
               reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))),
               reported_fit = c(obs_fit_both, rep(NA, length(dates_both)-length(obs_fit_both))))
 
+ copy_total_both = total_both
+ total_both[1:length(obs_both), c('2.5%', '25%', '50%', '75%', '97.5%')] <- NA
+
   title_both = paste0(reg_name,' - Combined Burden (', combined_names[ip],')')
+
+
 
   pl[[combined_names[ip]]] <- suppressMessages(ggplot(data=total_both,
                                            mapping=aes(x=date))+
-                                      geom_line(aes(y=`50%`),color='red')+
-                                      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
-                                      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-                                      geom_point(aes(y=reported),color='black', alpha = 0.4)+
-                                      geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
-                                      geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
-                                      labs(y=ylab,x=xlab) + ggtitle(title_both)) + coord_cartesian(ylim = c(0, both_max))
+                                      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='darkgrey',alpha=0.5)+
+                                      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='darkgrey',alpha=0.8)+
+                                        geom_line(aes(y=`50%`),color='black')+
+                                        geom_col(data = data_df, aes(x = date, y=reported, fill = disease), alpha = 1., inherit.aes = FALSE) +
+                                      # geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
+                                      labs(y=ylab,x=xlab) + ggtitle(title_both)) + coord_cartesian(ylim = c(0, both_max)) + theme(legend.position = "none")
 
   }
 
@@ -423,24 +472,13 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   }
 
   cat("\nMaking Plots\n\n")
-  if (npath == 2) {
 
-    suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2)))
+  suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2)))
 
-    if (!is.null(filename)) {
+  if (!is.null(filename)) {
       suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2))
       ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
-    }
-  } else {
-
-    suppressWarnings(print(pl[[1]]))
-
-    if (!is.null(filename)) {
-      ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
-      cat("\n Saving Forecast Plots to: ", filename,'\n')
-    }
-
   }
 
   # return forecast_traj

@@ -55,6 +55,8 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
   pl = pl_stat = list()
   fit_traj = stat_traj = list()
 
+  default_colors <- c("#F8766D", "#00BFC4")
+
   # loop on all diseases
   for (ip in 1:npath) {
 
@@ -334,9 +336,9 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
     pl[[disease]] <- ggplot(data=total,
                          mapping=aes(x=date))+
-      geom_line(aes(y=`50%`),color='red')+
-      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
-      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
+      geom_line(aes(y=`50%`),color=default_colors[ip])+
+      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill=default_colors[ip],alpha=0.4)+
+      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill=default_colors[ip],alpha=0.7)+
       geom_point(aes(y=reported),color='black')+
       labs(y=ylab,x=xlab) + ggtitle(title)
 

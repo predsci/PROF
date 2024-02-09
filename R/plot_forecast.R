@@ -58,7 +58,6 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   default_colors <- c("#F8766D", "#00BFC4") #c('#F8766D','#619CFF','#00BA38','#FF00FF ')
 
   reported_list = reported_fit_list = list()
-   # colors are red, blue, green, orange
 
   # loop on all diseases
   for (ip in 1:npath) {

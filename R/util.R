@@ -372,7 +372,7 @@ plot_prof_data <- function(prof_data, filename = NULL) {
 
   npath = length(prof_data)
 
-  col = c('salmon', 'cornflowerblue')
+  col <- c("#F8766D", "#00BFC4")
   pl = list()
 
   for (ip in 1:npath) {

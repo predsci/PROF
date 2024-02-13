@@ -17,6 +17,7 @@ Imports:
   dplyr,
   lubridate,
   EpiEstim,
+  scoringutils,
   pomp,
   deSolve,
   stats,

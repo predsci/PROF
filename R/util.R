@@ -740,11 +740,15 @@ score_forecast <- function(obs= NA, simdat) {
                  0.975, 0.99)
 
   for (ii in 1:nfrcst) {
-    sim = simdat[, ii] # need to make sure that this is the order
+    if (is.matrix(simdat)) {
+      sim = simdat[, ii]
+      } else {
+        sim = simdat[ii]
+    }
     # calculate quantiles
     my_quants = quantile(sim, probs=quantile_vec)
     pred_df = data.frame(quantile=quantile_vec, prediction=my_quants,
-                         true_value=obs, model="prof")
+                         true_value=obs[ii], model="prof")
     # By default, the score() function will calculate a precursor to WIS with
     # the same weights that are implied by the 'W' in WIS
     all_scores = score(pred_df)

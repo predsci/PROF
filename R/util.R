@@ -707,7 +707,58 @@ stat_forecast <- function(data, ntraj, nfrcst) {
   return(simdat)
 }
 
+#'
+#' Score-forecast
+#'
+#' A wrapper for calls to scoringutils package giving WIS score to forecasts
+#'
+#' @param: obs - observation array
+#' @param: sim - realization matrix - used to calculate quantiles of forecast
+#'
+#' @return wis_arr - An array of WIS scores with the same length as observations
+#'
+#' @export
+#' @import scoringutils
+#'
+#' @examples
+#'
 
+score_forecast <- function(obs= NA, simdat) {
+
+  if (all(is.na(obs))) {
+    return(NA)
+  }
+
+  nfrcst = length(obs)
+
+  # create an array for the wis score
+  wis_arr = 0.0 * obs
+
+  # Use the Hub quantiles
+  quantile_vec=c(0.01, 0.025,
+                 seq(0.05, 0.95, by = 0.05),
+                 0.975, 0.99)
+
+  for (ii in 1:nfrcst) {
+    sim = simdat[, ii] # need to make sure that this is the order
+    # calculate quantiles
+    my_quants = quantile(sim, probs=quantile_vec)
+    pred_df = data.frame(quantile=quantile_vec, prediction=my_quants,
+                         true_value=obs, model="prof")
+    # By default, the score() function will calculate a precursor to WIS with
+    # the same weights that are implied by the 'W' in WIS
+    all_scores = score(pred_df)
+    # summarise_scores then calculates the sum over quantiles for the target
+    # WIS score that we are accustomed to seeing.
+    score_summary = summarise_scores(all_scores)
+
+
+    wis_arr[ii] = score_summary$interval_score
+
+  }
+
+  return(wis_arr)
+}
 # C functions
 
 # define deterministic and stochastic Euler time steps

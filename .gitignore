@@ -13,4 +13,5 @@
 **.Rhistory*
 **.Rproj*
 
-
+# ignore IntelliJ project files
+**.idea

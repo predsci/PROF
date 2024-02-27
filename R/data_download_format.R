@@ -176,6 +176,33 @@ filename_timestamp_to_posix <- function(filepath) {
 }
 
 
+#' Fetch the date (in GMT) that the `g62h-syeh` dataset was last modified, as
+#' reported by healthdata.gov
+#'
+#' @return POSIXct Date. Date (where tz=GMT) that the `g62h-syeh` dataset was
+#'         last modified. If the GET response code is not 200, NULL is returned.
+#' @export
+#'
+#' @examples
+#' filepath <- "HHS_daily-hosp_state__210226120000.csv"
+#' posix_timestamp <- filename_timestamp_to_posix(filepath)
+#' last_modified <- fetch_hhs_last_modified()
+#' posix_timestamp < last_modified
+#'
+fetch_hhs_last_modified <- function() {
+  query <- list()
+  query$`$select` <- "date"
+  query$`$limit` <- "0"
+  response <- httr::GET(API, query=query)
+  if (response$status_code == 200) {
+    posix_timestamp <- as.POSIXct(response$headers$`last-modified`, format = FROM_TIMESTAMP_FMT, tz = "GMT")
+    return(posix_timestamp)
+  } else {
+    return()
+  }
+}
+
+
 #' Download daily state-level HHS PROTECT hospitalization admission data
 #' to a CSV.
 #'

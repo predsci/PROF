@@ -58,14 +58,14 @@ fetch_hhs_data <- function(down_dir="~",
                            order="date",
                            limit=1000000,
                            conditions=NULL) {
-
+  
   return_data <- list(download_path=NULL, last_modified=NULL, out_flag=1)
-
+  
   if (!dir.exists(down_dir)) {
     cat("'", down_dir, "'", "directory does not exist\n")
     return(return_data)
   }
-
+  
   query <- list()
   if (!is.null(fields)) {
     query$`$select` <- paste(fields, collapse = ",")
@@ -74,12 +74,13 @@ fetch_hhs_data <- function(down_dir="~",
     query$`$order` <- as.character(order)
   }
   if (!is.null(limit)) {
-    query$`$limit` <- as.character(limit)
+    # query$`$limit` <- as.character(limit)
+    query$`$limit` <- format(limit, scientific=FALSE)
   }
   if (!is.null(conditions)) {
     query$`$where` <- as.character(conditions)
   }
-
+  
   # Perform API request
   # If query dictionary has been populated, pass this as an argument to GET call
   if (length(query) == 0) {
@@ -87,14 +88,14 @@ fetch_hhs_data <- function(down_dir="~",
   } else {
     response <- httr::GET(API, query=query)
   }
-
+  
   # Check response status
   if (response$status_code == 200) {
     posix_timestamp <- as.POSIXct(response$headers$`last-modified`, format = FROM_TIMESTAMP_FMT, tz = "GMT")
-
+    
     # Generate default download_path of the form:
     # HHS_daily-hosp_state__<last_modified>.csv
-
+    
     # This default naming protocol can be used in conjunction with the function
     # `filename_timestamp_to_posix` to read in the `last_modified` metadata pertaining
     # to a dataset, and determine if a more recent dataset is available from the
@@ -103,41 +104,41 @@ fetch_hhs_data <- function(down_dir="~",
       fmt_timestamp <- format(posix_timestamp, TO_TIMESTAMP_FMT)
       down_filename <- paste(DEF_FILE_BASE, "__", fmt_timestamp, ".csv", sep = "")
     }
-
+    
     filepath <- file.path(down_dir, down_filename)
     data <- read.csv(text = httr::content(response, "text"))
-
+    
     # "https://healthdata.gov/resource/g62h-syeh.csv" returns the `date` column as a
     # datetime type. PROF requires the `date` column to be a date type, not datetime.
     # As such, if `date` is included, it is cast into the form: YYYY-mm-dd.
     if ("date" %in% colnames(data)) {
       data$date <- as.Date(data$date, format = "%Y-%m-%d")
     }
-
+    
     write.csv(data, filepath, row.names = FALSE)
-
+    
     if (file.exists(filepath)) {
       cat("\nData Saved At:", filepath, "\n\n")
       return_data$download_path <- filepath
       return_data$last_modified <- posix_timestamp
       return_data$out_flag <- 0
-
+      
       # Clean out existing dataset. For now, this only looks for csv files that
       # have been generated through the function's default filepath naming
       # conventions, viz. using the "__<last_modified>.csv" as an identifier for
       # possible matches.
       # This functionality has been commented out pending approval.
-
-#       file_pattern <- paste(DEF_FILE_BASE, "__[0-9]+\\.csv$", sep = "")
-#       files <- list.files(down_dir, pattern = file_pattern)
-#       for (file in files) {
-#         if (file != down_filename) {
-#           file.remove(file.path(down_dir, file))
-#           cat("Removing File:", file, "\n")
-#         }
-      }
+      
+      #       file_pattern <- paste(DEF_FILE_BASE, "__[0-9]+\\.csv$", sep = "")
+      #       files <- list.files(down_dir, pattern = file_pattern)
+      #       for (file in files) {
+      #         if (file != down_filename) {
+      #           file.remove(file.path(down_dir, file))
+      #           cat("Removing File:", file, "\n")
+      #         }
+      #      }
     }
-
+    
     return(return_data)
   } else {
     cat(httr::content(response, as="text"))

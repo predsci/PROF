@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_download_format.R
 \name{load_HHS_csv}
 \alias{load_HHS_csv}
-\title{Open the HHS Protect CSV.}
+\title{}
 \usage{
 load_HHS_csv(hhs_file = NULL)
 }
@@ -13,7 +13,10 @@ load_HHS_csv(hhs_file = NULL)
 dataframe of all HHS PROTECT columns
 }
 \description{
-Read the file with stringsAsFactors=TRUE, and return a dataframe.
+api_url = "https://healthdata.gov/api/views/g62h-syeh/rows.csv?accessType=DOWNLOAD"
+}
+\details{
+
 }
 \examples{
 load_HHS_csv(hhs_file = NULL)

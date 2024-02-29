@@ -46,7 +46,7 @@ to a local R-library using 'R CMD build dice' and 'R CMD INSTALL -l /my_lib_loc 
 -->
 
 ## Getting Started
-The PROF/prof_dev directory provides an example script that is a good starting point for using the package. 
+The PROF/prof_dev directory provides an example script that is a good starting point for using the package.  This script relies on two other scripts in the same directory and hence we suggest to start as follows.
 
 Create a 'test' directory 
 
@@ -56,9 +56,9 @@ Create a 'test' directory
 
  >\> cd test
 
-Copy the example.R script from PROF/prof_dev to the 'test' directory
+Copy all three scripts from PROF/prof_dev to the 'test' directory
 
->\> cp /path/to/PROF/prof_dev/example.R .
+>\> cp /path/to/PROF/prof_dev/*R .
 
 Open R or R studio and the 'example.R' script
 
@@ -66,12 +66,7 @@ Read the script and execute it, preferably first line by line. Please note that 
 
 ## Documentation and Examples
 
-Documentation and Examples: https://predsci.github.io/PROF/
-
-## Graphic User Interface
-
-For a GUI to PROF please clone: https://github.com/predsci/PROF-shiny-app
-
+Documentation and Examples can be found here: <put link to predsci.github.io/PROF>
 ## Acknowledgements
 The development of PROF is supported by the Council of State and Territorial Epidemiologists (CSTE) and the Centers for Disease Control and Prevention (CDC)
 through cooperative agreement number NU38OT000297, as part of the "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision-making" project.

@@ -5,21 +5,47 @@
 \title{Download daily state-level HHS PROTECT hospitalization admission data
 to a CSV.}
 \usage{
-hhs_hosp_state_down(down_dir = "~/", down_filename = NULL)
+hhs_hosp_state_down(
+  down_dir = "~",
+  down_filename = NULL,
+  fields = COLS,
+  order = "date",
+  limit = 1e+06,
+  conditions = NULL
+)
 }
 \arguments{
 \item{down_dir}{character string. The directory path to download to.}
 
 \item{down_filename}{character string. The filename to download to.}
+
+\item{fields}{character vector. Fields included in GET query.}
+
+\item{order}{character string. Field to order the returned dataset on.}
+
+\item{limit}{integer. Maximum number of records returned by GET query.}
+
+\item{conditions}{character string. WHERE clause used in DB query.}
 }
 \value{
-an integer. 0 for success and non-zero for failure.
+list. Named list containing: download_path, last_modified, and out_flag
 }
 \description{
-Download daily state-level HHS PROTECT hospitalization admission data
-to a CSV.
+Function returns the filepath where the HHS csv file was downloaded to,
+the date the dataset was last modified (as reported by healthdata.gov),
+and a flag corresponding to the status code of the API call. The data
+fetched through `fetch_hhs_data` is accessed through the HealthData.gov API,
+supported by the Socrata framework. As such, the API utilizes SoQL
+syntax to construct a DB query and retrieve the relevant data. The
+function signature for `fetch_hhs_data` wraps the Socrata API,
+constructing a SoQL query of the form:
+     SELECT `fields` FROM `API`
+     WHERE `conditions`
+     ORDER BY `order` ASC
+     LIMIT `limit`
 }
-\examples{
-hhs_hosp_state_down(down_dir = "~/Downloads", down_filename = NULL)
-
+\details{
+NOTE: When no `down_filename` is provided, the function creates a filename
+HHS_daily-hosp_state__<last_modified>.csv, where `last_modified` is a POSIX
+timestamp of the form: YYmmddHHMMSS.
 }

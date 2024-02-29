@@ -52,20 +52,20 @@ API <- "https://healthdata.gov/resource/g62h-syeh.csv"
 #'                      fields=c("date", "state", deaths_covid"),
 #'                      conditions="state == 'CA' AND deaths_covid IS NOT NULL")
 #'
-fetch_hhs_data <- function(down_dir="~",
+hhs_hosp_state_down <- function(down_dir="~",
                            down_filename=NULL,
                            fields=COLS,
                            order="date",
                            limit=1000000,
                            conditions=NULL) {
-  
+
   return_data <- list(download_path=NULL, last_modified=NULL, out_flag=1)
-  
+
   if (!dir.exists(down_dir)) {
     cat("'", down_dir, "'", "directory does not exist\n")
     return(return_data)
   }
-  
+
   query <- list()
   if (!is.null(fields)) {
     query$`$select` <- paste(fields, collapse = ",")
@@ -80,7 +80,7 @@ fetch_hhs_data <- function(down_dir="~",
   if (!is.null(conditions)) {
     query$`$where` <- as.character(conditions)
   }
-  
+
   # Perform API request
   # If query dictionary has been populated, pass this as an argument to GET call
   if (length(query) == 0) {
@@ -88,14 +88,14 @@ fetch_hhs_data <- function(down_dir="~",
   } else {
     response <- httr::GET(API, query=query)
   }
-  
+
   # Check response status
   if (response$status_code == 200) {
     posix_timestamp <- as.POSIXct(response$headers$`last-modified`, format = FROM_TIMESTAMP_FMT, tz = "GMT")
-    
+
     # Generate default download_path of the form:
     # HHS_daily-hosp_state__<last_modified>.csv
-    
+
     # This default naming protocol can be used in conjunction with the function
     # `filename_timestamp_to_posix` to read in the `last_modified` metadata pertaining
     # to a dataset, and determine if a more recent dataset is available from the
@@ -104,31 +104,31 @@ fetch_hhs_data <- function(down_dir="~",
       fmt_timestamp <- format(posix_timestamp, TO_TIMESTAMP_FMT)
       down_filename <- paste(DEF_FILE_BASE, "__", fmt_timestamp, ".csv", sep = "")
     }
-    
+
     filepath <- file.path(down_dir, down_filename)
     data <- read.csv(text = httr::content(response, "text"))
-    
+
     # "https://healthdata.gov/resource/g62h-syeh.csv" returns the `date` column as a
     # datetime type. PROF requires the `date` column to be a date type, not datetime.
     # As such, if `date` is included, it is cast into the form: YYYY-mm-dd.
     if ("date" %in% colnames(data)) {
       data$date <- as.Date(data$date, format = "%Y-%m-%d")
     }
-    
+
     write.csv(data, filepath, row.names = FALSE)
-    
+
     if (file.exists(filepath)) {
       cat("\nData Saved At:", filepath, "\n\n")
       return_data$download_path <- filepath
       return_data$last_modified <- posix_timestamp
       return_data$out_flag <- 0
-      
+
       # Clean out existing dataset. For now, this only looks for csv files that
       # have been generated through the function's default filepath naming
       # conventions, viz. using the "__<last_modified>.csv" as an identifier for
       # possible matches.
       # This functionality has been commented out pending approval.
-      
+
       #       file_pattern <- paste(DEF_FILE_BASE, "__[0-9]+\\.csv$", sep = "")
       #       files <- list.files(down_dir, pattern = file_pattern)
       #       for (file in files) {
@@ -138,7 +138,7 @@ fetch_hhs_data <- function(down_dir="~",
       #         }
       #      }
     }
-    
+
     return(return_data)
   } else {
     cat(httr::content(response, as="text"))
@@ -203,37 +203,37 @@ fetch_hhs_last_modified <- function() {
   }
 }
 
-
-#' Download daily state-level HHS PROTECT hospitalization admission data
-#' to a CSV.
 #'
-#' @param down_dir character string. The directory path to download to.
-#' @param down_filename character string. The filename to download to.
+#' #' Download daily state-level HHS PROTECT hospitalization admission data
+#' #' to a CSV.
+#' #'
+#' #' @param down_dir character string. The directory path to download to.
+#' #' @param down_filename character string. The filename to download to.
+#' #'
+#' #' @return an integer. 0 for success and non-zero for failure.
+#' #' @export
+#' #'
+#' #' @examples
+#' #' hhs_hosp_state_down(down_dir = "~/Downloads", down_filename = NULL)
+#' #'
+#' hhs_hosp_state_down <- function(down_dir="~/", down_filename=NULL) {
 #'
-#' @return an integer. 0 for success and non-zero for failure.
-#' @export
 #'
-#' @examples
-#' hhs_hosp_state_down(down_dir = "~/Downloads", down_filename = NULL)
+#'   api_url = "https://healthdata.gov/api/views/g62h-syeh/rows.csv?accessType=DOWNLOAD"
 #'
-hhs_hosp_state_down <- function(down_dir="~/", down_filename=NULL) {
-
-
-  api_url = "https://healthdata.gov/api/views/g62h-syeh/rows.csv?accessType=DOWNLOAD"
-
-  if (is.null(down_filename)) {
-    save_filename_base = "HHS_daily-hosp_state"
-    today_date = Sys.Date()
-    down_filename = paste0(save_filename_base, ".csv")
-  }
-
-  # download the new file (overwriting the previous current file)
-  download_path = file.path(down_dir, down_filename)
-  cat("Attempting download at time: ", format(Sys.time()), "\n", sep="")
-  out_flag = download.file(url=api_url, destfile=download_path)
-
-  return(list(download_path=download_path, out_flag=out_flag))
-}
+#'   if (is.null(down_filename)) {
+#'     save_filename_base = "HHS_daily-hosp_state"
+#'     today_date = Sys.Date()
+#'     down_filename = paste0(save_filename_base, ".csv")
+#'   }
+#'
+#'   # download the new file (overwriting the previous current file)
+#'   download_path = file.path(down_dir, down_filename)
+#'   cat("Attempting download at time: ", format(Sys.time()), "\n", sep="")
+#'   out_flag = download.file(url=api_url, destfile=download_path)
+#'
+#'   return(list(download_path=download_path, out_flag=out_flag))
+#' }
 
 
 #' Open the HHS Protect CSV.

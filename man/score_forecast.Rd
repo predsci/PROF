@@ -15,3 +15,6 @@ wis_arr - An array of WIS scores with the same length as observations
 \description{
 A wrapper for calls to scoringutils package giving WIS score to forecasts
 }
+\examples{
+
+}

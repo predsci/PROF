@@ -236,9 +236,9 @@ fetch_hhs_last_modified <- function() {
 #' }
 
 
-#' Open the HHS Protect CSV.
+#' @title Open the HHS Protect CSV.
 #'
-#' Read the file with stringsAsFactors=TRUE, and return a dataframe.
+#' @description Read the file with stringsAsFactors=TRUE, and return a dataframe.
 #' @param hhs_file Character string. Path to CSV file.
 #'
 #' @return dataframe of all HHS PROTECT columns

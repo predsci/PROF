@@ -2,8 +2,7 @@
 % Please edit documentation in R/data_download_format.R
 \name{hhs_hosp_state_down}
 \alias{hhs_hosp_state_down}
-\title{Download daily state-level HHS PROTECT hospitalization admission data
-to a CSV.}
+\title{Download daily state-level HHS PROTECT hospitalization admission data to a CSV.}
 \usage{
 hhs_hosp_state_down(
   down_dir = "~",

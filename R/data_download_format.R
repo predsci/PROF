@@ -16,8 +16,7 @@ TO_TIMESTAMP_FMT <- "%y%m%d%H%M%S"
 
 API <- "https://healthdata.gov/resource/g62h-syeh.csv"
 
-#' Download daily state-level HHS PROTECT hospitalization admission data
-#' to a CSV.
+#' Download daily state-level HHS PROTECT hospitalization admission data to a CSV.
 #'
 #' Function returns the filepath where the HHS csv file was downloaded to,
 #' the date the dataset was last modified (as reported by healthdata.gov),
@@ -236,22 +235,24 @@ fetch_hhs_last_modified <- function() {
 #' }
 
 
-#' Open the HHS Protect CSV.
+
+#' @title Load HHS Protect CSV
 #'
-#' Read the file with stringsAsFactors=TRUE, and return a dataframe.
-#' @param hhs_file Character string. Path to CSV file.
+#' @description Open the HHS Protect CSV file and read it into a dataframe.
 #'
-#' @return dataframe of all HHS PROTECT columns
+#' @param hhs_file Character string. Path to CSV file. If NULL, returns an empty dataframe.
+#' @return Dataframe containing all HHS Protect columns.
 #' @export
 #'
 #' @examples
 #' load_HHS_csv(hhs_file = NULL)
 #'
-load_HHS_csv <- function(hhs_file=NULL) {
+load_HHS_csv <- function(hhs_file = NULL) {
   # open raw data file
-  hosp_data = read.csv(file=hhs_file, stringsAsFactors=T)
+  hosp_data <- read.csv(file = hhs_file, stringsAsFactors = TRUE)
   return(hosp_data)
 }
+
 
 
 #' Subset HHS PROTECT hospitalizations by state, metric, and dates.

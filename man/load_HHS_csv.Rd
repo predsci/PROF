@@ -2,18 +2,18 @@
 % Please edit documentation in R/data_download_format.R
 \name{load_HHS_csv}
 \alias{load_HHS_csv}
-\title{Load HHS Protect CSV}
+\title{Open the HHS Protect CSV.}
 \usage{
 load_HHS_csv(hhs_file = NULL)
 }
 \arguments{
-\item{hhs_file}{Character string. Path to CSV file. If NULL, returns an empty dataframe.}
+\item{hhs_file}{Character string. Path to CSV file.}
 }
 \value{
-Dataframe containing all HHS Protect columns.
+dataframe of all HHS PROTECT columns
 }
 \description{
-Open the HHS Protect CSV file and read it into a dataframe.
+Read the file with stringsAsFactors=TRUE, and return a dataframe.
 }
 \details{
 #' Download daily state-level HHS PROTECT hospitalization admission data

@@ -2,12 +2,12 @@
 % Please edit documentation in R/util.R
 \name{score_forecast}
 \alias{score_forecast}
-\title{Score-forecast}
+\title{Weight-Interval-Score for forecast}
 \usage{
-score_forecast(obs = NA, simdat)
+score_forecast(obs = obs, simdat = NULL)
 }
 \arguments{
-\item{:}{sim - realization matrix - used to calculate quantiles of forecast}
+\item{:}{simdat - realization matrix - used to calculate quantiles of forecast}
 }
 \value{
 wis_arr - An array of WIS scores with the same length as observations
@@ -16,5 +16,5 @@ wis_arr - An array of WIS scores with the same length as observations
 A wrapper for calls to scoringutils package giving WIS score to forecasts
 }
 \examples{
-
+score_forecast(obs= obs, simdat = simdat)
 }

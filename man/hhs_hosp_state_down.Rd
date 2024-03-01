@@ -2,7 +2,8 @@
 % Please edit documentation in R/data_download_format.R
 \name{hhs_hosp_state_down}
 \alias{hhs_hosp_state_down}
-\title{Download daily state-level HHS PROTECT hospitalization admission data to a CSV.}
+\title{Download daily state-level HHS PROTECT hospitalization admission data
+to a CSV.}
 \usage{
 hhs_hosp_state_down(
   down_dir = "~",
@@ -42,8 +43,7 @@ constructing a SoQL query of the form:
      WHERE `conditions`
      ORDER BY `order` ASC
      LIMIT `limit`
-}
-\details{
+
 NOTE: When no `down_filename` is provided, the function creates a filename
 HHS_daily-hosp_state__<last_modified>.csv, where `last_modified` is a POSIX
 timestamp of the form: YYmmddHHMMSS.

@@ -19,8 +19,7 @@ See: file:///Users/michal/Downloads/pnas.2113561119.sapp.pdf for more details (s
 This baseline model forecasts a predictive median incidence equal to the incidence in the
 most recent data point(s), with uncertainty around the median based on changes in incidence
 that were observed in the past of the time series.
-}
-\details{
+
 Note that we do not force the median of the forecast forecast to be equal to
 the last observed value since the data is likely to be daily.  But we do truncate the distribution
 so that it has no negative values.

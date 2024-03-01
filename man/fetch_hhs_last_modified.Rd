@@ -2,8 +2,7 @@
 % Please edit documentation in R/data_download_format.R
 \name{fetch_hhs_last_modified}
 \alias{fetch_hhs_last_modified}
-\title{Fetch the date (in GMT) that the `g62h-syeh` dataset was last modified, as
-reported by healthdata.gov}
+\title{HHS Last Modified Date}
 \usage{
 fetch_hhs_last_modified()
 }

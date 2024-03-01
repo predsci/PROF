@@ -1,6 +1,6 @@
 #'
-#' Plots the Results of a Baseline Statistical Model to the dataset(s)
-#'
+#' @title  Baseline statistical model
+#' @description Calculates and plots a baseline statistical model for to the dataset(s)
 #'
 #' @param prof_data data structure for diseases
 #' for each disease it includes:

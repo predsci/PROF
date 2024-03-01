@@ -16,9 +16,10 @@ TO_TIMESTAMP_FMT <- "%y%m%d%H%M%S"
 
 API <- "https://healthdata.gov/resource/g62h-syeh.csv"
 
-#' Download daily state-level HHS PROTECT hospitalization admission data to a CSV.
+#' @title Download daily state-level HHS PROTECT hospitalization admission data
+#' to a CSV.
 #'
-#' Function returns the filepath where the HHS csv file was downloaded to,
+#' @description Function returns the filepath where the HHS csv file was downloaded to,
 #' the date the dataset was last modified (as reported by healthdata.gov),
 #' and a flag corresponding to the status code of the API call. The data
 #' fetched through `fetch_hhs_data` is accessed through the HealthData.gov API,
@@ -146,9 +147,9 @@ hhs_hosp_state_down <- function(down_dir="~",
 }
 
 
-#' Convert POSIX timestamp from filename to POSIXct object.
+#' @title Convert POSIX timestamp from filename to POSIXct object.
 #'
-#' This function extracts a POSIX timestamp from a filename following a specific pattern,
+#' @description This function extracts a POSIX timestamp from a filename following a specific pattern,
 #' then converts it to a POSIXct object.
 #'
 #' @param filepath Character string. The filepath containing the filename with the POSIX timestamp.
@@ -175,8 +176,8 @@ filename_timestamp_to_posix <- function(filepath) {
   }
 }
 
-
-#' Fetch the date (in GMT) that the `g62h-syeh` dataset was last modified, as
+#' @title HHS Last Modified Date
+#' @description Fetch the date (in GMT) that the `g62h-syeh` dataset was last modified, as
 #' reported by healthdata.gov
 #'
 #' @return POSIXct Date. Date (where tz=GMT) that the `g62h-syeh` dataset was
@@ -235,27 +236,26 @@ fetch_hhs_last_modified <- function() {
 #' }
 
 
-
-#' @title Load HHS Protect CSV
+#' @title Open the HHS Protect CSV.
 #'
-#' @description Open the HHS Protect CSV file and read it into a dataframe.
+#' @description Read the file with stringsAsFactors=TRUE, and return a dataframe.
+#' @param hhs_file Character string. Path to CSV file.
 #'
-#' @param hhs_file Character string. Path to CSV file. If NULL, returns an empty dataframe.
-#' @return Dataframe containing all HHS Protect columns.
+#' @return dataframe of all HHS PROTECT columns
 #' @export
 #'
 #' @examples
 #' load_HHS_csv(hhs_file = NULL)
 #'
-load_HHS_csv <- function(hhs_file = NULL) {
+load_HHS_csv <- function(hhs_file=NULL) {
   # open raw data file
-  hosp_data <- read.csv(file = hhs_file, stringsAsFactors = TRUE)
+  hosp_data = read.csv(file=hhs_file, stringsAsFactors=T)
   return(hosp_data)
 }
 
 
-
-#' Subset HHS PROTECT hospitalizations by state, metric, and dates.
+#' @title Subset HHS PROTECT dataset
+#' @description Subset HHS PROTECT hospitalizations by state, metric, and dates.
 #'
 #' @param hosp_data dataframe. Full HHS PROTECT dataset.
 #' @param get_cols vector of strings. The names of the HHS PROTECT columns to
@@ -332,9 +332,9 @@ get_HHS_state <- function(hosp_data=NULL, get_cols=c(
 }
 
 
-#' Format HHS hospitalization data for fitting.
+#' @title Format HHS hospitalization data for fitting.
 #'
-#' After subsetting the admissions data to a single location, now format for
+#' @description After subsetting the admissions data to a single location, now format for
 #' fitting.
 #' @param state_data Dataframe. The output from get_HHS_state().
 #' @param fit_col character. The name of the incidence columnn in 'state_data'
@@ -381,9 +381,9 @@ test_import <- function() {
 
 
 
-#' Example use of HHS data functions.
+#' @title Example use of HHS data functions.
 #'
-#' This is a set of HHS function calls that demonstrate how to retrieve and
+#' @description This is a set of HHS function calls that demonstrate how to retrieve and
 #' structure data for use with PROF fitting routines.  This function has
 #' many inputs hard-coded (dates, population, etc) and should be used as a
 #' blueprint rather than as an operational function.
@@ -532,9 +532,9 @@ hhs_data_ex <- function(season = NULL, state=NULL, fit_end = NULL) {
 }
 
 
-#' Convert HHS hospitalization data to PROF format.
+#' @title Convert HHS hospitalization data to PROF format.
 #'
-#' This function converts HHS hospitalization data to the structure that
+#' @description This function converts HHS hospitalization data to the structure that
 #' works with with PROF fitting routines.  This function retrieves data
 #' for an entire season and expects the HHS data is already downloaded.
 #' Before sending to fitting procedures, the output of this function
@@ -633,9 +633,9 @@ hhs_2_PROF <- function(hhs_path=NULL, season = NULL, state=NULL) {
 }
 
 
-#' Add fit-data structures to PROF_data
+#' @title Add fit-data structures to PROF_data
 #'
-#' Fit-data structures explicitly state the data to be passed to the fitting
+#' @description Fit-data structures explicitly state the data to be passed to the fitting
 #' routine.  This allows the user to exclude data from the begining or end
 #' of the season in the model fit.
 #' @param prof_data list. Generally the output from PROF::hhs_2_PROF().
@@ -687,9 +687,9 @@ hhs_set_fitdates <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) {
 }
 
 
-#' Add fit-data-stat structures to PROF_data
+#' @title Add fit-data-stat structures to PROF_data
 #'
-#' Fit-data-stat structures explicitly state the data to be passed to the statistical
+#' @description Fit-data-stat structures explicitly state the data to be passed to the statistical
 #' fitting routine.  This allows the user to exclude data from the beginning or end
 #' of the season in the model fit.
 #' @param prof_data list. Generally the output from PROF::hhs_2_PROF().
@@ -740,8 +740,8 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
   return(prof_data)
 }
 
-
-#' Retrieve population of a U.S. state or territory.
+#' @title Retrieve Poulation
+#' @description Retrieve population of a U.S. state or territory.
 #'
 #' @param location character. Intended to be a two-letter abbreviation, but will
 #' also attempt to match to location full names.

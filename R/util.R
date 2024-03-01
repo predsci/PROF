@@ -1,8 +1,8 @@
 
 #
-#' Estimate the initial number of infections
+#' @title Estimate the initial number of infections
 #'
-#' Use the EpiEstim package to estimate initial number of infections
+#' @description Use the EpiEstim package to estimate initial number of infections
 #' @param inc time series of hospitalization incidence
 #' @param mydisease disease name
 #' @return integer estimate for initial number of cases
@@ -46,9 +46,9 @@ est_I0 <- function(inc, mydisease) {
 
 }
 
-#' Set initial values for model states - SIRH or SEIRH
+#' @title Set initial values for model states - SIRH or SEIRH
 #'
-#' Based on the population size and the initial number of cases initialize the
+#' @description Based on the population size and the initial number of cases initialize the
 #' number in each compartment
 #' @param pop population size, integer
 #' @param I0 estimate for initial number of cases
@@ -90,9 +90,9 @@ set_init_states <- function(pop, I0, mymodel) {
 
 }
 
-#' Set disease specific initial guess for some model parameters
+#' @title Set disease specific initial guess for some model parameters
 #'
-#' Based on the disease set the initial guess for model parameters
+#' @description Based on the disease set the initial guess for model parameters
 #' @param mymodel model name sirh or seirh
 #' @param mydisease disease name covid19 or influenza
 #' @param inc time-series of hospitalization
@@ -182,9 +182,9 @@ init_param <- function(mymodel, mydisease, inc) {
   return(param)
 }
 
-#' Set value of baseline incidence
+#' @title Set value of baseline incidence
 #'
-#' Early in the season use first two weeks of data and later use last week
+#' @description Early in the season use first two weeks of data and later use last week
 #' of data.  Early/late is determined by value of end_of_season
 #'
 #' @param inc incidence time series
@@ -207,9 +207,9 @@ get_baseline <-function(inc, end_of_season) {
   return(baseline)
 }
 
-#' Run the optim package to improve initial guess for parameters
+#' @title Run the optim package to improve initial guess for parameters
 #'
-#' For SIRH model use the optim package to obtain an improved initial
+#' @description For SIRH model use the optim package to obtain an improved initial
 #' guess for some model parameters.  This is a simple optimization with a
 #' fixed one value for the force of infection
 #'
@@ -274,9 +274,9 @@ run_optim <- function(param0, inc) {
 }
 
 #'
-#' Set initial values for time-dependent Force of Infection
+#' @title Set initial values for time-dependent Force of Infection
 #'
-#' Set the values for the force of infection and the time(s) change takes place
+#' @description Set the values for the force of infection and the time(s) change takes place
 #'
 #' @param nb integer number of unique values FOI can have
 #' @param ntimes integer length of time series
@@ -310,9 +310,9 @@ set_td_beta <- function(nb, ntimes, Beta) {
 }
 
 #'
-#' Set model parameter names
+#' @title Set model parameter names
 #'
-#' Based on the model and number of values FOI can have set parameter names
+#' @description Based on the model and number of values FOI can have set parameter names
 #'
 #' @param nb integer number of unique values FOI can have
 #' @param par_names vector with model specific parameter names
@@ -345,12 +345,13 @@ update_par_names <- function(nb, par_names) {
 
 }
 
+#' @title Date to Integer conversion
 #'
-#' Create a days number array from a dates array
+#' @description Create a days number array from a dates array
 #'
 #' @param dates array of dates for incidence
 #' @return times - an array of day numbers
-#'
+#' @keywords internal
 dates_to_int <- function(dates) {
 
   int_dates = as.numeric(dates)
@@ -361,8 +362,8 @@ dates_to_int <- function(dates) {
 }
 
 
-#'
-#' Basic plotting function
+#' @title Basic Plot Incidence
+#' @description Basic plotting function
 #'
 #' @param prof_data - the complete data structure
 #' @param filename - if NULL print to screen else save to PDF
@@ -450,9 +451,9 @@ plot_prof_data <- function(prof_data, filename = NULL) {
 }
 
 #'
-#' Combine COVID19 and Influenza Forecasts
+#' @title Combine COVID19 and Influenza Forecasts
 #'
-#' Forecasts are combined using two procedures: random addition of trajectories and perfect
+#' @description Forecasts are combined using two procedures: random addition of trajectories and perfect
 #' ordering of trajectories
 #'
 #' @param prof_data - the complete data structure
@@ -571,9 +572,9 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 }
 
 #'
-#' Fit a baseline statistical model to the data
+#' @title Fit a baseline statistical model to the data
 #'
-#' See: file:///Users/michal/Downloads/pnas.2113561119.sapp.pdf for more details (start at bottom of page 3)
+#' @description See: file:///Users/michal/Downloads/pnas.2113561119.sapp.pdf for more details (start at bottom of page 3)
 #' This baseline model forecasts a predictive median incidence equal to the incidence in the
 #' most recent data point(s), with uncertainty around the median based on changes in incidence
 #' that were observed in the past of the time series.
@@ -620,9 +621,9 @@ stat_fit <- function(inc, ntraj) {
 }
 
 #'
-#' Forecast using a baseline statistical model fitted to the data
+#' @title Forecast using a baseline statistical model fitted to the data
 #'
-#' See: file:///Users/michal/Downloads/pnas.2113561119.sapp.pdf for more details (start at bottom of page 3)
+#' @description See: file:///Users/michal/Downloads/pnas.2113561119.sapp.pdf for more details (start at bottom of page 3)
 #' This baseline model forecasts a predictive median incidence equal to the incidence in the
 #' most recent data point(s), with uncertainty around the median based on changes in incidence
 #' that were observed in the past of the time series.
@@ -708,12 +709,12 @@ stat_forecast <- function(data, ntraj, nfrcst) {
 }
 
 #'
-#' Score-forecast
+#' @title Weight-Interval-Score for forecast
 #'
-#' A wrapper for calls to scoringutils package giving WIS score to forecasts
+#' @description A wrapper for calls to scoringutils package giving WIS score to forecasts
 #'
 #' @param: obs - observation array
-#' @param: sim - realization matrix - used to calculate quantiles of forecast
+#' @param: simdat - realization matrix - used to calculate quantiles of forecast
 #'
 #' @return wis_arr - An array of WIS scores with the same length as observations
 #'
@@ -721,13 +722,15 @@ stat_forecast <- function(data, ntraj, nfrcst) {
 #' @import scoringutils
 #'
 #' @examples
-#'
+#' score_forecast(obs= obs, simdat = simdat)
 
-score_forecast <- function(obs= NA, simdat) {
+score_forecast <- function(obs= obs, simdat = NULL) {
 
   if (all(is.na(obs))) {
     return(NA)
   }
+
+  if(is.null(simdat)) return(NA)
 
   nfrcst = length(obs)
 

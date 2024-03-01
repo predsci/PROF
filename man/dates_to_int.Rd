@@ -2,7 +2,7 @@
 % Please edit documentation in R/util.R
 \name{dates_to_int}
 \alias{dates_to_int}
-\title{Create a days number array from a dates array}
+\title{Date to Integer conversion}
 \usage{
 dates_to_int(dates)
 }
@@ -15,3 +15,4 @@ times - an array of day numbers
 \description{
 Create a days number array from a dates array
 }
+\keyword{internal}

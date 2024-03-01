@@ -1,0 +1,43 @@
+name: automated-hhs-data-sync
+on:
+  schedule:
+    - cron: "0 18 * * 3,5"
+permissions:
+  contents: write
+jobs:
+  fetch-hhs-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+
+      - name: Manage script permissions
+        run: chmod +x .github/scripts/fetch_hhs_data.sh
+
+      - name: Run data fetch script
+        run: .github/scripts/fetch_hhs_data.sh
+
+      - name: Diff
+        id: verify_diff
+        run: |
+          if git status --porcelain data/ | grep -Eo "data/HHS_daily-hosp_state(_TEST)?__[[:digit:]]+\.csv"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit
+        if: steps.verify_diff.outputs.changed == 'true'
+        run: |
+          git config --global user.name 'Ryder Davidson'
+          git config --global user.email 'ryder-davidson@users.noreply.github.com'
+          git status --porcelain data/ | grep -Eo "data/HHS_daily-hosp_state(_TEST)?__[[:digit:]]+\.csv" | xargs git add
+          git commit -m "Automated data fetch"
+          git push
+
+      - name: Push
+        if: steps.verify_diff.outputs.changed == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}

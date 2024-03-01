@@ -1,8 +1,7 @@
 name: automated-hhs-data-sync
 on:
-  [push]
-#  schedule:
-#    - cron: "0 18 * * 3,5"
+  schedule:
+    - cron: "0 18 * * 3,5"
 permissions:
   contents: write
 jobs:

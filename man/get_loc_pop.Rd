@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_download_format.R
 \name{get_loc_pop}
 \alias{get_loc_pop}
-\title{Retrieve population of a U.S. state or territory.}
+\title{Retrieve Poulation}
 \usage{
 get_loc_pop(location = "US")
 }

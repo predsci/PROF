@@ -43,8 +43,7 @@ constructing a SoQL query of the form:
      WHERE `conditions`
      ORDER BY `order` ASC
      LIMIT `limit`
-}
-\details{
+
 NOTE: When no `down_filename` is provided, the function creates a filename
 HHS_daily-hosp_state__<last_modified>.csv, where `last_modified` is a POSIX
 timestamp of the form: YYmmddHHMMSS.

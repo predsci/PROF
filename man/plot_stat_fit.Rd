@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_stat_fit.R
 \name{plot_stat_fit}
 \alias{plot_stat_fit}
-\title{Plots the Results of a Baseline Statistical Model to the dataset(s)}
+\title{Baseline statistical model}
 \usage{
 plot_stat_fit(prof_data, ntraj = NULL, filename = NULL)
 }
@@ -26,5 +26,5 @@ dates, and reported incidence.
 stat_pl - a list of statistical fit plots
 }
 \description{
-Plots the Results of a Baseline Statistical Model to the dataset(s)
+Calculates and plots a baseline statistical model for to the dataset(s)
 }

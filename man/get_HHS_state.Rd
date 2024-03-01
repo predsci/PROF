@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_download_format.R
 \name{get_HHS_state}
 \alias{get_HHS_state}
-\title{Subset HHS PROTECT hospitalizations by state, metric, and dates.}
+\title{Subset HHS PROTECT dataset}
 \usage{
 get_HHS_state(
   hosp_data = NULL,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_forecast.R
 \name{plot_forecast}
 \alias{plot_forecast}
-\title{Plots the Results of Fit model(s) to dataset(s)}
+\title{Plots Forecasts for Mechanistic Models}
 \usage{
 plot_forecast(
   prof_data,
@@ -49,6 +49,6 @@ dates, and reported incidence.
 }
 \description{
 Uses the posterior distribution of the fit(s) and
-a stochastic code to generate trajectories and calculate
-the statistics
+a stochastic code to generate trajectories, with the forecast horizon determined
+by the call and calculate the statistics
 }

@@ -2,8 +2,7 @@
 % Please edit documentation in R/plot_fit.R
 \name{plot_fit}
 \alias{plot_fit}
-\title{Plots the Results of Fit model(s) to dataset(s) and Results of a Statistical
-Baseline Model}
+\title{Plot the Results of mechanistic fit model(s) to dataset(s)}
 \usage{
 plot_fit(prof_data, par_list, fit_list, ntraj = 1000, filename = NULL)
 }

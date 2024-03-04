@@ -47,12 +47,12 @@ API <- "https://healthdata.gov/resource/g62h-syeh.csv"
 #' @export
 #'
 #' @examples
-#' hhs_hosp_state_down(down_dir = "data")
-#' hhs_hosp_state_down(down_dir = "data",
-#'                      fields=c("date", "state", deaths_covid"),
-#'                      conditions="state == 'CA' AND deaths_covid IS NOT NULL")
+#' fetch_hhs_data(down_dir = "data")
+#' fetch_hhs_data(down_dir = "data",
+#'                fields=c("date", "state", deaths_covid"),
+#'                conditions="state == 'CA' AND deaths_covid IS NOT NULL")
 #'
-hhs_hosp_state_down <- function(down_dir="~",
+fetch_hhs_data <- function(down_dir="~",
                            down_filename=NULL,
                            fields=COLS,
                            order="date",

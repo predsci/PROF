@@ -14,6 +14,8 @@ FROM_TIMESTAMP_FMT <- "%a, %d %b %Y %H:%M:%S GMT"
 
 TO_TIMESTAMP_FMT <- "%y%m%d%H%M%S"
 
+SUPPORTED_SEASONS <- c(2021, 2022, 2023)
+
 API <- "https://healthdata.gov/resource/g62h-syeh.csv"
 
 #' Download daily state-level HHS PROTECT hospitalization admission data
@@ -196,11 +198,86 @@ fetch_hhs_last_modified <- function() {
   query$`$limit` <- "0"
   response <- httr::GET(API, query=query)
   if (response$status_code == 200) {
-    posix_timestamp <- as.POSIXct(response$headers$`last-modified`, format = FROM_TIMESTAMP_FMT, tz = "GMT")
+    posix_timestamp <- as.POSIXct(response$headers$`last-modified`,
+                                  format = FROM_TIMESTAMP_FMT, tz = "GMT")
     return(posix_timestamp)
   } else {
     return()
   }
+}
+
+#' Fetch the start and end dates for a given `season`.
+#'
+#' @param season integer. The requested season.
+#' @return list of Dates. Contains elements `t0` and `t1` corresponding to
+#'         the season's start date and end date, respectively.
+#' @export
+#'
+#' @examples
+#' date_range <- fetch_season_tstart_tend(2023)
+#'
+fetch_season_tstart_tend <- function(season) {
+  if(!(as.character(season) %in% SUPPORTED_SEASONS)) {
+    stop('\nRequested season is not supported\n')
+  }
+  start_date = as.Date(paste0(season,'-09-01'), format = "%Y-%m-%d")
+  end_date   = as.Date(paste0(season+1,'-06-01'), format = "%Y-%m-%d")
+
+  if (season == 2023) {
+    start_date = as.Date(paste0(season,'-08-01'), format = "%Y-%m-%d")
+  }
+
+  return (list(t0=start_date, t1=end_date))
+}
+
+#' TODO: UPDATE DOCUMENTATION
+#'
+csv_to_prof <- function(filepath, population, location="NA",
+                        fit_start=NULL, fit_end=NULL) {
+
+  if (file.exists(filepath)) {
+    raw_csv <- read.csv(file=filepath, stringsAsFactors=T)
+  } else {
+    stop(paste('\nFile', filepath, 'does not exist\n'))
+  }
+
+  if (!all(names(raw_csv) %in% c("date", "disease", "metric", "value"))) {
+    stop('\nData must contain the fields: date, disease, metric, value\n')
+  }
+
+  raw_csv$date <- as.Date(raw_csv$date, format = "%Y/%m/%d")
+
+  if (is.null(fit_start)) {
+    fit_start <- min(raw_csv$date)
+  }
+  if (is.null(fit_end)) {
+    fit_end <- max(raw_csv$date)
+  }
+  if (as.Date(fit_start) > as.Date(fit_end)) {
+    stop('\nFit start date is greater than the fit end date\n')
+  }
+
+  prof_data <- list()
+
+  season_mask <- (raw_csv$date >= as.Date(season_start)) &
+                 (raw_csv$date <= as.Date(season_end))
+
+  for (disease_level in levels(raw_csv$disease)) {
+    disease_mask <- (raw_csv$disease == disease_level) & season_mask
+    inc_df = raw_csv[disease_mask, c('date', 'value')]
+    inc_df = inc_df[order(inc_df$date), ]
+    names(inc_df) = c('date', 'inc')
+
+    prof_data[[disease_level]] <- list()
+    prof_data[[disease_level]]$population <- population
+    prof_data[[disease_level]]$loc_name <- location
+    prof_data[[disease_level]]$inc_type <- levels(raw_csv$metric)[1]
+    prof_data[[disease_level]]$data <- inc_df
+    prof_data[[disease_level]]$data_fit <- inc_df[(inc_df$date >= as.Date(fit_start)) &
+                                                  (inc_df$date <= as.Date(fit_end)), ]
+  }
+
+  return (prof_data)
 }
 
 #'

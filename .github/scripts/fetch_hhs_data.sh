@@ -2,8 +2,11 @@
 #-------------------------------------------------------------------------------
 # Script     : fetch_hhs_data.sh.
 # Description: Fetch data from healthdata.gov.
-#              This script called within the automated-hhs-data-sync github
+# Notes      : This script is called within the automated-hhs-data-sync github
 #              action. It is performed every Wednesday and Friday at 10am PST.
+#              `fetch_hhs_data` fetches all records for the fields indicated in
+#              `COLS`. The "g62h-syeh" dataset is managed by healthdata.gov and
+#              supported by the Socrata API framework.
 #-------------------------------------------------------------------------------
 
 readonly STATUS_OK=0
@@ -87,12 +90,3 @@ time {
 }
 
 exit "$status"
-
-#for file in data/*HHS_daily-hosp_state__*; do
-#    date_raw=$(echo "$file" | grep -oE '[0-9]{12}')
-#    date_fmt="20${date_raw:4:2}-${date_raw:2:2}-${date_raw:0:2} ${date_raw:6:2}:${date_raw:8:2}:${date_raw:10:2}"
-#    file_date=$(date -j -f "%Y-%m-%d %H:%M:%S" "$date_fmt" +"%s")
-#    echo $date_fmt
-#    echo $file_date
-#    # You can perform operations on each file here
-#done

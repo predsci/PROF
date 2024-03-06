@@ -15,38 +15,6 @@ dataframe of all HHS PROTECT columns
 \description{
 Read the file with stringsAsFactors=TRUE, and return a dataframe.
 }
-\details{
-#' Download daily state-level HHS PROTECT hospitalization admission data
-#' to a CSV.
-#'
-#' @param down_dir character string. The directory path to download to.
-#' @param down_filename character string. The filename to download to.
-#'
-#' @return an integer. 0 for success and non-zero for failure.
-#' @export
-#'
-#' @examples
-#' hhs_hosp_state_down(down_dir = "~/Downloads", down_filename = NULL)
-#'
-hhs_hosp_state_down <- function(down_dir="~/", down_filename=NULL) {
-
-
-  api_url = "https://healthdata.gov/api/views/g62h-syeh/rows.csv?accessType=DOWNLOAD"
-
-  if (is.null(down_filename)) {
-    save_filename_base = "HHS_daily-hosp_state"
-    today_date = Sys.Date()
-    down_filename = paste0(save_filename_base, ".csv")
-  }
-
-  # download the new file (overwriting the previous current file)
-  download_path = file.path(down_dir, down_filename)
-  cat("Attempting download at time: ", format(Sys.time()), "\n", sep="")
-  out_flag = download.file(url=api_url, destfile=download_path)
-
-  return(list(download_path=download_path, out_flag=out_flag))
-}
-}
 \examples{
 load_HHS_csv(hhs_file = NULL)
 

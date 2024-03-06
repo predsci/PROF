@@ -1,8 +1,7 @@
 #'
-#' Plots the Results of Fit model(s) to dataset(s) and Results of a Statistical
-#' Baseline Model
+#' @title Plot the Results of mechanistic fit model(s) to dataset(s)
 #'
-#' For the Mechanistic Results, uses the posterior distribution of the fit(s) and
+#' @description For the Mechanistic Results, uses the posterior distribution of the fit(s) and
 #' a stochastic code to generate trajectories and calculate
 #' the statistics
 #'

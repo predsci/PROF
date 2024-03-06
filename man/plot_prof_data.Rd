@@ -2,7 +2,7 @@
 % Please edit documentation in R/util.R
 \name{plot_prof_data}
 \alias{plot_prof_data}
-\title{Basic plotting function}
+\title{Basic Plot Incidence}
 \usage{
 plot_prof_data(prof_data, filename = NULL)
 }

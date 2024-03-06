@@ -4,9 +4,9 @@
 
 
 
-#' Produce an empty parameter list for the SEIRH model.
+#' @title Produce an empty parameter list for the SEIRH model.
 #'
-#' Each pathogen to be fit/forecast requires a set of model and fit parameters.
+#' @description Each pathogen to be fit/forecast requires a set of model and fit parameters.
 #' This function produces an empty list of lists with the structure and entries
 #' required by the fitting function(s) for an SEIRH model.
 #'
@@ -59,9 +59,9 @@ init_model_seirh <- function() {
 }
 
 
-#' Produce an empty parameter list for the SIRH model.
+#' @title Produce an empty parameter list for the SIRH model.
 #'
-#' Each pathogen to be fit/forecast requires a set of model and fit parameters.
+#' @description Each pathogen to be fit/forecast requires a set of model and fit parameters.
 #' This function produces an empty list of lists with the structure and entries
 #' required by the fitting function(s) for an SIRH model.
 #'
@@ -112,9 +112,9 @@ init_model_sirh <- function() {
 }
 
 
-#' Full parameter list structure for multiple diseases.
+#' @title Full parameter list structure for multiple diseases.
 #'
-#' Each disease to be fit must have an entry in the parameter list. This
+#' @description Each disease to be fit must have an entry in the parameter list. This
 #' function simply loops through pathogens and populates its list entry
 #' with the appropriate model structure.
 #'
@@ -147,7 +147,7 @@ init_par_list <- function(diseases=c("covid19", "influenza"),
 }
 
 
-#' Write parameter list to YAML file.
+#' @title Write parameter list to YAML file.
 #'
 #' @param par_list Parameter list—usually the output of PROF::init_par_list
 #' @param file_path Full path where file to be written.
@@ -169,9 +169,9 @@ write_par_list_yaml <- function(par_list=NULL, file_path=NULL) {
 }
 
 
-#' Read parameter list from YAML file.
+#' @title Read parameter list from YAML file.
 #'
-#' The fitting function requires a specific list structure for the parameters.
+#' @description The fitting function requires a specific list structure for the parameters.
 #' See PROF/parameters/param_exmpl.yml for an example YAML file with
 #' documentation. Or use PROF::init_pars_list() to generate an appropriate
 #' structure in R.

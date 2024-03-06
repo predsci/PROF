@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_stat_forecast.R
 \name{plot_stat_forecast}
 \alias{plot_stat_forecast}
-\title{Plots the Results of a Baseline Statistical Model to the dataset(s)}
+\title{Baseline statistical forecast}
 \usage{
 plot_stat_forecast(prof_data, ntraj = NULL, nfrcst = NULL, filename = NULL)
 }
@@ -27,5 +27,5 @@ forecast_traj - a list with a list for each disease and for the combined burden
 dates, and reported incidence.
 }
 \description{
-Plots the Results of a Baseline Statistical Model to the dataset(s)
+Calculates and plots a baseline statistical forecast for to the dataset(s)
 }

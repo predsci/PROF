@@ -3,7 +3,7 @@
 library(PROF)
 
 # download HHS hospitalizations file
-result = hhs_hosp_state_down(down_dir="~/Downloads")
+result = fetch_hhs_data(down_dir="~/Downloads")
 
 if (result$out_flag!=0) {
   stop("There was an error with the download.")

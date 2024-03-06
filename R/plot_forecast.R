@@ -1,9 +1,9 @@
 #'
-#' Plots the Results of Fit model(s) to dataset(s)
+#' @title Plots Forecasts for Mechanistic Models
 #'
-#' Uses the posterior distribution of the fit(s) and
-#' a stochastic code to generate trajectories and calculate
-#' the statistics
+#' @description Uses the posterior distribution of the fit(s) and
+#' a stochastic code to generate trajectories, with the forecast horizon determined
+#' by the call and calculate the statistics
 #'
 #' @param prof_data data structure for diseases
 #' for each disease it includes:

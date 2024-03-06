@@ -1,6 +1,6 @@
 #'
-#' Plots the Results of a Baseline Statistical Model to the dataset(s)
-#'
+#' @title  Baseline statistical forecast
+#' @description Calculates and plots a baseline statistical forecast for to the dataset(s)
 #'
 #' @param prof_data data structure for diseases
 #' for each disease it includes:

@@ -1,7 +1,7 @@
 #'
-#' Fit model(s) to dataset(s)
+#' @title Fit model(s) to dataset(s)
 #'
-#' Main driver function for the sequential fitting procedure of one or two
+#' @description Main driver function for the sequential fitting procedure of one or two
 #' diseases
 #'
 #' @param prof_data data structure for diseases

@@ -32,7 +32,7 @@ While we recommend utilizing the SIRH model for influenza and SEIRH for COVID-19
 
 # Time-Dependent Force of Infection
 
-We use a smoothly varying two- or three-value functional form to describe the time-dependent reproduction number: R(t) = &beta;(t)&gamma;, where &beta;(t) is the time-dependent transmission rate is &gamma; is the total recovery rate. 
+We use a smoothly varying two- or three-value functional form to describe the time-dependent reproduction number: R(t) = &beta;(t)&gamma;, where &beta;(t) is the time-dependent transmission rate and &gamma; is the total recovery rate. 
 
 $$R(t)=\frac{1}{2}\left( R_{0} + R_{1} + (R_{1}-R_{0})tanh\left( \frac{t-t_{0}}{L} \right) \right)$$
 

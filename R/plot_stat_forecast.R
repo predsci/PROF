@@ -19,28 +19,56 @@
 #' forecast_traj - a list with a list for each disease and for the combined burden
 #' (random and ordered): trajectories,
 #' dates, and reported incidence.
+#' total_list - a list with the data frames used for each of the plots, these include the median and quantiles
+#' wis_df - a list of data frame with the WIS score of the forecast if available.  If not it contains a NULL
 #'
 plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename = NULL) {
 
   if (is.null(ntraj)) ntraj = 1000
-  if (is.null(nfrcst)) nfrcst = 35
+  if (is.null(nfrcst)) nfrcst = 28
 
-  npath = length(prof_data)
+  diseases = names(prof_data)
 
-  disease_list = names(prof_data)
+  npath = length(diseases)
 
-  pl = simdat_list = dates_frcst_list = list()
+  disease_list = diseases
+
+  pl = simdat_list = dates_frcst_list = total_list = list()
 
   forecast_traj = list()
 
+  reported_list = reported_fit_list = list()
+
+  wis_df = list()
+
   # https://www.statology.org/ggplot-default-colors/#:~:text=By%20default%2C%20ggplot2%20chooses%20to,and%20blue%20for%20the%20bars.&text=Here's%20how%20to%20interpret%20the,in%20the%20plot%20is%20%2300BA38.
 
-  default_colors <- c("#F8766D", "#00BFC4") #c('#F8766D','#619CFF','#00BA38','#FF00FF ')
+  # Define colors for plots
+  mycolor_list <- list('covid19' = "#F8766D", 'influenza'= "#00BFC4",
+                       'combined' = "#CC79A7") #= "#D55E00",
 
-  reported_list = reported_fit_list = list()
+  # Function to add transparency to colors
+  add_transparency <- function(color, alpha) {
+    # Convert hexadecimal color code to RGB format
+    rgb_vals <- col2rgb(color) / 255
+
+    # Append alpha value
+    rgb_vals <- c(rgb_vals, alpha)
+
+    # Convert back to hexadecimal format
+    rgba_color <- rgb(rgb_vals[1], rgb_vals[2], rgb_vals[3], alpha = rgb_vals[4])
+
+    return(rgba_color)
+  }
+
+  # Transparency values (adjust as needed)
+  alpha_values <- c(0.5, 0.5, 0.8)
+
+  mycolor_list_with_transparency <- Map(add_transparency, mycolor_list, alpha_values)
 
   # loop on all diseases
   for (ip in 1:npath) {
+
 
     disease = disease_list[ip]
 
@@ -49,10 +77,10 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
     reg_name = mydata$loc_name
 
     # hospitalization incidence - fitted
-    inc = mydata$data_fit$inc
+    inc = mydata$data_fit_stat$inc
 
     # dates - fitted
-    dates_fit  = mydata$data_fit$date
+    dates_fit  = mydata$data_fit_stat$date
 
     ndates = length(dates_fit)
 
@@ -79,28 +107,47 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
       dates_frcst = seq(from = dates_fit[1], length = ntimes_frcst, by = '1 week')
     }
 
+
     dates_frcst_list[[ip]] = dates_frcst
 
     # observations - all data stream
 
     obs = mydata$data$inc
 
-    # obs may not have the sam start date as obs_fit hence need to trim
+    # obs may not have the same start date as obs_fit hence need to trim
     keep_ind = which(mydata$data$date >= dates_fit[1])
 
     obs = obs[keep_ind]
     dates = mydata$data$date[keep_ind]
 
-    obs_fit = mydata$data_fit$inc
+    obs_fit = mydata$data_fit_stat$inc
 
     cat('\nCreating ',toupper(disease),' Statistical Forecast for ', reg_name,' ', nfrcst,' Days Forward\n\n')
+
     simdat = stat_forecast(mydata, ntraj, nfrcst)
 
     simdat_list[[ip]] = simdat
 
+    # we can score the forecast dates are not the same as mydata$data_fit_stat$date
+    #
+
+    if (length(dates) > length(dates_fit)) {
+      nscore = length(dates) - length(dates_fit)
+      obs_score = obs[(length(obs)-nscore+1):length(obs)]
+      dates_score = dates[(length(obs)-nscore+1):length(obs)]
+
+      # find the subset from the model that we are going to score
+      sim_score = simdat[, (length(obs)-nscore+1):length(obs)]
+
+      wis_arr = score_forecast(obs = obs_score, simdat = sim_score)
+
+      wis_df[[disease]] = data.frame(date=dates_score, wis = wis_arr, disease = disease, model = 'stat')
+
+    }
+
     npad = nfrcst - length(obs)
     if (npad > 0) {
-      reported = c(obs[1:length(dates_frcst)], rep(NA, npad))
+      reported = c(obs, rep(NA, npad))
     } else {
       reported = obs[1:length(dates_frcst)]
     }
@@ -108,7 +155,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
     npad_fit = nfrcst - length(obs_fit)
 
     if (npad_fit > 0) {
-      reported_fit = c(obs_fit[1:length(dates_frcst)], rep(NA, npad_fit))
+      reported_fit = c(obs_fit, rep(NA, npad_fit))
     } else {
       reported_fit = obs_fit[1:length(dates_frcst)]
     }
@@ -129,45 +176,58 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
 
     total = as.data.frame(total)
 
+    total_list[[disease]] = total
+
+    total = as.data.frame(total)
+
     reported_list[[disease]] = reported
     reported_fit_list[[disease]] = reported_fit
 
     copy_total = total
 
-    total[1:ndates, c('2.5%','25%','50%','75%','97.5')] <- NA
-
+    total[1:length(obs_fit), c('2.5%','25%','50%','75%','97.5%')] <- NA
 
     if (cadence == 1) cadence_lab = 'Daily'
     if (cadence == 7) cadence_lab = 'Weekly'
 
-    ylab = paste0(cadence_lab, ' New Hosp')
+    # y-label only on left most plot
+    if (ip == 1) {
+      ylab = paste0(cadence_lab, ' New Hosp')
+      #xlab = paste0(start_year,' - ', end_year)
+    } else {
+      ylab = ''
+    }
+    xlab = ''
 
-    title = paste0(reg_name,' - ', toupper(disease),' Statistical Baseline Model')
+    mycolor = mycolor_list_with_transparency[[disease]]
+
+    mytitle = paste0(reg_name,' - ', toupper(disease), ' Statistical Baseline Model')
 
     start_year = lubridate::year(range(dates)[1])
-    end_year   = lubridate::year(range(dates)[2])
-    xlab = paste0(start_year,' - ', end_year)
+    end_year   = start_year + 1
 
-    pl[[disease]] <- suppressMessages(ggplot(data=total,aes(x=date))+
-                                        geom_col(aes(y=reported_fit), fill = default_colors[(ip)], alpha = 1.) +
-                                        # geom_col(aes(y=reported), stat = "identity", fill = default_colors[(ip)], alpha = 0.4) +
-                                        geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='darkgrey',alpha=0.5)+
-                                        geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='darkgrey',alpha=0.8)+
-                                        geom_line(aes(y=`50%`),color='black')+
-                                        # geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
-                                        labs(y=ylab,x=xlab) + ggtitle(title))
+    vertical_line <- data.frame(
+      x = dates[ntimes],  # Specify the x-coordinate where the vertical line should be
+      y = c(0, max(total[,"97.5%"]))  # Specify the y-coordinate range (adjust as needed)
+    )
 
-    # pl[[disease]] <- suppressMessages(ggplot(data=total,
-    #                          mapping=aes(x=date))+
-    #   geom_line(aes(y=`50%`),color='red')+
-    #   geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
-    #   geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-    #   geom_point(aes(y=reported),color='black', alpha = 0.4)+
-    #   geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
-    #   geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
-    #   labs(y=ylab,x=xlab) + ggtitle(title))
+    pl[[disease]] <- ggplot(data=total,aes(x=date))+
+      geom_col(aes(y=reported), fill = mycolor, alpha = 1.) +
+      geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='blue',alpha=0.5)+
+      geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='blue',alpha=0.8)+
+      geom_line(aes(y=`50%`),color='black')+
+      labs(y=ylab,x=xlab) +
+      theme(plot.title = element_text(hjust = 0.5, vjust = 0.7), legend.position = "none") +
+      annotate("text", x = median(total$date), y = 0.93*max(total[,c('reported',"97.5%")], na.rm=TRUE), label = mytitle, size = 4)
 
   } #end of loop over diseases
+
+
+  if (length(wis_df) !=0) {
+    long_df = bind_rows(wis_df)
+  } else {
+    long_df = NULL
+  }
 
   if (npath == 1) {
 
@@ -177,7 +237,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
     }
-    return(forecast_traj)
+    return(list(total_list = total_list, wis_df = long_df))
   }
 
   # Combine forecasts
@@ -199,16 +259,16 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
 
   npad = nfrcst - length(obs_both)
   if (npad > 0) {
-    reported_both = c(obs_both[1:length(dates_frcst)], rep(NA, npad))
+    reported_both = c(obs_both, rep(NA, npad))
   } else {
-    reported_both = obs_both[1:length(dates_frcst)]
+    reported_both = obs_both[1:length(dates_both)]
   }
 
   npad_fit = nfrcst - length(obs_fit_both)
   if (npad_fit > 0) {
-    reported_fit_both = c(obs_fit_both[1:length(dates_frcst)], rep(NA, npad))
+    reported_fit_both = c(obs_fit_both, rep(NA, npad))
   } else {
-    reported_fit_both = obs_fit_both[1:length(dates_frcst)]
+    reported_fit_both = obs_fit_both[1:length(dates_both)]
   }
 
   combined_names <- c('random', 'sorted')
@@ -216,61 +276,72 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
   # find maximum in simdat_both of random and sorted and use
 
   both_max = 0.0
-  for (ip in 1:npath) {
+  for (ip in 1:length(combined_names)) {
     both_max = max(both_max, round(max(simdat_both[[ip]])))
   }
 
   # create a long data-frame with the reported values for both pathogens
   data_df_list = list()
+
   for (ip in 1:npath) {
+
     data_df_list[[ip]] = data.frame(date = as.Date(dates_both, format = '%Y-%m-%d'),disease = rep(disease_list[[ip]], length(dates_both)),
                                     reported = c(obs_each_list[[ip]], rep(NA, length(dates_both)-length(obs_both))))
   }
   data_df = rbind(data_df_list[[1]], data_df_list[[2]])
 
-  for (ip in 1:npath) {
+  for (ip in 1:length(combined_names)) {
 
-  apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
+    apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
 
-  quantiles_both <- t(quantiles_both)
-  quantiles_both <- as.data.frame(quantiles_both)
+    quantiles_both <- t(quantiles_both)
+    quantiles_both <- as.data.frame(quantiles_both)
 
-  forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
-                                               date = as.Date(dates_both, format = '%Y-%m-%d'),
-                                               reported_both = reported_both,
-                                               reported_fit_both = reported_fit_both)
+    forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
+                                                 date = as.Date(dates_both, format = '%Y-%m-%d'),
+                                                 reported_both = reported_both,
+                                                 reported_fit_both = reported_fit_both)
 
-  total_both=cbind(date = as.Date(dates_both, format = '%Y-%m-%d'),quantiles_both,
-              reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))),
-              reported_fit = c(obs_fit_both, rep(NA, length(dates_both)-length(obs_fit_both))))
+    total_both=cbind(date = as.Date(dates_both, format = '%Y-%m-%d'),quantiles_both,
+                     reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))),
+                     reported_fit = c(obs_fit_both, rep(NA, length(dates_both)-length(obs_fit_both))))
 
-  copy_total_both = total_both
-  total_both[1:length(obs_both), c('2.5%', '25%', '50%', '75%', '97.5%')] <- NA
+    total_list[[combined_names[ip]]] = total_both
 
-  title_both = paste0(reg_name,' - Combined Burden (', combined_names[ip],')')
+    copy_total_both = total_both
+    total_both[1:length(obs_fit_both), c('2.5%', '25%', '50%', '75%', '97.5%')] <- NA
+
+    mytitle = paste0(reg_name,' - Combined Burden (', combined_names[ip],')')
+
+    # y-label only on left most plot
+    if (ip == 1) {
+      ylab = paste0(cadence_lab, ' New Hosp')
+    } else {
+      ylab=""
+    }
+
+    xlab = paste0(start_year,' - ', end_year)
+    mycolor =mycolor_list_with_transparency[['combined']]
+
+    vertical_line <- data.frame(
+      x = dates[ntimes],  # Specify the x-coordinate where the vertical line should be
+      y = c(0, both_max)  # Specify the y-coordinate range (adjust as needed)
+    )
 
 
-  pl[[combined_names[ip]]] <- suppressMessages(ggplot(data=total_both,
-                                                      mapping=aes(x=date))+
-                                                 geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='darkgrey',alpha=0.5)+
-                                                 geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='darkgrey',alpha=0.8)+
-                                                 geom_line(aes(y=`50%`),color='black')+
-                                                 geom_col(data = data_df, aes(x = date, y=reported, fill = disease), alpha = 1., inherit.aes = FALSE) +
-                                                 # geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
-                                                 labs(y=ylab,x=xlab) + ggtitle(title_both)) + coord_cartesian(ylim = c(0, both_max)) + theme(legend.position = "none")
+    pl[[combined_names[ip]]] <- ggplot(data=data_df,
+                                       mapping=aes(x=date))+
+      geom_col(aes(y=reported, fill = disease, alpha = 0.5), alpha = 0.5) +
+      geom_ribbon(data=total_both, aes(x=date, ymin=`2.5%`,ymax=`97.5%`),fill='blue',alpha=0.5, inherit.aes = FALSE) +
+      geom_ribbon(data=total_both, aes(x=date, ymin=`25%`,ymax=`75%`),fill='blue',alpha=0.8, inherit.aes = FALSE) +
+      geom_line(data=total_both, aes(x= date, y=`50%`),color='black',  inherit.aes = FALSE) +
+      coord_cartesian(ylim=c(0, both_max)) +
+      labs(y=ylab,x=xlab) +
+      theme(plot.title = element_text(hjust = 0.5, vjust = 0.7), legend.position = "none") +
+      annotate("text", x = median(total_both$date), y = 0.93*both_max, label = mytitle, size = 4)
 
-  # pl[[combined_names[ip]]] <- suppressMessages(ggplot(data=total_both,
-  #                                          mapping=aes(x=date))+
-  #                                     geom_line(aes(y=`50%`),color='red')+
-  #                                     geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='red',alpha=0.2)+
-  #                                     geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='red',alpha=0.4)+
-  #                                     geom_point(aes(y=reported),color='black', alpha = 0.4)+
-  #                                     geom_point(aes(y=reported_fit),color='black', alpha = 1.)+
-  #                                     geom_vline(xintercept = dates[ntimes], linetype = "dashed", color = "cornflowerblue", size = 1.5) +
-  #                                     labs(y=ylab,x=xlab) + ggtitle(title_both)) + coord_cartesian(ylim = c(0, both_max))
 
   }
-
 
   interactive_plot <- list()
 
@@ -288,7 +359,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
     cat("\n Saving Forecast Plots to: ", filename,'\n')
   }
 
-  # return forecast_traj
+  # return a list
 
-  return(forecast_traj)
+  return(list(total_list = total_list, wis_df = long_df))
 }

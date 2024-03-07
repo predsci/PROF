@@ -6,9 +6,6 @@ library(PROF)
 library(plotly)
 library(deSolve)
 
-# set path to location of example.R script, for example:
-# setwd("~/Dropbox/CSMB03/michal/PROF/prof_dev")
-
 # download HHS Hospitalization file
 
 result = fetch_hhs_data(down_dir="~/Downloads")

@@ -1,6 +1,6 @@
 
 # example use of PROF
-# Fitting and forecasting 2022-23 covid19 and influenza data for  CA 2022-23
+# Fitting and forecasting 2023-24 covid19 and influenza seasons
 
 library(PROF)
 library(plotly)

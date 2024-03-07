@@ -2,6 +2,7 @@
 
 export(fetch_hhs_data)
 export(fetch_hhs_last_modified)
+export(fetch_season_tstart_tend)
 export(filename_timestamp_to_posix)
 export(format_hhs_state)
 export(get_HHS_state)

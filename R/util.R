@@ -401,12 +401,15 @@ plot_prof_data <- function(prof_data, filename = NULL) {
 
     main_txt = paste0(reg_name, ' - ', disease,' ',cadence_lab)
 
+    if (ip == 1) combined_main_text = NULL
+    combined_main_text =  paste0(combined_main_text,'         ', main_txt)
+
     start_year = lubridate::year(range(dates)[1])
     end_year   = start_year + 1
     xlab = paste0(start_year,' - ', end_year)
     ylab = inc_type
     data = data.frame(x=dates, y = inc)
-
+    if (ip == 2) ylab = ''
     pl[[ip]] <- ggplot() +
       geom_point(data = data, aes(x,y), color=col[ip], alpha = alpha_data, size = 3) +
       labs(x = xlab,           # X-axis label
@@ -430,7 +433,7 @@ plot_prof_data <- function(prof_data, filename = NULL) {
 
   if (npath == 2) {
     # suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 2)))
-    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]], nrows = 1, titleX = TRUE, titleY = TRUE)
+    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]], nrows = 1, titleX = TRUE, titleY = TRUE) %>% layout(title = combined_main_text)
 
     if (!is.null(filename)) {
       suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 2)))

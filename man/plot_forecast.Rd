@@ -46,6 +46,8 @@ plots to screen and  file
 forecast_traj - a list with a list for each disease and for the combined burden
 (random and ordered): trajectories,
 dates, and reported incidence.
+total_list - a list with the data frames used for each of the plots, these include the median and quantiles
+wis_df - a list of data frame with the WIS score of the forecast if available.  If not it contains a NULL
 }
 \description{
 Uses the posterior distribution of the fit(s) and

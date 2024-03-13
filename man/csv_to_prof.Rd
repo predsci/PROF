@@ -2,16 +2,24 @@
 % Please edit documentation in R/data_download_format.R
 \name{csv_to_prof}
 \alias{csv_to_prof}
-\title{TODO: UPDATE DOCUMENTATION}
+\title{Read a User provided incidence file and populate the PROF data structure}
 \usage{
-csv_to_prof(
-  filepath,
-  population,
-  location = "NA",
-  fit_start = NULL,
-  fit_end = NULL
-)
+csv_to_prof(filepath, population, location = "PROFVille")
+}
+\arguments{
+\item{filepath}{string.  Path to csv data file}
+
+\item{population}{numeric.  Population size  (no default)}
+
+\item{location}{string. Location name (default is "PROFVille")}
+}
+\value{
+PROF data structure
 }
 \description{
-TODO: UPDATE DOCUMENTATION
+Given a path to a User provided data file, population size, and
+location name populate the PROF data structure.
+Data must contain the following fields:
+date (%Y-%m-%d format), disease (string, covid19, influenza), metric (string, 'hosp'),
+value (numeric, incidence)
 }

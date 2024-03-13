@@ -23,6 +23,11 @@ prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=sta
 
 plot_prof_data(prof_data = prof_data)
 
+
+# To upload you own data you can use the csv_to_prof function,
+# use help('csv_to_prof') and our github.io for more documenation
+# prof_data=csv_to_prof(filepath = 'path/to/csv/file', population = 350000, location = "My-County")
+
 # add fit data structure to each pathogen - this is the data that will
 # be fitted with a mechanistic compartmental model
 # NULL values for start/end dates mean set to start/end of the season data
@@ -69,7 +74,6 @@ plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list =
 # We can also fit a baseline statistical model to the data.
 # We start by adding the fit-stat data structure to each pathogen - this is the data
 # that will be fitted with a simple baseline statistical model
-
 
 prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 

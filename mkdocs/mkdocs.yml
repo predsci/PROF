@@ -1,0 +1,84 @@
+site_name: PROF
+site_description: PROF Documentation
+site_author: PROF Team
+
+# repository information
+repo_url: https://github.com/predsci/PROF
+edit_uri: blob/master/mkdocs/docs/
+
+# site navigation
+nav:
+  - Home: index.md
+  - About: about.md
+  - Install: install.md
+  - PROF-Shiny Tutorial: tutorial.md
+  - PROF Command Line Example: example.md
+  - PROF-Advanced Topics: advanced.md
+#  - HMI Data:
+#    - Aquiring Data: data/data.md
+#    - Data Corrections: data/corr.md
+#  - Coordinate Transformations: calcs/coords.md
+#  - Region Identification: calcs/region.md
+#  - Velocity Components: calcs/vel.md
+#  - RV Calculation: calcs/rv.md
+#  - Magnetic Observables: calcs/mag.md
+#  - Full Pipeline: package/pipeline.md
+#  - Function Documentation:
+#    - Coordinate Transformations: package/coord_funcs.md
+#    - Limb-Brightening Correction: package/lbc_funcs.md
+#    - Calculation Functions: package/calculation_funcs.md
+#    - RV Calculations: package/rv_funcs.md
+#    - Plotting Functions: package/plotting_funcs.md
+#    # - Settings: package/settings.md
+#  - Jupyter Examples:
+#    - Sunpy Basics: examples/docs_sunpy_example.ipynb
+#    - Component Calculations: examples/docs_solar_corrections.ipynb
+#    - RV Calculation: examples/docs_rv_calcs.ipynb
+#    - Full Pipeline: examples/docs_full_pipeline.ipynb
+
+
+# theme
+theme:
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - yml
+    - rust
+  language: en
+  palette:
+    primary: indigo
+    accent: light blue
+  logo: img/psi.png
+  favicon: img/psi.png
+  font:
+    code: Oswald
+  features:
+    - navigation.top
+    - header.autohide
+
+
+# plugins
+plugins:
+  - search:
+      lang: en
+#  - mkdocs-jupyter:
+#      ignore_h1_titles: True
+#  - mkdocstrings:
+#      docstring_style: numpy
+#      watch:
+#        - PROF/PROF
+
+# extensions
+markdown_extensions:
+  - attr_list
+  - admonition
+#  - pymdownx.critic
+#  - pymdownx.mark
+#  - pymdownx.tabbed
+#  - pymdownx.arithmatex
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML
+  - javascripts/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

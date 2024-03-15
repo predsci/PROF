@@ -11,6 +11,7 @@ fit_end = as.Date("2023-01-31")
 
 # download HHS hospitalizations file
 # result = fetch_hhs_data(down_dir="~/Downloads")
+
 #
 # if (result$out_flag!=0) {
 #   stop("There was an error with the download.")

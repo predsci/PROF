@@ -419,13 +419,13 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   if (npath == 1) {
 
-    suppressWarnings(print(pl[[1]]))
+    suppressWarnings(print(ggplotly(pl[[1]])))
 
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
     }
-    return(list(arrange_plot = arrange_plot, total_list = total_list, wis_df = long_df))
+    return(list(arrange_plot = pl[[1]], total_list = total_list, wis_df = long_df))
   }
 
   # Combine forecasts
@@ -541,7 +541,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   cat("\nMaking Plots\n\n")
 
-  suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2)))
+  suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]), ggplotly(pl[[2]]), ggplotly(pl[[3]]), ggplotly(pl[[4]]), ncol = 2)))
 
   if (!is.null(filename)) {
       suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2))

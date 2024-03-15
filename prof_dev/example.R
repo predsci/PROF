@@ -6,7 +6,7 @@ library(PROF)
 library(plotly)
 library(deSolve)
 
-# download HHS Hospitalization file
+# download the most recent HHS Hospitalization file
 
 result = fetch_hhs_data(down_dir="~/Downloads")
 
@@ -25,7 +25,7 @@ plot_prof_data(prof_data = prof_data)
 
 
 # To upload you own data you can use the csv_to_prof function,
-# use help('csv_to_prof') and our github.io for more documenation
+# use help('csv_to_prof') and our github.io for more documentation
 # prof_data=csv_to_prof(filepath = 'path/to/csv/file', population = 350000, location = "My-County")
 
 # add fit data structure to each pathogen - this is the data that will
@@ -75,6 +75,7 @@ plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list =
 # We start by adding the fit-stat data structure to each pathogen - this is the data
 # that will be fitted with a simple baseline statistical model
 
+
 prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 
 # Running and plotting the fitting of a simple statistical baseline model will only take a
@@ -120,7 +121,7 @@ stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 28)
 # same four elements as the one for the mechanistic forecasts
 
 
-# If you would like to fit and forecst only a single pathogen please follow the steps below
+# If you would like to fit and forecast only a single pathogen please follow the steps below
 # After loading and plotting the data set the parameter list, and model to the single pathogen
 # you would like to fit and forecast ('covid19' or 'influenza'), here we chose 'covid19'
 

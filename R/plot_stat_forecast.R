@@ -231,7 +231,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
 
   if (npath == 1) {
 
-    suppressWarnings(print(pl[[1]]))
+    suppressWarnings(print(ggplotly(pl[[1]])))
 
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
@@ -351,7 +351,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL, filename 
 
   cat("\nMaking Plots\n\n")
 
-  suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2)))
+  suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]), ggplotly(pl[[2]]), ggplotly(pl[[3]]), ggplotly(pl[[4]]), ncol = 2)))
 
   if (!is.null(filename)) {
     suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2))

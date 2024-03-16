@@ -131,14 +131,14 @@ fetch_hhs_data <- function(down_dir="~",
       # possible matches.
       # This functionality has been commented out pending approval.
 
-      #       file_pattern <- paste(DEF_FILE_BASE, "__[0-9]+\\.csv$", sep = "")
-      #       files <- list.files(down_dir, pattern = file_pattern)
-      #       for (file in files) {
-      #         if (file != down_filename) {
-      #           file.remove(file.path(down_dir, file))
-      #           cat("Removing File:", file, "\n")
-      #         }
-      #      }
+      file_pattern <- paste(DEF_FILE_BASE, "__[0-9]+\\.csv$", sep = "")
+      files <- list.files(down_dir, pattern = file_pattern)
+      for (file in files) {
+        if (file != down_filename) {
+          file.remove(file.path(down_dir, file))
+          cat("Removing File:", file, "\n")
+        }
+      }
     }
 
     return(return_data)
@@ -281,7 +281,7 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
   prof_data <- list()
 
   season_mask <- (raw_csv$date >= as.Date(season_start)) &
-                 (raw_csv$date <= as.Date(season_end))
+    (raw_csv$date <= as.Date(season_end))
 
   for (disease_level in levels(raw_csv$disease)) {
     disease_mask <- (raw_csv$disease == disease_level) & season_mask
@@ -758,40 +758,21 @@ hhs_set_fitdates <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) {
     for (pathog in pathogens) fit_start[[pathog]] = NULL
   }
 
-  if (is.null(fit_end)) {
-    fit_end = list()
-    for (pathog in pathogens) fit_end[[pathog]] = NULL
-  }
-
-
   for (pathog in pathogens) {
-
-    if (is.null(fit_end[[pathog]])) {
-      fit_end_use = max(prof_data[[pathog]]$data$date)
-    } else {
-      #check that requested fit_end is greater that start of data and smaller than end of data
-      if (fit_end < min(prof_data[[pathog]]$data$date)) {
-        stop("\nRequested fit_end date precedes start of data\n")
-      } else if (fit_end > max(prof_data[[pathog]]$data$date)) {
-        stop("\nRequested fit_start date exceeds end of data\n")
-      } else {
-        fit_end_use = fit_end[[pathog]]
+    if(!is.null(fit_end)) {
+      if (!(fit_end<=max(prof_data[[pathog]]$data$date) &&
+          fit_end>=min(prof_data[[pathog]]$data$date))) {
+        stop("\nRequested fit_end is NOT consistent with selected season\n")
       }
-
+      fit_end_use = fit_end
+    } else {
+      fit_end_use = max(max(prof_data[[pathog]]$data$date))
     }
 
     if (is.null(fit_start[[pathog]])) {
       fit_start_use = min(prof_data[[pathog]]$data$date)
     } else {
-      #check that requested fit_start is not smaller than start of data and not greater than the end
-      if (fit_start < min(prof_data[[pathog]]$data$date)) {
-        stop("\nRequested fit_start date precedes start of data\n")
-      } else if (fit_start > max(prof_data[[pathog]]$data$date)) {
-        stop("\nRequested fit_start date exceeds end of data\n")
-      } else {
-        fit_start_use = fit_start[[pathog]]
-      }
-
+      fit_start_use = fit_start[[pathog]]
     }
 
     # set fit data entry
@@ -831,40 +812,23 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
     for (pathog in pathogens) fit_start[[pathog]] = NULL
   }
 
-  if (is.null(fit_end)) {
-    fit_end = list()
-    for (pathog in pathogens) fit_end[[pathog]] = NULL
-  }
-
   for (pathog in pathogens) {
-
-    if (is.null(fit_end[[pathog]])) {
-      fit_end_use = max(prof_data[[pathog]]$data$date)
-    } else {
-      #check that requested fit_end is greater that start of data and smaller than end of data
-      if (fit_end < min(prof_data[[pathog]]$data$date)) {
-        stop("\nRequested fit_end date precedes start of data\n")
-      } else if (fit_end > max(prof_data[[pathog]]$data$date)) {
-        stop("\nRequested fit_start date exceeds end of data\n")
-      } else {
-        fit_end_use = fit_end[[pathog]]
+    if(!is.null(fit_end)) {
+      if (!(fit_end<=max(prof_data[[pathog]]$data$date) &&
+            fit_end>=min(prof_data[[pathog]]$data$date))) {
+        stop("\nRequested fit_end is NOT consistent with selected season\n")
       }
-
+      fit_end_use = fit_end
+    } else {
+      fit_end_use = max(max(prof_data[[pathog]]$data$date))
     }
 
-      if (is.null(fit_start[[pathog]])) {
-        fit_start_use = min(prof_data[[pathog]]$data$date)
-      } else {
-        #check that requested fit_start is not smaller than start of data and not greater than the end
-        if (fit_start < min(prof_data[[pathog]]$data$date)) {
-          stop("\nRequested fit_start date precedes start of data\n")
-        } else if (fit_start > max(prof_data[[pathog]]$data$date)) {
-          stop("\nRequested fit_start date exceeds end of data\n")
-        } else {
-          fit_start_use = fit_start[[pathog]]
-        }
+    if (is.null(fit_start[[pathog]])) {
+      fit_start_use = min(prof_data[[pathog]]$data$date)
+    } else {
+      fit_start_use = fit_start[[pathog]]
+    }
 
-      }
     # set fit data entry
     prof_data[[pathog]]$data_fit_stat = prof_data[[pathog]]$data[
       prof_data[[pathog]]$data$date >= fit_start_use &

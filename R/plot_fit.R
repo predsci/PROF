@@ -346,14 +346,14 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
   cat("\nMaking Plots\n\n")
 
   if (npath == 2) {
-    suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], ncol = 2)))
+    suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]),  ggplotly(pl[[2]]), ncol = 2)))
     if (!is.null(filename)) {
       suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], ncol = 2)))
       ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(print(pl[[1]]))
+    suppressWarnings(print(ggplotly(pl[[1]])))
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Fit Plot to: ", filename,'\n')

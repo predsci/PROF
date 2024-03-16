@@ -131,14 +131,14 @@ fetch_hhs_data <- function(down_dir="~",
       # possible matches.
       # This functionality has been commented out pending approval.
 
-      #       file_pattern <- paste(DEF_FILE_BASE, "__[0-9]+\\.csv$", sep = "")
-      #       files <- list.files(down_dir, pattern = file_pattern)
-      #       for (file in files) {
-      #         if (file != down_filename) {
-      #           file.remove(file.path(down_dir, file))
-      #           cat("Removing File:", file, "\n")
-      #         }
-      #      }
+      file_pattern <- paste(DEF_FILE_BASE, "__[0-9]+\\.csv$", sep = "")
+      files <- list.files(down_dir, pattern = file_pattern)
+      for (file in files) {
+        if (file != down_filename) {
+          file.remove(file.path(down_dir, file))
+          cat("Removing File:", file, "\n")
+        }
+      }
     }
 
     return(return_data)

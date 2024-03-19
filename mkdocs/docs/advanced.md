@@ -69,11 +69,12 @@ Numeric.
 Incidence value.
 We require the incidence data to be in long format, i.e., if you are providing data for both pathogens, list all the data for the first one followed by the data for the second one.
 The figure below presents an example of the expected format.
-The covid19 data is followed by the influenza data.
-Only a small portion of the covid19 data is displayed, and none of the influenza data is shown.
+The COVID-19 data is followed by the influenza data.
+Only a small portion of the COVID-19 data is displayed, and none of the influenza data is shown.
 Please note that PROF supports the fitting and forecasting of only ONE season at a time.
+
 ![Figure 6: Example of required CSV data file format.](img/example_csv.png)
 
 ## Editing the Parameter File
 
-## Inferring Mortaliity
+## Inferring Mortality

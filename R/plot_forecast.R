@@ -330,12 +330,17 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
 
     if (length(dates) > length(dates_fit)) {
-      nscore = length(dates) - length(dates_fit)
-      obs_score = obs[(length(obs)-nscore+1):length(obs)]
-      dates_score = dates[(length(obs)-nscore+1):length(obs)]
+      dates_frcst_only = anti_join(data.frame(date=dates_frcst), data.frame(date=dates_fit), by = "date")$date #Forecast only dates
+      # which of the forecast only dates are also in the observation dates
+      dates_frcst_only_in_obs = semi_join(data.frame(date=dates_frcst_only), data.frame(date=dates), by = "date")$date
+      keep_ind_obs = match(dates_frcst_only_in_obs, dates)
+      keep_ind_model = match(dates_frcst_only_in_obs, dates_frcst)
+      nscore = length(dates_frcst_only_in_obs)
+      obs_score = obs[keep_ind_obs]
+      dates_score = dates[keep_ind_obs]
 
       # find the subset from the model that we are going to score
-      sim_score = simdat[, (length(obs)-nscore+1):length(obs)]
+      sim_score = simdat[, keep_ind_model]
 
       wis_arr = score_forecast(obs = obs_score, simdat = sim_score)
 

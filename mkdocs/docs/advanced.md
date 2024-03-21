@@ -53,24 +53,33 @@ This requires more knowledge in R and is discussed below.
 
 ## Uploading Your Own Data
 
-To fit and forecast your own data, you will need to provide a CSV data file containing hospitalization incidence data, the population size you are modeling, and a location name.
+To fit and forecast your own data, you will need to provide a CSV data file containing daily hospitalization incidence data, the population size you are modeling, and a location name.
 The latter is only needed for display on the plots.
-Currently, PROF supports only the modeling of hospitalization data for two pathogens: COVID-19 and Influenza.
-Your CSV file MUST have the following columns with the following information and format specifications: (i) column name: date.
-Date information in the format `\%Y-\%m-\%d` , e.g., `2024-10-01`.
+Currently, PROF supports only the modeling of daily hospitalization data for two pathogens: COVID-19 and Influenza.
+Your CSV file MUST have the following columns with the following information and format specifications:
+
+(i) column name: date.
+    Date information in the format `\%Y-\%m-\%d` , e.g., `2024-10-01`.
+    Currently we only support daily data
+
 (ii) column name: disease.
-String with disease name.
-Currently we only support `covid19` and `influenza`.
-This information must be provided for each incidence date.
+     String with disease name.
+     Currently we only support `covid19` and `influenza`.
+     This information must be provided for each incidence date.
+
 (iii) column name: metric.
-String with the metric of incidence.
-Currently, PROF only supports `hosp`. (iv) columns name: value.
-Numeric.
-Incidence value.
+      String with the metric of incidence.
+      Currently, PROF only supports `hosp`.
+
+(iv) columns name: value.
+     Numeric.
+     Non-negative incidence value.
+
 We require the incidence data to be in long format, i.e., if you are providing data for both pathogens, list all the data for the first one followed by the data for the second one.
 The figure below presents an example of the expected format.
 The COVID-19 data is followed by the influenza data.
 Only a small portion of the COVID-19 data is displayed, and none of the influenza data is shown.
+
 Please note that PROF supports the fitting and forecasting of only ONE season at a time.
 
 ![Figure 6: Example of required CSV data file format.](img/example_csv.png)

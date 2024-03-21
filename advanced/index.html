@@ -152,25 +152,28 @@ We suggest starting with a two-value force of infection and if the results are n
 If no improvement is achieved with three values you can try to improve the results by changing the default values for the initial guess of the fitted parameters and their allowed ranges.
 This requires more knowledge in R and is discussed below.</p>
 <h2 id="uploading-your-own-data">Uploading Your Own Data</h2>
-<p>To fit and forecast your own data, you will need to provide a CSV data file containing hospitalization incidence data, the population size you are modeling, and a location name.
+<p>To fit and forecast your own data, you will need to provide a CSV data file containing daily hospitalization incidence data, the population size you are modeling, and a location name.
 The latter is only needed for display on the plots.
-Currently, PROF supports only the modeling of hospitalization data for two pathogens: COVID-19 and Influenza.
-Your CSV file MUST have the following columns with the following information and format specifications: (i) column name: date.
-Date information in the format <code>\%Y-\%m-\%d</code> , e.g., <code>2024-10-01</code>.
-(ii) column name: disease.
-String with disease name.
-Currently we only support <code>covid19</code> and <code>influenza</code>.
-This information must be provided for each incidence date.
-(iii) column name: metric.
-String with the metric of incidence.
-Currently, PROF only supports <code>hosp</code>. (iv) columns name: value.
-Numeric.
-Incidence value.
-We require the incidence data to be in long format, i.e., if you are providing data for both pathogens, list all the data for the first one followed by the data for the second one.
+Currently, PROF supports only the modeling of daily hospitalization data for two pathogens: COVID-19 and Influenza.
+Your CSV file MUST have the following columns with the following information and format specifications:</p>
+<p>(i) column name: date.
+    Date information in the format <code>\%Y-\%m-\%d</code> , e.g., <code>2024-10-01</code>.
+    Currently we only support daily data</p>
+<p>(ii) column name: disease.
+     String with disease name.
+     Currently we only support <code>covid19</code> and <code>influenza</code>.
+     This information must be provided for each incidence date.</p>
+<p>(iii) column name: metric.
+      String with the metric of incidence.
+      Currently, PROF only supports <code>hosp</code>.</p>
+<p>(iv) columns name: value.
+     Numeric.
+     Non-negative incidence value.</p>
+<p>We require the incidence data to be in long format, i.e., if you are providing data for both pathogens, list all the data for the first one followed by the data for the second one.
 The figure below presents an example of the expected format.
 The COVID-19 data is followed by the influenza data.
-Only a small portion of the COVID-19 data is displayed, and none of the influenza data is shown.
-Please note that PROF supports the fitting and forecasting of only ONE season at a time.</p>
+Only a small portion of the COVID-19 data is displayed, and none of the influenza data is shown.</p>
+<p>Please note that PROF supports the fitting and forecasting of only ONE season at a time.</p>
 <p><img alt="Figure 6: Example of required CSV data file format." src="../img/example_csv.png" /></p>
 <h2 id="editing-the-parameter-file">Editing the Parameter File</h2>
 <h2 id="inferring-mortality">Inferring Mortality</h2>

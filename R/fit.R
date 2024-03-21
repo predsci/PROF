@@ -261,7 +261,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     dt = 1./20.0
 
-    dt = 1./10.
+    dt = 1./15.
     t0 = 0
 
     accum = c('Ih')
@@ -296,10 +296,10 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     input_parmax = prof_init_par$dis_par_ranges$parmax
 
     parmin = par
-    parmin[ind_opt] <- lapply(par[ind_opt], function(x) x * 0.5)
+    parmin[ind_opt] <- lapply(par[ind_opt], function(x) x * 0.75)
     # hand-tune some min values
     parmin['pH'] = 1e-4
-    # parmin[['mu_H1H2']] = 0.5
+    parmin[['mu_H1H2']] = 0.5
     parmin[['baseline']] = max(parmin[['baseline']], 1)
 
     # if user provided values use them
@@ -315,38 +315,32 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     parmax[['mu_H1H2']] = 2.0
 
     if (lubridate::year(dates[1]) == 2023 & disease == 'influenza') {
-      parmin[c('Beta1')] = 0.8 * par$gamma
-      parmin[c('Beta2')] = 0.8 * par$gamma
+      parmin[c('Beta1')] = 0.9 * par$gamma
+      parmin[c('Beta2')] = 0.9 * par$gamma
 
       parmax[c('Beta1')] = 1.1 * par$gamma
-      parmax[c('Beta2')] = 1.8 * par$gamma
+      parmax[c('Beta2')] = 1.6 * par$gamma
 
       parmin[c('tcng1')] = 28
       parmax[c('tcng1')] = (ntimes -28)
 
       parmin['I0'] = 10
       parmax['I0'] = 1000
+
+      parmin['time0'] = 1.
+      parmax['time0'] = 28.
+
+
+
       if (nb == 3) {
-        parmin[c('Beta3')] = 0.8 * par$gamma
-        parmax[c('Beta3')] = 1.8 * par$gamma
-        parmin[c('tcng2')] = 7
-        parmax[c('tcng1')] = (ntimes/2)
-        parmax[c('tcng2')] = (ntimes/2)
+        parmin['Beta3'] = parmin['Beta2']
+        parmax['Beta3'] = 1.4 * par$gamma #parmax['Beta2']
+        parmin['tcng2'] = parmin['tcng1']
+        parmax['tcng2'] = parmax['tcng1']
       }
 
-    }
 
-    # TEST THIS
-    if (lubridate::year(dates[1]) == 2023 & disease == 'covid19') {
-     par['Beta1'] = 0.7*par$Beta1
-     if(nb == 3) parmax['Beta3'] = 1.0
-     # par['Beta2'] = 0.6
-     #
-     # parmin[c('tcng1')] = 28
-     # parmax[c('tcng1')] = (ntimes -28)
-     parmax['time0'] = 100.0
     }
-
 
     # if user provided values use them
     if (!any(is.na(input_parmax))) {

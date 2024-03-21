@@ -28,7 +28,15 @@
 #'  @param ntraj - integer number of stochastic trajectories, default 1000
 #'  @param nfrcst - number of time units to produce a forecast for (assume to be the same
 #'  cadence as the data), default is 35 days
-#'  @filename - if NULL print plot to screen, if not save also to filename
+#'  @param filename - if NULL print plot to screen, if not save also to filename
+#'  @param err_cor numeric scalar [-1, 1] - specify the error correlation to be used
+#'  for combining influenza and COVID19 forecasts.  If NULL, default behavior is
+#'  to evaluate for err_cor=1 (ordered) and err_cor=0 (random).
+#'  @param method_name character - method used to aggregate pathogen forecasts 
+#'  'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA' 
+#' is a more proper combination of profiles.  'lin_scale' uses the uncertainty 
+#' range of 'semi_sorted_randA', but ensures that the combined forecast has a 
+#' median equal to the sum of the aggregate forecast medians.
 #' @return
 #' plots to screen and  file
 #' forecast_traj - a list with a list for each disease and for the combined burden
@@ -37,7 +45,7 @@
 #' total_list - a list with the data frames used for each of the plots, these include the median and quantiles
 #' wis_df - a list of data frame with the WIS score of the forecast if available.  If not it contains a NULL
 #'
-plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 35, filename = NULL) {
+plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 35, filename = NULL, err_cor = NULL, method_name="semi_sorted_randA") {
 
   tab_list = fit_list$tab_list
 
@@ -431,7 +439,14 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   # Combine forecasts
   cat("Combining Forecasts \n")
 
-  combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
+  if (is.null(err_cor)) {
+    combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
+  } else {
+    combined_frcst <- combine_fore_err_corr(prof_data, dates_frcst_list, simdat_list,
+                                            err_corr=err_cor, 
+                                            method_name=method_name)
+  }
+  
 
   obs_each_list = combined_frcst$obs_each_list
 

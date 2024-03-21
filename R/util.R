@@ -574,6 +574,129 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
               obs_each_list = obs_each_list, obs_fit_each_list = obs_fit_each_list))
 }
 
+
+#'
+#' Combine COVID19 and Influenza Forecasts
+#'
+#' Forecasts can be combined using two procedures using the error-correlation: 
+#' semi-random trajectory matching 'semi_sorted_randA' or a median-preserving 
+#' method that linearly scales uncertainty across known anchor points 'lin_scale'.
+#'
+#' @param prof_data - the complete data structure
+#' @param dates_frcst_list - a list of length two with dates (fit and forecast) for each
+#' pathogen
+#' @param simdat_list - a list of length two with an array of trajectories for each pathogen
+#' @param method_name character - 'semi_sorted_randA' or 'lin_scale'.
+#' @param cor_val numeric [-1, 1] designating the expected error/uncertainty 
+#' correlation between the aggregate forecasts.
+#' @param method_name character - 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA' 
+#' is a more proper combination of profiles.  'lin_scale' uses the uncertainty 
+#' range of 'semi_sorted_randA', but ensures that the combined forecast has a 
+#' median equal to the sum of the aggregate forecast medians.
+#'
+#' @return a list with two items
+#' simdat_both - a list of length two with the two estimates for the combined burden
+#' (random and ordered)
+#' inc_both - the combined reported hospitalization
+#' dates_both - dates array for combined forecast
+#'
+#'
+combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_list = NULL, err_corr=0., method_name="semi_sorted_randA") {
+  
+  if (is.null(prof_data)) stop('Missing prof_data in combined_foreccasts')
+  if (is.null(dates_frcst_list)) stop('Missing dates_frcst_list in combined_foreccasts')
+  if (is.null(simdat_list)) stop('Missing simdat_list in in combined_foreccasts')
+  
+  npath = length(names(prof_data))
+  
+  # find dates that are common to both diseases
+  # find number of trajectories in each forecast
+  
+  dates_start = dates_end = rep(as.Date("2020-01-01"), npath)
+  ntraj_both = rep(0, npath)
+  
+  for (ip in 1:npath) {
+    dates_start[ip] = min(dates_frcst_list[[ip]])
+    dates_end[ip]   = max(dates_frcst_list[[ip]])
+    ntraj_both[ip] = dim(simdat_list[[ip]])[1]
+  }
+  
+  start_date = max(dates_start)
+  end_date   = min(dates_end)
+  
+  # Dates array for both pathogens
+  dates_both = seq(start_date, end_date, by = '1 day')
+  
+  ntraj_both = min(ntraj_both)[1]
+  
+  # subset each pathogen using start/end dates
+  browser()
+  for (ip in 1:npath) {
+    
+    mydata = prof_data[[ip]]
+    
+    # hospitalization incidence - fitted
+    inc_fit = mydata$data_fit$inc
+    
+    # dates - fitted
+    dates_fit  = mydata$data_fit$date
+    
+    # complete hospitalization incidence and dates
+    
+    inc_all = mydata$data$inc
+    dates_all  = mydata$data$date
+    
+    dates_frcst = dates_frcst_list[[ip]]
+    
+    ind0 = which(dates_frcst == start_date)
+    ind1 = which(dates_frcst ==   end_date)
+    
+    keep_ind = which(dates_fit >= start_date & dates_fit <= end_date)
+    
+    inc_fit_trmd = inc_fit[keep_ind]
+    dates_fit_trmd = dates_fit[keep_ind]
+    
+    simdat = simdat_list[[ip]]
+    
+    simdat = simdat[1:ntraj_both, ind0:ind1]
+    
+    simdat_list[[ip]] = simdat
+    
+    # observations may need to be trimmed at start to ensure
+    # they start at the same date as the fitted data
+    
+    keep_ind = which(mydata$data$date >= start_date)
+    
+    inc = mydata$data$inc[keep_ind]
+    
+    if (ip == 1) {
+      rand_simdat_both = ordered_simdat_both = simdat * 0.0
+      obs_both = inc * 0.0
+      obs_fit_both = inc_fit_trmd * 0.0
+    }
+    
+    rand_simdat_both = rand_simdat_both + simdat
+    obs_both = obs_both + inc
+    
+    obs_fit_both = obs_fit_both + inc_fit_trmd
+    
+    # now order also
+    
+    max_values <- apply(simdat, 1, max)
+    # print(length(max_values))
+    ordered_simdat <- simdat[order(max_values),]
+    ordered_simdat_both = ordered_simdat_both + ordered_simdat
+    
+  }
+  
+  simdat_both = list()
+  simdat_both[['random']]  = rand_simdat_both
+  simdat_both[['ordered']] = ordered_simdat_both
+  
+  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both))
+}
+
+
 #'
 #' @title Fit a baseline statistical model to the data
 #'

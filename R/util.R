@@ -586,6 +586,8 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 #' @param dates_frcst_list - a list of length two with dates (fit and forecast) for each
 #' pathogen
 #' @param simdat_list - a list of length two with an array of trajectories for each pathogen
+#' @param nfrcst integer - the number of days/weeks that were simulated beyond
+#' the fitting time period.
 #' @param method_name character - 'semi_sorted_randA' or 'lin_scale'.
 #' @param cor_val numeric [-1, 1] designating the expected error/uncertainty 
 #' correlation between the aggregate forecasts.
@@ -601,38 +603,44 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 #' dates_both - dates array for combined forecast
 #'
 #'
-combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_list = NULL, err_corr=0., method_name="semi_sorted_randA") {
+combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_list = NULL, nfrcst=NULL, err_corr=0., method_name="semi_sorted_randA") {
   
-  if (is.null(prof_data)) stop('Missing prof_data in combined_foreccasts')
-  if (is.null(dates_frcst_list)) stop('Missing dates_frcst_list in combined_foreccasts')
-  if (is.null(simdat_list)) stop('Missing simdat_list in in combined_foreccasts')
+  if (is.null(prof_data)) stop('Missing prof_data in combine_fore_err_corr()')
+  if (is.null(dates_frcst_list)) stop('Missing dates_frcst_list in combine_fore_err_corr()')
+  if (is.null(simdat_list)) stop('Missing simdat_list in in combine_fore_err_corr()')
   
   npath = length(names(prof_data))
   
   # find dates that are common to both diseases
   # find number of trajectories in each forecast
-  
-  dates_start = dates_end = rep(as.Date("2020-01-01"), npath)
+  forecast_dates = list()
   ntraj_both = rep(0, npath)
+  dates_start = dates_end = as.Date("2000-01-01")
   
   for (ip in 1:npath) {
+    # Determine which dates are needed for the forecast period
+    total_sim_dates = length(dates_frcst_list[[ip]])
+    forecast_dates[[ip]] = dates_frcst_list[[ip]][(total_sim_dates-nfrcst+1):total_sim_dates]
+    if (ip==1) {
+      combine_dates = forecast_dates[[ip]]
+    } else {
+      combine_dates = intersect(combine_dates, forecast_dates[[ip]])
+    }
+    
     dates_start[ip] = min(dates_frcst_list[[ip]])
     dates_end[ip]   = max(dates_frcst_list[[ip]])
-    ntraj_both[ip] = dim(simdat_list[[ip]])[1]
+    ntraj_both[ip]  = dim(simdat_list[[ip]])[1]
   }
+  # convert integer-dates back to Date format
+  combine_dates = as.Date(combine_dates, origin="1970-01-01")
   
+  # --- for back-compatibility ------------------
   start_date = max(dates_start)
   end_date   = min(dates_end)
   
-  # Dates array for both pathogens
-  dates_both = seq(start_date, end_date, by = '1 day')
+  obs_each_list = obs_fit_each_list = list()
   
-  ntraj_both = min(ntraj_both)[1]
-  
-  # subset each pathogen using start/end dates
-  browser()
   for (ip in 1:npath) {
-    
     mydata = prof_data[[ip]]
     
     # hospitalization incidence - fitted
@@ -649,18 +657,12 @@ combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, sim
     dates_frcst = dates_frcst_list[[ip]]
     
     ind0 = which(dates_frcst == start_date)
-    ind1 = which(dates_frcst ==   end_date)
+    ind1 = which(dates_frcst == end_date)
     
     keep_ind = which(dates_fit >= start_date & dates_fit <= end_date)
     
     inc_fit_trmd = inc_fit[keep_ind]
     dates_fit_trmd = dates_fit[keep_ind]
-    
-    simdat = simdat_list[[ip]]
-    
-    simdat = simdat[1:ntraj_both, ind0:ind1]
-    
-    simdat_list[[ip]] = simdat
     
     # observations may need to be trimmed at start to ensure
     # they start at the same date as the fitted data
@@ -670,30 +672,44 @@ combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, sim
     inc = mydata$data$inc[keep_ind]
     
     if (ip == 1) {
-      rand_simdat_both = ordered_simdat_both = simdat * 0.0
       obs_both = inc * 0.0
       obs_fit_both = inc_fit_trmd * 0.0
     }
     
-    rand_simdat_both = rand_simdat_both + simdat
     obs_both = obs_both + inc
     
     obs_fit_both = obs_fit_both + inc_fit_trmd
     
-    # now order also
+    # for stacked barplot we need to have the individual pathogen information also
     
-    max_values <- apply(simdat, 1, max)
-    # print(length(max_values))
-    ordered_simdat <- simdat[order(max_values),]
-    ordered_simdat_both = ordered_simdat_both + ordered_simdat
+    obs_each_list[[ip]] = inc
+    obs_fit_each_list[[ip]] = inc_fit_trmd
+  }
+  # --- end back-compatibility section ----------
+  
+  dates_both_data = seq(start_date, min(combine_dates)-1, by="1 day")
+  ntraj_both = min(ntraj_both)[1]
+  
+  # initiate combined profiles array
+  comb_fore = array(data=NA, dim=c(ntraj_both, length(combine_dates)))
+  
+  for (ii in 1:length(combine_dates)) {
+    cur_date = combine_dates[ii]
+    # assume only two pathogens, and extract cur_date profiles
+    A_date_ind = which(dates_frcst_list[[1]]==cur_date)
+    A = sort(simdat_list[[1]][, A_date_ind])
+    B_date_ind = which(dates_frcst_list[[2]]==cur_date)
+    B = sort(simdat_list[[2]][, B_date_ind])
     
+    # combine the profiles
+    comb_fore[, ii] = eval_comb(method_name, A, B, cor_val=err_corr)
   }
   
   simdat_both = list()
-  simdat_both[['random']]  = rand_simdat_both
-  simdat_both[['ordered']] = ordered_simdat_both
+  simdat_both[[1]]  = comb_fore
   
-  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both))
+  return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both_data = dates_both_data, dates_fore=combine_dates, obs_each_list=obs_each_list,
+         obs_fit_each_list=obs_fit_each_list))
 }
 
 

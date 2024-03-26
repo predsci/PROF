@@ -124,7 +124,7 @@ fetch_hhs_data <- function(down_dir="~",
       return_data$download_path <- filepath
       return_data$last_modified <- posix_timestamp
       return_data$out_flag <- 0
-
+      
       # Clean out existing dataset. For now, this only looks for csv files that
       # have been generated through the function's default filepath naming
       # conventions, viz. using the "__<last_modified>.csv" as an identifier for
@@ -806,7 +806,7 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
 
   # determine all pathogens
   pathogens = names(prof_data)
-
+  
   if (is.null(fit_start)) {
     fit_start = list()
     for (pathog in pathogens) fit_start[[pathog]] = NULL
@@ -839,7 +839,7 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
   return(prof_data)
 }
 
-#' @title Retrieve Poulation
+#' @title Retrieve Population
 #' @description Retrieve population of a U.S. state or territory.
 #'
 #' @param location character. Intended to be a two-letter abbreviation, but will

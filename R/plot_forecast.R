@@ -5,6 +5,9 @@
 #' a stochastic code to generate trajectories, with the forecast horizon determined
 #' by the call and calculate the statistics
 #'
+#' @import ggplot2
+#' @import gridExtra
+#'
 #' @param prof_data data structure for diseases
 #' for each disease it includes:
 #' disease - covid19 or influenza
@@ -45,7 +48,7 @@
 #' total_list - a list with the data frames used for each of the plots, these include the median and quantiles
 #' wis_df - a list of data frame with the WIS score of the forecast if available.  If not it contains a NULL
 #'
-plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 35, filename = NULL, err_cor = NULL, method_name="semi_sorted_randA") {
+plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 35, filename = NULL, err_cor = 1.0, method_name="semi_sorted_randA") {
 
   tab_list = fit_list$tab_list
 
@@ -443,88 +446,113 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   # Combine forecasts
   cat("Combining Forecasts \n")
-
-  if (is.null(err_cor)) {
-    combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
-  } else {
-    combined_frcst <- combine_fore_err_corr(prof_data, dates_frcst_list, simdat_list,
-                                            err_corr=err_cor, 
-                                            method_name=method_name)
-  }
   
-
+  # if (is.null(err_cor)) {
+  #   combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
+  # } else {
+    combined_frcst_ecor <- combine_fore_err_corr(prof_data, dates_frcst_list, simdat_list,
+                                                 err_corr=err_cor, nfrcst=nfrcst,
+                                                 method_name=method_name)
+    combined_frcst_rand <- combine_fore_err_corr(prof_data, 
+                                                 dates_frcst_list, simdat_list,
+                                                 err_corr=0, nfrcst=nfrcst,
+                                                 method_name=method_name)
+    
+    combined_frcst = combined_frcst_ecor
+    combined_frcst$simdat_both[[2]] = combined_frcst_rand$simdat_both[[1]]
+    
+    combined_names <- c("err_cor", "random")
+    names(combined_frcst$simdat_both) = combined_names
+    
+  # }
+  
   obs_each_list = combined_frcst$obs_each_list
 
   obs_fit_each_list = combined_frcst$obs_fit_each_list
 
   simdat_both = combined_frcst$simdat_both
 
-  dates_both  = combined_frcst$dates_both
+  dates_both_data  = combined_frcst$dates_both_data
+  dates_fore = combined_frcst$dates_fore
 
   obs_both    = combined_frcst$obs_both
 
   obs_fit_both = combined_frcst$obs_fit_both
 
-  npad = length(dates_both) - length(obs_both)
+  # npad = length(dates_both) - length(obs_both)
+  npad = length(dates_fore)
 
   if (npad > 0) {
     reported_both = c(obs_both, rep(NA, npad))
   } else {
-    reported_both = obs_both[1:length(dates_both)]
+    reported_both = obs_both[1:length(dates_both_data)]
   }
 
-  npad_fit = length(dates_both) - length(obs_fit_both)
+  npad_fit = length(dates_both_data)
 
   if (npad_fit > 0) {
     reported_fit_both = c(obs_fit_both, rep(NA, npad))
   } else {
-    reported_fit_both = obs_fit_both[1:length(dates_both)]
+    reported_fit_both = obs_fit_both[1:length(dates_both_data)]
   }
 
-  combined_names <- c('random', 'sorted')
+  # find maximum in simdat_both of random and custom and use
 
-  # find maximum in simdat_both of random and sorted and use
-
-  both_max = 0.0
-  for (ip in 1:npath) {
-    both_max = max(both_max, round(max(simdat_both[[ip]])))
+  both_max = max(reported_both, na.rm=T)
+  for (ic in 1:length(combined_names)) {
+    both_max = max(both_max, round(max(simdat_both[[ic]])))
   }
 
   # create a long data-frame with the reported values for both pathogens
   data_df_list = list()
-
+  plot_dates = c(dates_both_data, dates_fore)
+  
   for (ip in 1:npath) {
-
-    data_df_list[[ip]] = data.frame(date = as.Date(dates_both, format = '%Y-%m-%d'),disease = rep(disease_list[[ip]], length(dates_both)),
-                                    reported = c(obs_each_list[[ip]], rep(NA, length(dates_both)-length(obs_both))))
+    data_df_list[[ip]] = data.frame(
+      # date = as.Date(dates_both, format = '%Y-%m-%d'),
+      date = plot_dates,
+      disease = rep(disease_list[[ip]], length(plot_dates)),
+      reported = c(obs_each_list[[ip]], rep(NA, npad))
+      )
   }
   data_df = rbind(data_df_list[[1]], data_df_list[[2]])
+  
+  for (ic in 1:length(combined_names)) {
 
-  for (ip in 1:npath) {
-
-    apply(simdat_both[[ip]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
+    apply(simdat_both[[ic]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
 
     quantiles_both <- t(quantiles_both)
     quantiles_both <- as.data.frame(quantiles_both)
+    quantiles_pad = as.data.frame(matrix(data=NA, nrow=npad_fit, 
+                                         ncol=ncol(quantiles_both))
+                                 )
+    names(quantiles_pad) = names(quantiles_both)
+    quantiles_both = rbind(quantiles_pad, quantiles_both)
 
-    forecast_traj[[combined_names[[ip]]]] = list(traj = simdat_both[[ip]],
-                                                 date = as.Date(dates_both, format = '%Y-%m-%d'),
+    forecast_traj[[combined_names[[ic]]]] = list(traj = simdat_both[[ic]],
+                                                 date = plot_dates,
                                                  reported_both = reported_both,
                                                  reported_fit_both = reported_fit_both)
 
-    total_both=cbind(date = as.Date(dates_both, format = '%Y-%m-%d'),quantiles_both,
-                     reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))),
-                     reported_fit = c(obs_fit_both, rep(NA, length(dates_both)-length(obs_fit_both))))
+    total_both=cbind(date = plot_dates,
+                     quantiles_both,
+                     reported = c(obs_both, rep(NA, npad)),
+                     reported_fit = c(obs_fit_both, rep(NA, npad)))
 
-    total_list[[combined_names[[ip]]]] = total_both
+    total_list[[combined_names[[ic]]]] = total_both
 
-    copy_total_both = total_both
-    total_both[1:length(obs_fit_both), c('2.5%', '25%', '50%', '75%', '97.5%')] <- NA
-
-    mytitle = paste0(reg_name,' - Combined Burden (', combined_names[ip],')')
+    # copy_total_both = total_both
+    # total_both[1:length(obs_fit_both), c('2.5%', '25%', '50%', '75%', '97.5%')] <- NA
+    
+    if (combined_names[ic]=="err_cor") {
+      mytitle = paste0(reg_name,' - Combined Burden (err_cor=', err_cor, ')')
+    } else {
+      mytitle = paste0(reg_name,' - Combined Burden (err_cor=0.0)')
+    }
+    
 
     # y-label only on left most plot
-    if (ip == 1) {
+    if (ic == 1) {
       ylab = paste0(cadence_lab, ' New Hosp')
     } else {
       ylab=""
@@ -538,7 +566,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
       y = c(0, both_max)  # Specify the y-coordinate range (adjust as needed)
     )
 
-    pl[[combined_names[ip]]] <- ggplot(data=total_both,
+    pl[[combined_names[ic]]] <- ggplot(data=total_both,
                                        mapping=aes(x=date))+
       geom_ribbon(aes(ymin=`2.5%`,ymax=`97.5%`),fill='blue',alpha=0.5) +
       geom_ribbon(aes(ymin=`25%`,ymax=`75%`),fill='blue',alpha=0.8) +
@@ -552,7 +580,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
 
   }
 
-
+  
   interactive_plot <- list()
 
   for (ip in 1:npath) {
@@ -560,8 +588,9 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 3
   }
 
   cat("\nMaking Plots\n\n")
-
-  suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]), ggplotly(pl[[2]]), ggplotly(pl[[3]]), ggplotly(pl[[4]]), ncol = 2)))
+  
+  # suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]), ggplotly(pl[[2]]), ggplotly(pl[[3]]), ggplotly(pl[[4]]), ncol = 2)))
+  suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2)))
 
   if (!is.null(filename)) {
       suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], pl[[3]], pl[[4]], ncol = 2))

@@ -120,7 +120,7 @@ lin_scale_uncert_profs <- function(A, B, cor_val=1.) {
     # Calculate linearly interpolated widths
     zero_dist = zero_comb - zero_median
     one_dist = one_comb - one_median
-    comb_dist = cor_val*(one_dist - zero_dist) + one_dist
+    comb_dist = cor_val*(zero_dist - one_dist) + zero_dist
     out_profs = one_median + comb_dist
   } 
   return(out_profs)

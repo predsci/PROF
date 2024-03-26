@@ -256,12 +256,35 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
     stop('\nData must contain the fields: date, disease, metric, value\n')
   }
 
-  if (is.null(population) | population < 0) {
+  if (is.null(population) | population <= 0) {
     stop("\nPlease provide population size as a positive integer.\n")
   }
 
+  if (!all(levels(raw_csv$disease)) %in% c('covid19', 'influenza')) {
+    stop("\nPROF only supports covid19 and influenza. Please check your data\n")
+  }
+
+  if (!all(raw_csv$value) > 0) {
+    stop("\nThe value column can not contain negative values\n")
+  }
+
+  if (!all(raw_csv$metric) == 'hosp') {
+    stop("\nPROF can only model hospitalization data\n")
+  }
+
+  # Ensure date is in %Y-%m-%d format
+
   raw_csv$date <- ymd(raw_csv$date)
 
+  # check that data is daily
+
+  date_array <- unique(raw_csv$date)
+
+  all_one_day_apart = all(diff(date_array) == 1)
+
+  if (!all_one_day_apart) {
+    stop("\nPROF currently supports only daily dat\n")
+  }
 
   # if (is.null(fit_start)) {
   #   fit_start <- min(raw_csv$date)
@@ -275,6 +298,8 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
 
   season_start <- min(raw_csv$date)
   season_end   <- max(raw_csv$date)
+
+  # Provide a default location name if input is NA
 
   if (is.na(location) | is.null(location)) location <- "PROFVille"
 

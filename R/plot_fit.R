@@ -329,6 +329,10 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
     title = paste0(reg_name,' - ', toupper(disease),' Mechanistic Fit')
 
+    if (ip == 1) combined_main_text = NULL
+    combined_main_text =  paste0(combined_main_text,'         ', title)
+
+
     start_year = lubridate::year(range(dates)[1])
     end_year   = start_year + 1
     xlab = paste0(start_year,' - ', end_year)
@@ -345,15 +349,21 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
   cat("\nMaking Plots\n\n")
 
+  interactive_plot <- list()
+  for (ip in 1:npath) {
+    interactive_plot[[ip]] <- ggplotly(pl[[ip]])
+  }
+
   if (npath == 2) {
-    suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]),  ggplotly(pl[[2]]), ncol = 2)))
+    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]], nrows = 1, titleX = TRUE, titleY = TRUE) # %>% layout(title = combined_main_text)
+    # suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]),  ggplotly(pl[[2]]), ncol = 2)))
     if (!is.null(filename)) {
       suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], ncol = 2)))
       ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Fit Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(print(ggplotly(pl[[1]])))
+    arrange_plot <- interactive_plot[[1]]
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Fit Plot to: ", filename,'\n')
@@ -363,6 +373,6 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
   # return the trajectory list
 
-  return(list(fit_traj = fit_traj, pl = pl))
+  return(list(fit_traj = fit_traj, pl = pl, arrange_plot = arrange_plot))
 
 }

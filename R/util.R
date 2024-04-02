@@ -96,6 +96,7 @@ set_init_states <- function(pop, I0, mymodel) {
 #' @param mymodel model name sirh or seirh
 #' @param mydisease disease name covid19 or influenza
 #' @param inc time-series of hospitalization
+#' @param cadence integer. Data cadence, e.g. daily = 1, weekly = 7
 #' @return param a model specific list with initial guess for parameters:
 #'
 #' gamma - generation time
@@ -112,7 +113,7 @@ set_init_states <- function(pop, I0, mymodel) {
 #'
 #' @keywords internal
 
-init_param <- function(mymodel, mydisease, inc) {
+init_param <- function(mymodel, mydisease, inc, cadence = 1) {
 
   if (mymodel == 'sirh' & mydisease == 'influenza') { #influenza  and SIRH
     gamma = 1.0/2.6
@@ -120,8 +121,8 @@ init_param <- function(mymodel, mydisease, inc) {
     Beta = 1.3 * gamma
     pH = 0.001
     rho = 0.95
-    wl = 3.0
-    time0 = 14
+    wl = 3.0 /cadence
+    time0 = 14 * cadence
     mu_rec = 1./7. # may even be closer to six
     immn_wn = 0.0 # no waning of immunity
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, Beta = Beta, pH = pH, rho = rho,
@@ -139,8 +140,8 @@ init_param <- function(mymodel, mydisease, inc) {
     mu_EI = 1.0
     pH = 0.005
     rho = 0.95
-    wl = 3.0
-    time0 = 14
+    wl = 3.0/cadence
+    time0 = 14 * cadence
     mu_rec = 1./15. # rate of going from H to R days-1
     immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, mu_EI = mu_EI, Beta = Beta,
@@ -152,8 +153,8 @@ init_param <- function(mymodel, mydisease, inc) {
     mu_EI = 1.0
     pH = 0.001
     rho = 0.95
-    wl = 3.0
-    time0 = 14
+    wl = 3.0/cadence
+    time0 = 14 * cadence
     mu_rec = 1./7.
     immn_wn = 0.0 # no waning of immunity
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, mu_EI = mu_EI, Beta = Beta,
@@ -169,8 +170,8 @@ init_param <- function(mymodel, mydisease, inc) {
     mu_EI = 1.0
     pH = 0.005
     rho = 0.95
-    wl = 3.0
-    time0 = 14
+    wl = 3.0/cadence
+    time0 = 14 * cadence
     mu_rec = 1./15. # rate of going from H to R days-1
     immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, Beta = Beta, pH = pH, rho = rho,
@@ -189,17 +190,18 @@ init_param <- function(mymodel, mydisease, inc) {
 #'
 #' @param inc incidence time series
 #' @param end_of_season logical (TRUE or FALSE)
+#' @param cadence integer, cadence of data, daily=1, weekly=7. Default is daily
 #' @return baseline integer baseline value >= 1
 #' @keywords internal
 #'
-get_baseline <-function(inc, end_of_season) {
+get_baseline <-function(inc, end_of_season, cadence = 1) {
 
-  nstart = 14
+  nstart = 14/cadence
 
-  baseline = round(mean(inc[1:14]))
+  baseline = round(mean(inc[1:nstart]))
 
   if (end_of_season) {
-    npast = 7
+    npast = 7/cadence
     ntimes = length(inc)
     baseline = round(mean(inc[(ntimes-npast):ntimes]))
   }
@@ -578,8 +580,8 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 #'
 #' Combine COVID19 and Influenza Forecasts
 #'
-#' Forecasts can be combined using two procedures using the error-correlation: 
-#' semi-random trajectory matching 'semi_sorted_randA' or a median-preserving 
+#' Forecasts can be combined using two procedures using the error-correlation:
+#' semi-random trajectory matching 'semi_sorted_randA' or a median-preserving
 #' method that linearly scales uncertainty across known anchor points 'lin_scale'.
 #'
 #' @param prof_data - the complete data structure
@@ -589,11 +591,11 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 #' @param nfrcst integer - the number of days/weeks that were simulated beyond
 #' the fitting time period.
 #' @param method_name character - 'semi_sorted_randA' or 'lin_scale'.
-#' @param cor_val numeric [-1, 1] designating the expected error/uncertainty 
+#' @param cor_val numeric [-1, 1] designating the expected error/uncertainty
 #' correlation between the aggregate forecasts.
-#' @param method_name character - 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA' 
-#' is a more proper combination of profiles.  'lin_scale' uses the uncertainty 
-#' range of 'semi_sorted_randA', but ensures that the combined forecast has a 
+#' @param method_name character - 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA'
+#' is a more proper combination of profiles.  'lin_scale' uses the uncertainty
+#' range of 'semi_sorted_randA', but ensures that the combined forecast has a
 #' median equal to the sum of the aggregate forecast medians.
 #'
 #' @return a list with two items
@@ -604,19 +606,19 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
 #'
 #'
 combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_list = NULL, nfrcst=NULL, err_corr=0., method_name="semi_sorted_randA") {
-  
+
   if (is.null(prof_data)) stop('Missing prof_data in combine_fore_err_corr()')
   if (is.null(dates_frcst_list)) stop('Missing dates_frcst_list in combine_fore_err_corr()')
   if (is.null(simdat_list)) stop('Missing simdat_list in in combine_fore_err_corr()')
-  
+
   npath = length(names(prof_data))
-  
+
   # find dates that are common to both diseases
   # find number of trajectories in each forecast
   forecast_dates = list()
   ntraj_both = rep(0, npath)
   dates_start = dates_end = as.Date("2000-01-01")
-  
+
   for (ip in 1:npath) {
     # Determine which dates are needed for the forecast period
     total_sim_dates = length(dates_frcst_list[[ip]])
@@ -626,73 +628,76 @@ combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, sim
     } else {
       combine_dates = intersect(combine_dates, forecast_dates[[ip]])
     }
-    
+
     dates_start[ip] = min(dates_frcst_list[[ip]])
     dates_end[ip]   = max(dates_frcst_list[[ip]])
     ntraj_both[ip]  = dim(simdat_list[[ip]])[1]
   }
   # convert integer-dates back to Date format
   combine_dates = as.Date(combine_dates, origin="1970-01-01")
-  
+
   # --- for back-compatibility ------------------
   start_date = max(dates_start)
   end_date   = min(dates_end)
-  
+
   obs_each_list = obs_fit_each_list = list()
-  
+
   for (ip in 1:npath) {
     mydata = prof_data[[ip]]
-    
+
     # hospitalization incidence - fitted
     inc_fit = mydata$data_fit$inc
-    
+
     # dates - fitted
     dates_fit  = mydata$data_fit$date
-    
+
     # complete hospitalization incidence and dates
-    
+
     inc_all = mydata$data$inc
     dates_all  = mydata$data$date
-    
+
     dates_frcst = dates_frcst_list[[ip]]
-    
+
     ind0 = which(dates_frcst == start_date)
     ind1 = which(dates_frcst == end_date)
-    
+
     keep_ind = which(dates_fit >= start_date & dates_fit <= end_date)
-    
+
     inc_fit_trmd = inc_fit[keep_ind]
     dates_fit_trmd = dates_fit[keep_ind]
-    
+
     # observations may need to be trimmed at start to ensure
     # they start at the same date as the fitted data
-    
+
     keep_ind = which(mydata$data$date >= start_date)
-    
+
     inc = mydata$data$inc[keep_ind]
-    
+
     if (ip == 1) {
       obs_both = inc * 0.0
       obs_fit_both = inc_fit_trmd * 0.0
     }
-    
+
     obs_both = obs_both + inc
-    
+
     obs_fit_both = obs_fit_both + inc_fit_trmd
-    
+
     # for stacked barplot we need to have the individual pathogen information also
-    
+
     obs_each_list[[ip]] = inc
     obs_fit_each_list[[ip]] = inc_fit_trmd
   }
   # --- end back-compatibility section ----------
-  
-  dates_both_data = seq(start_date, min(combine_dates)-1, by="1 day")
+
+  cadence = as.numeric(combine_dates[2] - combine_dates[1])
+  if (cadence == 1) cadence = '1 day'
+  if (cadence == 7) cadence = '1 week'
+  dates_both_data = seq(start_date, min(combine_dates)-1, by=cadence)
   ntraj_both = min(ntraj_both)[1]
-  
+
   # initiate combined profiles array
   comb_fore = array(data=NA, dim=c(ntraj_both, length(combine_dates)))
-  
+
   for (ii in 1:length(combine_dates)) {
     cur_date = combine_dates[ii]
     # assume only two pathogens, and extract cur_date profiles
@@ -700,14 +705,14 @@ combine_fore_err_corr <- function(prof_data = NULL, dates_frcst_list = NULL, sim
     A = sort(simdat_list[[1]][, A_date_ind])
     B_date_ind = which(dates_frcst_list[[2]]==cur_date)
     B = sort(simdat_list[[2]][, B_date_ind])
-    
+
     # combine the profiles
     comb_fore[, ii] = eval_comb(method_name, A, B, cor_val=err_corr)
   }
-  
+
   simdat_both = list()
   simdat_both[[1]]  = comb_fore
-  
+
   return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both_data = dates_both_data, dates_fore=combine_dates, obs_each_list=obs_each_list,
          obs_fit_each_list=obs_fit_each_list))
 }

@@ -124,7 +124,7 @@ fetch_hhs_data <- function(down_dir="~",
       return_data$download_path <- filepath
       return_data$last_modified <- posix_timestamp
       return_data$out_flag <- 0
-      
+
       # Clean out existing dataset. For now, this only looks for csv files that
       # have been generated through the function's default filepath naming
       # conventions, viz. using the "__<last_modified>.csv" as an identifier for
@@ -260,7 +260,7 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
     stop("\nPlease provide population size as a positive integer.\n")
   }
 
-  if (!all(levels(raw_csv$disease)) %in% c('covid19', 'influenza')) {
+  if (!all(levels(raw_csv$disease) %in% c('covid19', 'influenza'))) {
     stop("\nPROF only supports covid19 and influenza. Please check your data\n")
   }
 
@@ -268,7 +268,7 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
     stop("\nThe value column can not contain negative values\n")
   }
 
-  if (!all(raw_csv$metric) == 'hosp') {
+  if (!all(levels(raw_csv$metric) == 'hosp')) {
     stop("\nPROF can only model hospitalization data\n")
   }
 
@@ -281,10 +281,10 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
   date_array <- unique(raw_csv$date)
 
   all_one_day_apart = all(diff(date_array) == 1)
-
-  if (!all_one_day_apart) {
-    stop("\nPROF currently supports only daily dat\n")
-  }
+#
+#   if (!all_one_day_apart) {
+#     stop("\nPROF currently supports only daily data\n")
+#   }
 
   # if (is.null(fit_start)) {
   #   fit_start <- min(raw_csv$date)
@@ -831,7 +831,7 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
 
   # determine all pathogens
   pathogens = names(prof_data)
-  
+
   if (is.null(fit_start)) {
     fit_start = list()
     for (pathog in pathogens) fit_start[[pathog]] = NULL

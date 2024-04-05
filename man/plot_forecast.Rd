@@ -9,7 +9,7 @@ plot_forecast(
   par_list,
   fit_list,
   ntraj = 1000,
-  nfrcst = 35,
+  nfrcst = 28,
   filename = NULL,
   err_cor = 1,
   method_name = "semi_sorted_randA"
@@ -39,16 +39,15 @@ mcmc_pars}
  for each pathogen
  wl real, needed for tanh function of bete(t)
  @param ntraj - integer number of stochastic trajectories, default 1000
- @param nfrcst - number of time units to produce a forecast for (assume to be the same
- cadence as the data), default is 35 days
+ @param nfrcst - number of days to produce a forecast for (MUST be in days), default is 28 days
  @param filename - if NULL print plot to screen, if not save also to filename
  @param err_cor numeric scalar [-1, 1] - specify the error correlation to be used
  for combining influenza and COVID19 forecasts.  If NULL, default behavior is
  to evaluate for err_cor=1 (ordered) and err_cor=0 (random).
- @param method_name character - method used to aggregate pathogen forecasts 
- 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA' 
-is a more proper combination of profiles.  'lin_scale' uses the uncertainty 
-range of 'semi_sorted_randA', but ensures that the combined forecast has a 
+ @param method_name character - method used to aggregate pathogen forecasts
+ 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA'
+is a more proper combination of profiles.  'lin_scale' uses the uncertainty
+range of 'semi_sorted_randA', but ensures that the combined forecast has a
 median equal to the sum of the aggregate forecast medians.}
 }
 \value{

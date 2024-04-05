@@ -25,8 +25,7 @@ data_fit - subset of data for fitting (can be eqaul to data)}
 
 \item{ntraj}{- integer number of stochastic trajectories, default 1000}
 
-\item{nfrcst}{- number of time units to produce a forecast for (assume to be the same
-cadence as the data), default is 35 days}
+\item{nfrcst}{- number of days to produce a forecast for (MUST be in days), default is 28 days}
 
 \item{filename}{- if NULL print plot to screen, if not save also to filename}
 
@@ -34,10 +33,10 @@ cadence as the data), default is 35 days}
 for combining influenza and COVID19 forecasts.  If NULL, default behavior is
 to evaluate for err_cor=1 (ordered) and err_cor=0 (random).}
 
-\item{method_name}{character - method used to aggregate pathogen forecasts 
- 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA' 
-is a more proper combination of profiles.  'lin_scale' uses the uncertainty 
-range of 'semi_sorted_randA', but ensures that the combined forecast has a 
+\item{method_name}{character - method used to aggregate pathogen forecasts
+ 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA'
+is a more proper combination of profiles.  'lin_scale' uses the uncertainty
+range of 'semi_sorted_randA', but ensures that the combined forecast has a
 median equal to the sum of the aggregate forecast medians.}
 }
 \value{

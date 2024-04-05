@@ -1,6 +1,7 @@
 
-# example use of PROF
-# Fitting and forecasting 2023-24 covid19 and influenza seasons
+# example use of PROF for weekly data
+# Fitting and forecasting weekly user data
+# covid19 and influenza
 
 library(PROF)
 library(plotly)
@@ -56,7 +57,7 @@ filepath_weekly = "~/Downloads/example_inc_weekly.csv"
 
 write.csv(data_weekly, file = filepath_weekly, row.names = FALSE)
 
-
+# load weekly data
 prof_data=csv_to_prof(filepath = filepath_weekly, population = 4e7, location = "CA-WEEKLY")
 
 # To plot the data to a screen use:
@@ -94,11 +95,36 @@ forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_l
                                nfrcst = 28)
 
 # Please note that although your data may be weekly the code expects the forecast horizon to be
-# in days
+# in days and in multiples of seven
 
 # to plot the forecast (interactive plots)
 
 forecast_list$ararnge_plot
 
 # statistical forecast
+
+# We can also fit a baseline statistical model to the data.
+# We start by adding the fit-stat data structure to each pathogen - this is the data
+# that will be fitted with a simple baseline statistical model
+
+
+prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
+
+# Running and plotting the fitting of a simple statistical baseline model will only take a
+# few seconds:
+
+stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntraj = 1e4, filename = NULL)
+
+# For an interactive plot of the baseline sttaistical model
+
+stat_fit_list$arrange_plot
+
+
+# to use a baseline statistical model and create individual forecasts 28 days forward
+# and combined burden forecasts use:
+
+stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 28)
+
+# Again: Please note that although your data may be weekly the code expects the forecast horizon to be
+# in days and in multiples of seven
 

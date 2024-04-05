@@ -98,6 +98,9 @@ stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntraj = 1e4, filename = NU
 forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list,
                                nfrcst = 28)
 
+# to display interactive plots
+forecast_list$arrange_plot
+
 # please note that we currently provide two versions of the combined forecast:
 # random (bottom left panel), and sorted (bottom right panel)
 

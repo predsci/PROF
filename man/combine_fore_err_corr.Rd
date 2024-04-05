@@ -24,12 +24,12 @@ pathogen}
 \item{nfrcst}{integer - the number of days/weeks that were simulated beyond
 the fitting time period.}
 
-\item{method_name}{character - 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA' 
-is a more proper combination of profiles.  'lin_scale' uses the uncertainty 
-range of 'semi_sorted_randA', but ensures that the combined forecast has a 
+\item{method_name}{character - 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA'
+is a more proper combination of profiles.  'lin_scale' uses the uncertainty
+range of 'semi_sorted_randA', but ensures that the combined forecast has a
 median equal to the sum of the aggregate forecast medians.}
 
-\item{cor_val}{numeric [-1, 1] designating the expected error/uncertainty 
+\item{cor_val}{numeric [-1, 1] designating the expected error/uncertainty
 correlation between the aggregate forecasts.}
 }
 \value{
@@ -40,7 +40,7 @@ inc_both - the combined reported hospitalization
 dates_both - dates array for combined forecast
 }
 \description{
-Forecasts can be combined using two procedures using the error-correlation: 
-semi-random trajectory matching 'semi_sorted_randA' or a median-preserving 
+Forecasts can be combined using two procedures using the error-correlation:
+semi-random trajectory matching 'semi_sorted_randA' or a median-preserving
 method that linearly scales uncertainty across known anchor points 'lin_scale'.
 }

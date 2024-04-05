@@ -29,7 +29,7 @@
 #'  for each pathogen
 #'  wl real, needed for tanh function of bete(t)
 #'  @param ntraj - integer number of stochastic trajectories, default 1000
-#'  @param nfrcst - number of days to produce a forecast for (MUST be in dys), default is 28 days
+#'  @param nfrcst - number of days to produce a forecast for (MUST be in days), default is 28 days
 #'  @param filename - if NULL print plot to screen, if not save also to filename
 #'  @param err_cor numeric scalar [-1, 1] - specify the error correlation to be used
 #'  for combining influenza and COVID19 forecasts.  If NULL, default behavior is
@@ -146,6 +146,11 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
       cadence_lab = paste0(cadence, ' week')
       print_lab = 'Weeks'
       dates_frcst = seq(from = dates_fit[1], length = ntimes_frcst, by = '1 week')
+      #check that nfrcst is a product of seven
+      if (nfrcst %% 7 != 0) {
+        print("\nError: For weekly data nfrcst must be a prodcut of seven (e.g., 7, 14, 21..) \n")
+        return()
+      }
     }
 
     times_frcst = dates_to_int(dates_frcst)
@@ -417,6 +422,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
     start_year = lubridate::year(range(dates)[1])
     end_year   = lubridate::year(range(dates)[2])
     xlab = paste0(start_year,' - ', end_year)
+    if (npath == 2) xlab = ' '
 
     pl[[disease]] <- ggplot(data=total,aes(x=date))+
       geom_col(aes(y=reported), fill = mycolor, alpha = 0.5) +
@@ -439,8 +445,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
   }
 
   if (npath == 1) {
-    arrange_plot <- interactive_plot[[1]]
-    # suppressWarnings(print(ggplotly(pl[[1]])))
+    arrange_plot <- ggplotly(pl[[1]])
 
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)

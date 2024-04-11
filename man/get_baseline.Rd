@@ -4,12 +4,14 @@
 \alias{get_baseline}
 \title{Set value of baseline incidence}
 \usage{
-get_baseline(inc, end_of_season)
+get_baseline(inc, end_of_season, cadence = 1)
 }
 \arguments{
 \item{inc}{incidence time series}
 
 \item{end_of_season}{logical (TRUE or FALSE)}
+
+\item{cadence}{integer, cadence of data, daily=1, weekly=7. Default is daily}
 }
 \value{
 baseline integer baseline value >= 1

@@ -61,9 +61,11 @@ fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
 
 saveRDS(fit_list, filename = '/path/to/filename.rds')
 
-# to plot the results of the fit to the screen use:
+# to plot the results of the fit to the screen use these two calls:
 
 plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+
+plot_fit_list$arrange_plot
 
 # The plotting routine returns a list with the following elements
 # fit_traj - a list for each disease containing: model fit mechanistic trajectories,
@@ -95,6 +97,9 @@ stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntraj = 1e4, filename = NU
 
 forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list,
                                nfrcst = 28)
+
+# to display interactive plots
+forecast_list$arrange_plot
 
 # please note that we currently provide two versions of the combined forecast:
 # random (bottom left panel), and sorted (bottom right panel)

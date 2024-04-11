@@ -4,7 +4,14 @@
 \alias{plot_stat_forecast}
 \title{Baseline statistical forecast}
 \usage{
-plot_stat_forecast(prof_data, ntraj = NULL, nfrcst = NULL, filename = NULL)
+plot_stat_forecast(
+  prof_data,
+  ntraj = NULL,
+  nfrcst = NULL,
+  filename = NULL,
+  err_cor = 1,
+  method_name = "semi_sorted_randA"
+)
 }
 \arguments{
 \item{prof_data}{data structure for diseases
@@ -14,11 +21,23 @@ population - population size
 loc_name - location name
 inc_type - incidence type, e.g. hosp_admits
 data - all available data as a 2D structure of dates and incidence
-data_fit - subset of data for fitting (can be eqaul to data)
- @param ntraj - integer number of stochastic trajectories, default 1000
- @param nfrcst - number of time units to produce a forecast for (assume to be the same
- cadence as the data), default is 35 days
- @filename - if NULL print plot to screen, if not save also to filename}
+data_fit - subset of data for fitting (can be eqaul to data)}
+
+\item{ntraj}{- integer number of stochastic trajectories, default 1000}
+
+\item{nfrcst}{- number of days to produce a forecast for (MUST be in days), default is 28 days}
+
+\item{filename}{- if NULL print plot to screen, if not save also to filename}
+
+\item{err_cor}{numeric scalar [-1, 1] - specify the error correlation to be used
+for combining influenza and COVID19 forecasts.  If NULL, default behavior is
+to evaluate for err_cor=1 (ordered) and err_cor=0 (random).}
+
+\item{method_name}{character - method used to aggregate pathogen forecasts
+ 'semi_sorted_randA' or 'lin_scale'. 'semi_sorted_randA'
+is a more proper combination of profiles.  'lin_scale' uses the uncertainty
+range of 'semi_sorted_randA', but ensures that the combined forecast has a
+median equal to the sum of the aggregate forecast medians.}
 }
 \value{
 plots to screen and  file

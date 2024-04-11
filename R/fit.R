@@ -78,7 +78,6 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     cat("\nFitting ",toupper(disease), " Data for ", reg_name,'\n')
 
-
     ndates = length(dates)
 
     # using the date array to build an integer day array
@@ -86,6 +85,13 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     times = dates_to_int(dates)
 
     ntimes = length(times)
+
+    # cadence of data
+
+    cadence = as.numeric(dates[2]-dates[1])
+
+    if (cadence == 1) cadence_lab = 'Daily'
+    if (cadence == 7) cadence_lab = 'Weekly'
 
     # retrieve model 'seirh' or 'sirh'
 
@@ -99,7 +105,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     cat("\nEstimating Initial Number of Infectious ", '\n')
     cat("\nThis number will be refined in the optimization step\n")
 
-    I0est = est_I0(inc, disease)
+    I0est = est_I0(inc, disease, cadence)
 
     # based on model set initial conditions for the states/compartments
 
@@ -122,7 +128,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     if (any(is.na(prof_init_par$dis_par_ranges$par))) {
 
-      param0 <- init_param(model, disease, inc)
+      param0 <- init_param(model, disease, inc, cadence)
 
       # estimate for baseline - first use data_fit to see if we are at the end
       # of the season
@@ -144,7 +150,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
       }
 
 
-      baseline <- get_baseline(inc, end_of_season)
+      baseline <- get_baseline(inc, end_of_season, cadence = cadence)
 
       # append 'baseline' to parameter list
 
@@ -207,7 +213,10 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     # We will need to work on this if we allow for more than two values
 
     # works for any number of nb values
-    td_foi <- set_td_beta(nb, length(inc), param0$Beta)
+
+
+
+    td_foi <- set_td_beta(nb, max(times), param0$Beta)
 
     # param names is updated to include TD-FOI
 
@@ -321,16 +330,14 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
       parmax[c('Beta1')] = 1.1 * par$gamma
       parmax[c('Beta2')] = 1.6 * par$gamma
 
-      parmin[c('tcng1')] = 28
-      parmax[c('tcng1')] = (ntimes -28)
+      parmin[c('tcng1')] = 7
+      parmax[c('tcng1')] = (ntimes * cadence -28 )
 
       parmin['I0'] = 10
       parmax['I0'] = 1000
 
-      parmin['time0'] = 1.
-      parmax['time0'] = 28.
-
-
+      parmin['time0'] = 1. * cadence
+      parmax['time0'] = 28. * cadence
 
       if (nb == 3) {
         parmin['Beta3'] = parmin['Beta2']
@@ -338,7 +345,6 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
         parmin['tcng2'] = parmin['tcng1']
         parmax['tcng2'] = parmax['tcng1']
       }
-
 
     }
 
@@ -356,6 +362,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
         par[[my_ind]] = parmin[[my_ind]] + 0.5*(parmax[[my_ind]] - parmin[[my_ind]])
       }
     }
+
 
     # Call to MCMC procedure happens here
     # total number of parameters

@@ -4,7 +4,7 @@
 \alias{init_param}
 \title{Set disease specific initial guess for some model parameters}
 \usage{
-init_param(mymodel, mydisease, inc)
+init_param(mymodel, mydisease, inc, cadence = 1)
 }
 \arguments{
 \item{mymodel}{model name sirh or seirh}
@@ -12,6 +12,8 @@ init_param(mymodel, mydisease, inc)
 \item{mydisease}{disease name covid19 or influenza}
 
 \item{inc}{time-series of hospitalization}
+
+\item{cadence}{integer. Data cadence, e.g. daily = 1, weekly = 7}
 }
 \value{
 param a model specific list with initial guess for parameters:

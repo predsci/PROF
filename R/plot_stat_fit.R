@@ -105,19 +105,24 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
 
   } #end of loop over diseases
 
-
-
   cat("\nMaking Plots\n\n")
+
+  interactive_plot <- list()
+  for (ip in 1:npath) {
+    interactive_plot[[ip]] <- ggplotly(pl[[ip]])
+  }
+
   if (npath == 2) {
 
-    suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]), ggplotly(pl[[2]]), ncol = 2)))
+    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]],
+                            nrows = 1, titleX = TRUE, titleY = TRUE)
     if (!is.null(filename)) {
       suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], ncol = 2))
       ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
     }
   } else {
-    suppressWarnings(print(ggplotly(pl[[1]])))
+    arrange_plot <- interactive_plot[[1]]
     if (!is.null(filename)) {
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
@@ -126,6 +131,6 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
   }
 
   # return ft_traj
-  return(list(stat_fit_traj = fit_traj, pl_stat = pl))
+  return(list(stat_fit_traj = fit_traj, pl_stat = pl, arrange_plot = arrange_plot))
 
 }

@@ -11,16 +11,16 @@ lin_scale_uncert_profs(A, B, cor_val = 1)
 
 \item{B}{numeric vector of sorted forecast profiles for pathogen B.}
 
-\item{cor_val}{numeric [-1, 1] designating the expected error/uncertainty 
+\item{cor_val}{numeric [-1, 1] designating the expected error/uncertainty
 correlation between the forecasts for A and B.}
 }
 \value{
 numeric vector of the combined A and B profiles/samples.
 }
 \description{
-Unlike the 'semi_sorted_randA' method, this method preserves the 
-aggregated median sum (i.e. median(A) + median(B) = median(output)). The 
-uncertainty intervals are linearly interpolated using the results of 
+Unlike the 'semi_sorted_randA' method, this method preserves the
+aggregated median sum (i.e. median(A) + median(B) = median(output)). The
+uncertainty intervals are linearly interpolated using the results of
 semi_sorted_randA at an error correlation of 0 and 1 (or 0 and -1 for
 negative values) as anchor points.
 }

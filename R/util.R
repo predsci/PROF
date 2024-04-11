@@ -5,41 +5,37 @@
 #' @description Use the EpiEstim package to estimate initial number of infections
 #' @param inc time series of hospitalization incidence
 #' @param mydisease disease name
+#' @param cadence integer either 1 or 7 days
 #' @return integer estimate for initial number of cases
 #' @keywords internal
 #'
-est_I0 <- function(inc, mydisease) {
+est_I0 <- function(inc, mydisease, cadence) {
 
-  # calculate 1-week moving average and rm NAs from time-series
-
-  rolling_avg = zoo::rollmean(inc, k = 7, fill = NA, align = 'center')
-  na_ind <- which(is.na(rolling_avg))
-  rolling_avg = rolling_avg[-na_ind]
 
   I0_min = 10
 
+  if (cadence == 1) { # estimate_R works ONLY with daily data
+
+
   if (tolower(mydisease) == 'covid19') { # covid
 
-    ## we choose to draw:
-
-    config <- make_config(list(mean_si = 6.48, std_mean_si = 3.83, min_mean_si = 2.48,
-                               max_mean_si = 10.48, std_si = 10, std_std_si = 1,
-                               min_std_si = 1, max_std_si = 19))
-    method <- "uncertain_si"
+    mean_si <- 6.3
+    std_si <- 4.2
 
   } else { # influenza
 
-    config <- make_config(list(mean_si = 2.6,std_si = 1.5))
-    method <- "parametric_si"
+    mean_si <- 2.6
+    std_si <- 1.5
   }
+  method <- "parametric_si"
 
+  res <- estimate_R(inc, method=method, config = config)
 
+  I0 <- res$I_imported[1]
 
-  res_parametric_si <- suppressMessages(estimate_R(rolling_avg,
-                                                   method=method, config = config))
-
-
-  I0 <- res_parametric_si$I_imported[1]
+  } else {
+    I0 = inc[1]
+  }
   I0 <- round(max(I0, I0_min))
 
   return(I0)
@@ -491,13 +487,17 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
     dates_start[ip] = min(dates_frcst_list[[ip]])
     dates_end[ip]   = max(dates_frcst_list[[ip]])
     ntraj_both[ip] = dim(simdat_list[[ip]])[1]
+    cadence = as.numeric(dates_frcst_list[[ip]][2] - dates_frcst_list[[ip]][1])
   }
 
   start_date = max(dates_start)
   end_date   = min(dates_end)
 
+
   # Dates array for both pathogens
-  dates_both = seq(start_date, end_date, by = '1 day')
+
+  if (cadence == 1) dates_both = seq(start_date, end_date, by = '1 day')
+  if (cadence == 7) dates_both = seq(start_date, end_date, by = '1 week')
 
   ntraj_both = min(ntraj_both)[1]
 
@@ -569,8 +569,6 @@ combine_forecasts <- function(prof_data = NULL, dates_frcst_list = NULL, simdat_
   simdat_both = list()
   simdat_both[['random']]  = rand_simdat_both
   simdat_both[['ordered']] = ordered_simdat_both
-
-
 
   return(list(simdat_both = simdat_both, obs_both = obs_both, obs_fit_both = obs_fit_both, dates_both = dates_both,
               obs_each_list = obs_each_list, obs_fit_each_list = obs_fit_each_list))

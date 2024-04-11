@@ -78,7 +78,6 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
 
     cat("\nFitting ",toupper(disease), " Data for ", reg_name,'\n')
 
-
     ndates = length(dates)
 
     # using the date array to build an integer day array
@@ -106,7 +105,7 @@ fit_data <- function(prof_data, par_list, nb_vec=c(2,2)) {
     cat("\nEstimating Initial Number of Infectious ", '\n')
     cat("\nThis number will be refined in the optimization step\n")
 
-    I0est = est_I0(inc, disease)
+    I0est = est_I0(inc, disease, cadence)
 
     # based on model set initial conditions for the states/compartments
 

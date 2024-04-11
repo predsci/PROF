@@ -4,12 +4,14 @@
 \alias{est_I0}
 \title{Estimate the initial number of infections}
 \usage{
-est_I0(inc, mydisease)
+est_I0(inc, mydisease, cadence)
 }
 \arguments{
 \item{inc}{time series of hospitalization incidence}
 
 \item{mydisease}{disease name}
+
+\item{cadence}{integer either 1 or 7 days}
 }
 \value{
 integer estimate for initial number of cases

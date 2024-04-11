@@ -384,7 +384,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
     if (combined_names[ic]=="err_cor") {
       mytitle = paste0(reg_name,' - Combined Burden (err_cor=', err_cor, ')')
     } else {
-      mytitle = paste0(reg_name,' - Combined Burden (err_cor=0.0)')
+      mytitle = paste0(reg_name,' - Combined Burden (err_cor=0)')
     }
 
     # y-label only on left most plot

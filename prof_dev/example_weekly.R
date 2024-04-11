@@ -128,3 +128,6 @@ stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 28)
 # Again: Please note that although your data may be weekly the code expects the forecast horizon to be
 # in days and in multiples of seven
 
+stat_forecast_list$arrange_plot
+
+

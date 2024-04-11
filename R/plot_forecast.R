@@ -457,24 +457,21 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
   # Combine forecasts
   cat("Combining Forecasts \n")
 
-  # if (is.null(err_cor)) {
   #   combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
-  # } else {
-    combined_frcst_ecor <- combine_fore_err_corr(prof_data, dates_frcst_list, simdat_list,
+
+  combined_frcst_ecor <- combine_fore_err_corr(prof_data, dates_frcst_list, simdat_list,
                                                  err_corr=err_cor, nfrcst=nfrcst/cadence,
                                                  method_name=method_name)
-    combined_frcst_rand <- combine_fore_err_corr(prof_data,
+  combined_frcst_rand <- combine_fore_err_corr(prof_data,
                                                  dates_frcst_list, simdat_list,
                                                  err_corr=0, nfrcst=nfrcst/cadence,
                                                  method_name=method_name)
 
-    combined_frcst = combined_frcst_ecor
-    combined_frcst$simdat_both[[2]] = combined_frcst_rand$simdat_both[[1]]
+  combined_frcst = combined_frcst_ecor
+  combined_frcst$simdat_both[[2]] = combined_frcst_rand$simdat_both[[1]]
 
-    combined_names <- c("err_cor", "random")
-    names(combined_frcst$simdat_both) = combined_names
-
-  # }
+  combined_names <- c("err_cor", "random")
+  names(combined_frcst$simdat_both) = combined_names
 
   obs_each_list = combined_frcst$obs_each_list
 
@@ -557,7 +554,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
     if (combined_names[ic]=="err_cor") {
       mytitle = paste0(reg_name,' - Combined Burden (err_cor=', err_cor, ')')
     } else {
-      mytitle = paste0(reg_name,' - Combined Burden (err_cor=0.0)')
+      mytitle = paste0(reg_name,' - Combined Burden (err_cor=0)')
     }
 
 

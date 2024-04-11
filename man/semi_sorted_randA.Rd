@@ -2,7 +2,7 @@
 % Please edit documentation in R/fore_agrgt_funs.R
 \name{semi_sorted_randA}
 \alias{semi_sorted_randA}
-\title{Generate a trajectory-matching matrix for the 'semi_sorted_randA' forecast 
+\title{Generate a trajectory-matching matrix for the 'semi_sorted_randA' forecast
 aggregation method.}
 \usage{
 semi_sorted_randA(
@@ -15,17 +15,20 @@ semi_sorted_randA(
 \item{n}{integer - the number of forecast profiles}
 
 \item{correlation_val}{numeric [-1, 1] - a continuous parameter that defines
-a correlation between the aggregate uncertainties. NOTE: only the sign of 
+a correlation between the aggregate uncertainties. NOTE: only the sign of
 correlation_val is used here.  correlation_val and sample_var are not
 independent (see sample_var below).}
 
-\item{sample_var}{numeric [0, n] - Sample var controls the strength of 
-correlation in the mixing matrix.  We usually define it as 
+\item{sample_var}{numeric [0, n] - Sample var controls the strength of
+correlation in the mixing matrix.  We usually define it as
 (n - n*abs(correlation_val)),
-but it is an independent input in this function so the user may define their 
+but it is an independent input in this function so the user may define their
 own relationship.}
 }
+\value{
+A list with three elements: Aindex, Bindex and alg_fail_count
+}
 \description{
-Generate a trajectory-matching matrix for the 'semi_sorted_randA' forecast 
+Generate a trajectory-matching matrix for the 'semi_sorted_randA' forecast
 aggregation method.
 }

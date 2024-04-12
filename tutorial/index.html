@@ -1,67 +1,61 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <meta name="author" content="PROF Team">
-  
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>PROF-Shiny Tutorial - PROF</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
-
-  <link rel="stylesheet" href="../css/theme.css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "PROF-Shiny Tutorial";
-    var mkdocs_page_input_path = "tutorial.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="PROF Team" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>PROF-Shiny Tutorial - PROF</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "PROF-Shiny Tutorial";
+        var mkdocs_page_input_path = "tutorial.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
 
   <div class="wy-grid-for-nav">
-
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> PROF</a>
-        <div role="search">
+          <a href="..">
+          <img src="../img/psi.png" class="logo" alt="Logo"/>
+        </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../install/">Install</a>
-                    </li>
-                </ul>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">PROF-Shiny Tutorial</a>
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Install</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">PROF-Shiny Tutorial</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#opening-the-app">Opening the App</a>
     </li>
@@ -88,51 +82,39 @@
     <li class="toctree-l2"><a class="reference internal" href="#about-tab">About Tab</a>
     </li>
     </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../example/">PROF Command Line Example</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../advanced/">PROF-Advanced Topics</a>
-                    </li>
-                </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../example/">PROF Command Line Example</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../advanced/">PROF-Advanced Topics</a>
+                </li>
+              </ul>
       </div>
     </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">PROF</a>
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">PROF</a>
+        
       </nav>
-
-      
       <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
-    
-      
-    
-    <li>PROF-Shiny Tutorial</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li class="breadcrumb-item active">PROF-Shiny Tutorial</li>
     <li class="wy-breadcrumbs-aside">
-      
-        <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/tutorial.md"
-          class="icon icon-github"> Edit on GitHub</a>
-      
+          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/tutorial.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
-  
   <hr/>
 </div>
-
-          <div role="main">
-            <div class="section">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
               
                 <h1 id="prof-tutorial">PROF Tutorial</h1>
 <p>This tutorial is configured assuming an Rstudio session with the PROF-Shiny-app GUI. It assumes that PROF has been successfully installed and that the PROF-shiny-app has been cloned.</p>
@@ -157,50 +139,43 @@
 <h2 id="3-forecast-incidence">3. Forecast Incidence</h2>
 <p>Forecasting will always be done on the currently selected location, season, pathogens and models.</p>
 <h3 id="mechanistic-forecast">Mechanistic Forecast</h3>
-<p>The mechanistic forecast is based on the posterior distribution of the parameters coming out of the fit. This means that only pathogens that you selected for a mechanistic fit will be forecasted and the only selection you need to make now the number of days for the forecast. By default this is set to 28 days and you can move the slider to modify this. Once you made you selection press the <code>Mechanistic Forecast</code> button. The plots will appear after less than a minute. The top left/right plots show the forecast for COVID-19/Influenza (median, 50 and 95 confidence intervals). The bottom plot shows our estimate for the combined burden calculated either by selecting random realizations from each forecast (left panel) or by sorting the realizations (right panel). Here too, you can save the plots as a png file and download the data as a csv file. Please note that the combined burden plots will appear only if you selected to fit and forecast both pathogens.</p>
+<p>The mechanistic forecast is based on the posterior distribution of the parameters coming out of the fit. This means that only pathogens that you selected for a mechanistic fit can be forecasted. We ask the User to make either one or two selections depending on the scenario. If only one pathogen was fitted, the User only needs to select the number of days for the forecast. By default, this value is set to 28 days, and users can adjust it using the slider. If both pathogens were fitted, we ask the User to specify the value of the error-correlation parameter. This parameter determines the combination of uncertainties present in the individual forecasts. Its default value is one, indicating full correlation between individual errors and resulting in greater uncertainty. Users can modify this default value using the slider. It's important to note that, regardless of the user's selection, PROF will always generate an estimate of the combined burden with an error-correlation value of zero. Once you made you selection(s) press the <code>Mechanistic Forecast</code> button. The plots will appear after less than a minute. The top left/right plots show the forecast for COVID-19/Influenza (median, 50 and 95 confidence intervals). The bottom plot shows our estimate for the combined burden calculated either with an error-correlation value of zero (right panel) and using our selection value of 0.7 for the error-correlation parameter. Here too, you can save the plots as a png file and download the data as a csv file. Please remember that the combined burden plots will appear only if you selected to fit and forecast both pathogens.</p>
 <p><img alt="Figure 5: Example of output plots for mechanistic forecasts" src="../img/prof_shiny_mech_forecast.png" /></p>
 <h3 id="statistical-forecast">Statistical Forecast</h3>
-<p>Here we use the baseline statistical model for the forecast with all other details being the same as in the Mechanistic Forecast tab. An example of output plots for a statistical forecast is shown below.</p>
+<p>Here we use the baseline statistical model for the forecast with all other details being the same as in the Mechanistic Forecast tab. An example of output plots for a statistical forecast is shown below. In this example, we've set the error-correlation parameter to 0.8, as indicated in the legend of the bottom-left panel. The bottom-right panel displays the estimated combined burden, assuming that the errors of the two forecasts are entirely independent. As explained before, the error-correlation parameter governs the width of the combined forecast, with higher values leading to a wider forecast.</p>
 <p><img alt="Figure 6: Example of output plots for baseline statistical forecasts" src="../img/prof_shiny_stat_forecast.png" /></p>
 <h3 id="evaluating-forecasts">Evaluating Forecasts</h3>
-<p>By default, PROF is configured to fit the entirety of the data stream, and the forecast time-window begins a day after the last data point. Assessing the forecast accuracy is not feasible in this scenario (due to lack of data). However, the User has the option to fit and forecast data from previous seasons or to fit a portion of the current season's data stream. In either of these scenarios, the forecast can be compared to reported observations, and the accuracy of the forecast can be evaluated. PROF uses the <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008618">weighted interval score</a> as implemented in the <a href="https://cran.r-project.org/web/packages/scoringutils/index.html">scoringutils R package</a> to assess the accuracy of its probabilistic forecasts. Smaller values of WIS indicate forecasts that are more aligned with observations. The evaluation of the WIS uses daily data and forecasts and the same quantiles as mandated by the <a href="https://www.cdc.gov/flu/weekly/flusight/index.html">FluSight Challenge</a>.</p>
-<p>To evaluate a forecast you must select an <code>end date</code> for the fitting that preceds the end date of the data stream. This is done at the <code>2. Fit Incidence</code> stage. The end date is set independently for the Mechanistic and Statistical Models. For example, if the data stream ends on 02-17-2024 and you would like to evaluate a 21 day forward forecast you should set the end-date for the fit to be 21 days prior to 02-17-2024, i.e., 01-27-2024. A snapshot of such a selection for the Statistical Model is shown below.</p>
+<p>By default, PROF is configured to fit the entirety of the data stream, and the forecast time-window begins a day (or a week) after the last data point. Assessing the forecast accuracy is not feasible in this scenario (due to lack of data). However, the User has the option to fit and forecast data from previous seasons or to fit a portion of the current season's data stream. In either of these scenarios, the forecast can be compared to reported observations, and the accuracy of the forecast can be evaluated. PROF uses the <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008618">weighted interval score</a> as implemented in the <a href="https://cran.r-project.org/web/packages/scoringutils/index.html">scoringutils R package</a> to assess the accuracy of its probabilistic forecasts. Smaller values of WIS indicate forecasts that are more aligned with observations. The evaluation of the WIS uses the data and forecasts cadence and the same quantiles as mandated by the <a href="https://www.cdc.gov/flu/weekly/flusight/index.html">FluSight Challenge</a>.</p>
+<p>To evaluate a forecast you must select an <code>end date</code> for the fitting that precedes the end date of the data stream. This is done at the <code>2. Fit Incidence</code> stage. The end date is set independently for the Mechanistic and Statistical Models. For example, if the data stream ends on 02-24-2024 and you would like to evaluate a 28 day forward forecast you should set the end-date for the fit to be 28 days prior to 02-24-2024, i.e., 01-27-2024. A snapshot of such a selection for the Statistical Model is shown below.</p>
 <p><img alt="Figure 7: Selecting an end date for mechanistic fitting" src="../img/prof_shiny_fitting_stat_enddate_selection.png" /></p>
 <p>If you plan to also run a mechanistic model we recommend setting the same end date for it so that the accuracy of both models can be evaluated for the same forecast horizon. Once the fitting process is completed, for either one or two models and for either one or two pathogens you can proceed to the <code>3. Create Forecast</code> tab. You can create a forecast for each pathogen/model combination you fitted. Your only selection is for the number of days in the forecast horizon with the default being 28 days. Since the forecast step is fast we recommend doing it for all pathogens/models you fitted. The plot below shows the results of a 28 day forward mechanistic forecast.</p>
-<p><img alt="Figure 8: Mechanistic forecast for a retrospective study" src="../img/prof_shiny_mech_forecast_results.png" /></p>
-<p>Based on our selections, there are 21 days of data in the forecast time-window, and we will assess the accuracy of the forecasts for these 21 days. Since we utilized both mechanistic and statistical models to fit both pathogens, we can evaluate the accuracy of both models for each pathogen, as illustrated in the figure below. The top and bottom panels in this figure depict the WIS score of the mechanistic (red) and statistical (blue) models for the COVID-19 and Influenza forecasts, respectively. With lower scores indicating better performance, we observe that the mechanistic forecast outperformed the statistical forecast for nearly all days in the case of COVID-19, while for Influenza, it significantly outperformed the statistical forecast for ALL days.</p>
+<p><img alt="Figure 8: Mechanistic forecast for a retrospective study" src="../img/prof_shiny_mech_forecast.png" /></p>
+<p>Based on our selections, there are 28 days of data in the forecast time-window, and we will assess the accuracy of the forecasts for these 28 days. Since we utilized both mechanistic and statistical models to fit both pathogens, we can evaluate the accuracy of both models for each pathogen, as illustrated in the figure below. The top and bottom panels in this figure depict the WIS score of the mechanistic (red) and statistical (blue) models for the COVID-19 and Influenza forecasts, respectively. With lower scores indicating better performance, we observe that the mechanistic forecast outperformed the statistical forecast for nearly all days in the case of COVID-19, while for Influenza, it significantly outperformed the statistical forecast for ALL days.</p>
 <p><img alt="Figure 9: WIS score for mechanistic (red) and statistical (blue) models, COVID-19 and Influenza (top and bottom panels, respectively)" src="../img/prof_shiny_forecast_evaluation.png" /></p>
 <h2 id="about-tab">About Tab</h2>
 <p>The <code>About</code> tab provides background information about PROF as well as an Acknowledgement and a link to our web documentation. For questions/comments/suggestions/bugs please email us at:</p>
 <ul>
 <li><em>Michal Ben-Nun</em>: <a class="email" href="mailto:mbennun@predsci.com">mbennun\@predsci.com</a></li>
 <li><em>James Turtle</em>: <a class="email" href="mailto:jturtle@predsci.com">jturtle\@predsci.com</a></li>
+<li><em>Pete Riley</em>: <a class="email" href="mailtp:pete@predsci.com">pete\@predsci.com</a></li>
 </ul>
               
             </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../install/" class="btn btn-neutral float-left" title="Install"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../example/" class="btn btn-neutral float-right" title="PROF Command Line Example">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../install/" class="btn btn-neutral" title="Install"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <!-- Copyright etc -->
-    
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-      
+          
         </div>
       </div>
 
@@ -208,11 +183,11 @@
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" aria-label="Versions">
   <span class="rst-current-version" data-toggle="rst-current-version">
     
         <span>
-          <a href="https://github.com/predsci/PROF/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/predsci/PROF" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
         </span>
     
     
@@ -223,18 +198,19 @@
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
-      <script src="../javascripts/config.js" defer></script>
-      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      <script src="../javascripts/config.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

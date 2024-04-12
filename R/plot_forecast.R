@@ -455,7 +455,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
   }
 
   # Combine forecasts
-  cat("Combining Forecasts \n")
+  cat("\nCombining Forecasts \n")
 
   #   combined_frcst <- combine_forecasts(prof_data, dates_frcst_list, simdat_list)
 
@@ -505,9 +505,10 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
 
   # find maximum in simdat_both of random and custom and use
 
-  both_max = max(reported_both, na.rm=T)
-  for (ic in 1:length(combined_names)) {
-    both_max = max(both_max, round(max(simdat_both[[ic]])))
+  both_max = 0.0
+  for (ip in 1:length(combined_names)) {
+    both_max = max(both_max, round(max(simdat_both[[ip]])))
+    both_max = max(both_max, reported_both, na.rm = TRUE)
   }
 
   # create a long data-frame with the reported values for both pathogens
@@ -515,12 +516,18 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
   plot_dates = c(dates_both_data, dates_fore)
 
   for (ip in 1:npath) {
+    obs_each = obs_each_list[[ip]]
+    if (length(obs_each) > length(plot_dates)) {
+      reported = obs_each[1:length(plot_dates)]
+    } else {
+      reported = c(obs_each, rep(NA, length(plot_dates)-length(obs_each_list[[1]])))
+    }
     data_df_list[[ip]] = data.frame(
       # date = as.Date(dates_both, format = '%Y-%m-%d'),
       date = plot_dates,
       disease = rep(disease_list[[ip]], length(plot_dates)),
-      reported = c(obs_each_list[[ip]], rep(NA, npad))
-      )
+      reported = reported
+    )
   }
   data_df = rbind(data_df_list[[1]], data_df_list[[2]])
 
@@ -538,13 +545,13 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
 
     forecast_traj[[combined_names[[ic]]]] = list(traj = simdat_both[[ic]],
                                                  date = plot_dates,
-                                                 reported_both = reported_both,
+                                                 reported_both = reported_both[1:length(plot_dates)],
                                                  reported_fit_both = reported_fit_both)
 
     total_both=cbind(date = plot_dates,
                      quantiles_both,
-                     reported = c(obs_both, rep(NA, npad)),
-                     reported_fit = c(obs_fit_both, rep(NA, npad)))
+                     reported = reported_both[1:length(plot_dates)],
+                     reported_fit = reported_fit_both)
 
     total_list[[combined_names[[ic]]]] = total_both
 

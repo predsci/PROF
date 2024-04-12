@@ -48,23 +48,23 @@ As discussed below, our 'control knobs' are limited to the minimum and maximum v
 
 To conclude, this example demonstrates the need to experiment with the mechanistic models.
 We suggest starting with a two-value force of infection and if the results are not-satisfactory to try and repeat the fit with a three value model.
-If no improvement is achieved with three values you can try to improve the results by changing the default values for the initial guess of the fitted parameters and their allowed ranges.
+If no improvement is achieved with three values you can attempt to improve the results by adjusting the default values for the initial guess of the fitted parameters and their permissible ranges.
 This requires more knowledge in R and is discussed below.
 
 ## Uploading Your Own Data
 
-To fit and forecast your own data, you will need to provide a CSV data file containing daily hospitalization incidence data, the population size you are modeling, and a location name.
+To fit and forecast your own data, you will need to provide a CSV data file containing daily or weekly hospitalization incidence data, the population size you are modeling, and a location name.
 The latter is only needed for display on the plots.
-Currently, PROF supports only the modeling of daily hospitalization data for two pathogens: COVID-19 and Influenza.
+Currently, PROF supports only the modeling of daily or weekly hospitalization data for two pathogens: COVID-19 and Influenza.
 Your CSV file MUST have the following columns with the following information and format specifications:
 
 (i) column name: date.
     Date information in the format `\%Y-\%m-\%d` , e.g., `2024-10-01`.
-    Currently we only support daily data
+    Currently we support daily and weekly data
 
 (ii) column name: disease.
      String with disease name.
-     Currently we only support `covid19` and `influenza`.
+     Currently we support `covid19` and `influenza`.
      This information must be provided for each incidence date.
 
 (iii) column name: metric.

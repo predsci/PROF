@@ -4,7 +4,8 @@ This R package requires an R or Rstudio installation and Fortran/GCC compilers. 
 
 ## Using 'devtools' in an R console
 
-> \> library(devtools)\
+> \> library(devtools)
+
 > \> install_git(url="<https://github.com/predsci/PROF>")
 
 ## Cloning through GitHub

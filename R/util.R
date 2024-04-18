@@ -19,8 +19,8 @@ est_I0 <- function(inc, mydisease, cadence) {
 
   if (tolower(mydisease) == 'covid19') { # covid
 
-    mean_si <- 6.3
-    std_si <- 4.2
+    mean_si <- 4.8
+    std_si <- 2.5
 
   } else { # influenza
 

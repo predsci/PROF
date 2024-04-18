@@ -90,6 +90,9 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
 
     title = paste0(reg_name,' - ', toupper(disease),' Statistical Baseline Model')
 
+    if (ip == 1) combined_main_text = NULL
+    combined_main_text =  paste0(combined_main_text,'         ', title)
+
     start_year = lubridate::year(range(dates)[1])
     end_year   = start_year + 1
     xlab = paste0(start_year,' - ', end_year)
@@ -115,7 +118,7 @@ plot_stat_fit <- function(prof_data, ntraj = NULL, filename=NULL) {
   if (npath == 2) {
 
     arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]],
-                            nrows = 1, titleX = TRUE, titleY = TRUE)
+                            nrows = 1, titleX = TRUE, titleY = TRUE) %>% layout(title = combined_main_text)
     if (!is.null(filename)) {
       suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], ncol = 2))
       ggsave(filename = filename, plot = grid_plots, width = 14, height = 6, dpi = 300)

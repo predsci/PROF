@@ -29,6 +29,8 @@ est_I0 <- function(inc, mydisease, cadence) {
   }
   method <- "parametric_si"
 
+  config = list(mean_si = mean_si, std_si = std_si)
+
   res <- estimate_R(inc, method=method, config = config)
 
   I0 <- res$I_imported[1]

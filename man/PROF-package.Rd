@@ -6,7 +6,10 @@
 \alias{PROF-package}
 \title{PROF: Package for Respiratory disease Open-source Forecasting}
 \description{
-A Package for fitting publicly available confirmed hospital admission data and short term probabilistic forecasts. PROF supports two respiratory viruses: influenza and COVID-19 and when requested will provide an estimate of the combined burden of both.
+A Package for fitting publicly available confirmed hospital 
+    admission data and short term probabilistic forecasts.  
+    PROF supports two respiratory viruses: influenza and COVID-19 and 
+    when requested will provide an estimate of the combined burden of both.
 }
 \details{
 Additional details...

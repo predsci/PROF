@@ -42,6 +42,8 @@
       real*8 rv, myaccept
       logical accept
 
+      real*8 cadence
+      
       real*8  calcfit
       external calcfit
 
@@ -68,6 +70,8 @@
       step_max = 1.d0
       step_min = 1e-5
       iadapt = 0
+!
+      cadence = times(2) - times(1)
       
 ! ran1 works with -iseed
 
@@ -80,11 +84,11 @@
       param(nparam_tot) = 0.0d0
       sum_ts = sum(param((nparam+nb+1):nparam_tot))
 
-      if (sum_ts > ntimes) Then
+      if (sum_ts > times(ntimes)) Then
          param((nparam+nb+1):nparam_tot) =
-     $        param((nparam+nb+1):nparam_tot) * dble(ntimes)/sum_ts
+     $        param((nparam+nb+1):nparam_tot)*times(ntimes)/sum_ts
       endif
-      
+ 
 !     calculate initial profile      
       curpars = param
 
@@ -120,9 +124,9 @@
 !
 
 !     This is the best scenario basically
-      obsLLK = calcfit(obs,gamaObs,obs+1e-6,wght,ntimes)
+      obsLLK = calcfit(obs,gamaObs,obs+1e-6,wght,ntimes)/cadence
 !     Initial LLK     
-      curLLK = calcfit(obs,gamaObs,cases+1e-6,wght,ntimes)
+      curLLK = calcfit(obs,gamaObs,cases+1e-6,wght,ntimes)/cadence
       
 !
 ! MCMC loop starts here 
@@ -138,7 +142,8 @@
       parupdt = curpars      
       savepar = curpars
       copypar = curpars
-
+  
+      
       do ii = 1, nMCMC
          
          savepar = curpars
@@ -150,9 +155,9 @@
          parupdt(nparam_tot) = 0.0d0
          sum_ts = sum(parupdt((nparam+nb+1):nparam_tot))
          
-         if (sum_ts > ntimes) Then
+         if (sum_ts > times(ntimes)) Then
             parupdt((nparam+nb+1):nparam_tot) =
-     $           parupdt((nparam+nb+1):nparam_tot) * dble(ntimes)/sum_ts
+     $           parupdt((nparam+nb+1):nparam_tot)*times(ntimes)/sum_ts
          endif
          
          curpars(ind_opt) = parupdt(ind_opt)
@@ -172,7 +177,7 @@
             cases(jj) = dble(ZBQLPOI(mu))
          enddo
          
-         newLLK = calcfit(obs,gamaObs,cases+1e-6,wght,ntimes)
+         newLLK = calcfit(obs,gamaObs,cases+1e-6,wght,ntimes)/cadence
 
            rv = rand()
 
@@ -189,6 +194,7 @@
               curpars = savepar
            endif
 
+        
         if (mod(ii,ithin) .eq. 0) Then
             icount = icount + 1
             tab(icount,1:nparam_tot)   = real(curpars)
@@ -199,9 +205,9 @@
          if (mod(ii, 100000) .eq. 0) Then
             print*,int(real(ii)/real(nMCMC) * 100.0),'% MCMC Completed'
 c$$$            print*, real(curLLK)
-c$$$            print*, real(curpars(ind_opt))
 c$$$            print *, nint(obs)
 c$$$            print *, nint(cases)
+c$$$            print *, real(curpars(ind_opt))
          endif
          
          

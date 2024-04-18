@@ -99,7 +99,7 @@ forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_l
 
 # to plot the forecast (interactive plots)
 
-forecast_list$ararnge_plot
+forecast_list$arrange_plot
 
 # statistical forecast
 

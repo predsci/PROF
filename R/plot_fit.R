@@ -355,7 +355,7 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
   }
 
   if (npath == 2) {
-    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]], nrows = 1, titleX = TRUE, titleY = TRUE) # %>% layout(title = combined_main_text)
+    arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]], nrows = 1, titleX = TRUE, titleY = TRUE)  %>% layout(title = combined_main_text)
     # suppressWarnings(print(grid.arrange(ggplotly(pl[[1]]),  ggplotly(pl[[2]]), ncol = 2)))
     if (!is.null(filename)) {
       suppressWarnings(print(grid.arrange(pl[[1]],  pl[[2]], ncol = 2)))

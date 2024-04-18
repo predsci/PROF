@@ -19,8 +19,8 @@ est_I0 <- function(inc, mydisease, cadence) {
 
   if (tolower(mydisease) == 'covid19') { # covid
 
-    mean_si <- 6.3
-    std_si <- 4.2
+    mean_si <- 4.8
+    std_si <- 2.5
 
   } else { # influenza
 
@@ -28,6 +28,8 @@ est_I0 <- function(inc, mydisease, cadence) {
     std_si <- 1.5
   }
   method <- "parametric_si"
+
+  config = list(mean_si = mean_si, std_si = std_si)
 
   res <- estimate_R(inc, method=method, config = config)
 
@@ -110,15 +112,16 @@ set_init_states <- function(pop, I0, mymodel) {
 #' @keywords internal
 
 init_param <- function(mymodel, mydisease, inc, cadence = 1) {
+  rho = 0.95
+  wl = 3.0 /cadence
+  time0 = 14 * cadence
 
   if (mymodel == 'sirh' & mydisease == 'influenza') { #influenza  and SIRH
     gamma = 1.0/2.6
     mu_H1H2 = 1.0
     Beta = 1.3 * gamma
     pH = 0.001
-    rho = 0.95
-    wl = 3.0 /cadence
-    time0 = 14 * cadence
+
     mu_rec = 1./7. # may even be closer to six
     immn_wn = 0.0 # no waning of immunity
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, Beta = Beta, pH = pH, rho = rho,
@@ -135,9 +138,6 @@ init_param <- function(mymodel, mydisease, inc, cadence = 1) {
     }
     mu_EI = 1.0
     pH = 0.005
-    rho = 0.95
-    wl = 3.0/cadence
-    time0 = 14 * cadence
     mu_rec = 1./15. # rate of going from H to R days-1
     immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, mu_EI = mu_EI, Beta = Beta,
@@ -148,9 +148,6 @@ init_param <- function(mymodel, mydisease, inc, cadence = 1) {
     Beta = 1.2 * gamma
     mu_EI = 1.0
     pH = 0.001
-    rho = 0.95
-    wl = 3.0/cadence
-    time0 = 14 * cadence
     mu_rec = 1./7.
     immn_wn = 0.0 # no waning of immunity
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, mu_EI = mu_EI, Beta = Beta,
@@ -165,9 +162,6 @@ init_param <- function(mymodel, mydisease, inc, cadence = 1) {
     }
     mu_EI = 1.0
     pH = 0.005
-    rho = 0.95
-    wl = 3.0/cadence
-    time0 = 14 * cadence
     mu_rec = 1./15. # rate of going from H to R days-1
     immn_wn = 1./(6*30.458) # rate of waning of immunity in days-1
     param = list(gamma = gamma, mu_H1H2 = mu_H1H2, Beta = Beta, pH = pH, rho = rho,

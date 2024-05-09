@@ -10,8 +10,8 @@ The development of PROF is supported by the Council of State and Territorial Epi
 
 ## Contact
 
-**Michal Ben-Nun**: [mbennun\@predsci.com](mailto:mbennun@predsci.com){.email}
+**Michal Ben-Nun**: [mbennun@predsci.com](mailto:mbennun@predsci.com){.email}
 
-**James Turtle**: [jturtle\@predsci.com](mailto:jturtle@predsci.com){.email}
+**James Turtle**: [jturtle@predsci.com](mailto:jturtle@predsci.com){.email}
 
-**Pete Riley**: [pete\@predsci.com](mailto:pete@predsci.com){.email}
+**Pete Riley**: [pete@predsci.com](mailto:pete@predsci.com){.email}

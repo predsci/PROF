@@ -54,21 +54,31 @@ Here we use the baseline statistical model for the forecast with all other detai
 
 ![Figure 6: Example of output plots for baseline statistical forecasts](img/prof_shiny_stat_forecast.png)
 
+### Combining Forecasts
+
+When forecasting both pathogens, we can combine the individual forecasts to provide an estimate of the combined burden. Given that each forecast carries its own uncertainty, the method of combining these uncertainties is currently an active area of research. Two limits are intuitively clear: no correlation between the errors of the individual forecasts or full correlation among the individual errors. At PSI we have developed a procedure for tuning this correlation using a single parameter that adjusts the combination of uncertainties present in the individual forecasts. A value of one indicates full correlation among the individual errors, leading to greater uncertainty in the combined forecast. Conversely, a value of zero suggests errors that are entirely independent, resulting in a narrower forecast. PROF provides a slider for selecting the value of this parameter (which is set by default to one). The Figure below shows this slider for the case of a statistical forecast. An identical slider is available on the Mechanistic tab. (This slider will appear only if both pathogens were forecasted.)
+
+![Figure 7: Setting the value of the error correlation parameter](img/select_err_cor.png)
+
+We recommend starting with the default value of one and examining the resulting uncertainty of the combined burden. You can then lower this value and observe how the uncertainty of the combined burden decreases. Note that if one pathogen significantly outweighs the summed uncertainty magnitude, the specific value you select has little effect. In addition to your selection of the error correlation value, PROF will always estimate the combined burden using an error correlation value of zero. The two estimates of the combined burden appear in the bottom panels below, with the left panel showing an error correlation of 0.5 and the right panel showing an error correlation of zero. A close inspection reveals that, as expected, the uncertainty of the combined estimate with an error correlation value of 0.5 is greater than that with a value of zero. Finally, we note that for retrospective studies (see below), we only estimate the accuracy of individual forecasts, which are not affected by changes in the uncertainty of the combined forecast.
+
+![Figure 8: Individual and Combined burden forecast estimates](img/forecast_err_cor.png)
+
 ### Evaluating Forecasts
 
 By default, PROF is configured to fit the entirety of the data stream, and the forecast time-window begins a day (or a week) after the last data point. Assessing the forecast accuracy is not feasible in this scenario (due to lack of data). However, the User has the option to fit and forecast data from previous seasons or to fit a portion of the current season's data stream. In either of these scenarios, the forecast can be compared to reported observations, and the accuracy of the forecast can be evaluated. PROF uses the [weighted interval score](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008618) as implemented in the [scoringutils R package](https://cran.r-project.org/web/packages/scoringutils/index.html) to assess the accuracy of its probabilistic forecasts. Smaller values of WIS indicate forecasts that are more aligned with observations. The evaluation of the WIS uses the data and forecasts cadence and the same quantiles as mandated by the [FluSight Challenge](https://www.cdc.gov/flu/weekly/flusight/index.html).
 
 To evaluate a forecast you must select an `end date` for the fitting that precedes the end date of the data stream. This is done at the `2. Fit Incidence` stage. The end date is set independently for the Mechanistic and Statistical Models. For example, if the data stream ends on 02-24-2024 and you would like to evaluate a 28 day forward forecast you should set the end-date for the fit to be 28 days prior to 02-24-2024, i.e., 01-27-2024. A snapshot of such a selection for the Statistical Model is shown below.
 
-![Figure 7: Selecting an end date for mechanistic fitting](img/prof_shiny_fitting_stat_enddate_selection.png)
+![Figure 9: Selecting an end date for mechanistic fitting](img/prof_shiny_fitting_stat_enddate_selection.png)
 
 If you plan to also run a mechanistic model we recommend setting the same end date for it so that the accuracy of both models can be evaluated for the same forecast horizon. Once the fitting process is completed, for either one or two models and for either one or two pathogens you can proceed to the `3. Create Forecast` tab. You can create a forecast for each pathogen/model combination you fitted. Your only selection is for the number of days in the forecast horizon with the default being 28 days. Since the forecast step is fast we recommend doing it for all pathogens/models you fitted. The plot below shows the results of a 28 day forward mechanistic forecast.
 
-![Figure 8: Mechanistic forecast for a retrospective study](img/prof_shiny_mech_forecast.png)
+![Figure 10: Mechanistic forecast for a retrospective study](img/prof_shiny_mech_forecast.png)
 
 Based on our selections, there are 28 days of data in the forecast time-window, and we will assess the accuracy of the forecasts for these 28 days. Since we utilized both mechanistic and statistical models to fit both pathogens, we can evaluate the accuracy of both models for each pathogen, as illustrated in the figure below. The top and bottom panels in this figure depict the WIS score of the mechanistic (red) and statistical (blue) models for the COVID-19 and Influenza forecasts, respectively. With lower scores indicating better performance, we observe that the mechanistic forecast outperformed the statistical forecast for nearly all days in the case of COVID-19, while for Influenza, it significantly outperformed the statistical forecast for ALL days.
 
-![Figure 9: WIS score for mechanistic (red) and statistical (blue) models, COVID-19 and Influenza (top and bottom panels, respectively)](img/prof_shiny_forecast_evaluation.png)
+![Figure 11: WIS score for mechanistic (red) and statistical (blue) models, COVID-19 and Influenza (top and bottom panels, respectively)](img/prof_shiny_forecast_evaluation.png)
 
 ## About Tab
 

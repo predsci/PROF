@@ -91,7 +91,7 @@
  
 !     calculate initial profile      
       curpars = param
-
+      
 !     imodel = 1, COVID, SEIRH
 !     imodel = 2, INFLUENZA, SIRH
 

@@ -32,6 +32,7 @@ wl - the parameter used for tanh of beta(t), default 3
 nb_vec - number of values for FOI. Options are 2 or 3
 }
 \description{
-Main driver function for the sequential fitting procedure of one or two
+Main driver fu
+nction for the sequential fitting procedure of one or two
 diseases
 }

@@ -344,6 +344,19 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
 
     simdat = simdat[1:icount,]
 
+    last_non_na_index <- max(which(!is.na(obs_fit)))
+    if (cadence == 7) {
+      obs_mean = obs_fit[last_non_na_index]
+      obs_model = mean(simdat[,last_non_na_index])
+    } else {
+      obs_mean = mean(obs_fit[(last_non_na_index-7+1):last_non_na_index])
+      obs_model = mean(simdat[,(last_non_na_index-7+1):last_non_na_index])
+    }
+
+    shift = obs_mean - obs_model
+
+    for (ii in 1:icount) simdat[ii, ] = pmax(simdat[ii, ] + shift,0)
+
     simdat_list[[ip]] = simdat
 
     # score the forecast if possible
@@ -451,7 +464,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
     }
-    return(list(arrange_plot = arrange_plot, total_list = total_list, wis_df = long_df))
+    return(list(forecast_traj = forecast_traj, arrange_plot = arrange_plot, total_list = total_list, wis_df = long_df))
   }
 
   # Combine forecasts

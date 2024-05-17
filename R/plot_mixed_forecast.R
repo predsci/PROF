@@ -15,7 +15,7 @@ plot_mixed_forecast <- function(prof_data, forecast_list, forecast_stat_list) {
 
   disease_list= names(forecast_list$forecast_traj)
 
-  npath = length(diseases)
+  npath = length(disease_list)
 
   pl = forecast_mixed = total_list = list()
 

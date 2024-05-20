@@ -31,35 +31,35 @@ prof_data = hhs_set_fitdates(prof_data=prof_data,
                              fit_start=NULL, fit_end=NULL)
 
 # load default parameter file
-par_list = init_par_list(diseases=c("influenza"),
+par_list = init_par_list(diseases=disease,
                          models=c("sirh"))
 
 
 # Fit a mechanistic model to influenza time-series
-fit_list <- fit_data(prof_data = prof_data['influenza'], par_list = par_list, nb_vec=c(3))
+fit_list <- fit_data(prof_data = prof_data[disease], par_list = par_list, nb_vec=c(3))
 
 # to plot the results of the fit to the screen use these two calls:
 
-plot_fit_list <- plot_fit(prof_data = prof_data['influenza'], par_list = par_list, fit_list = fit_list)
+plot_fit_list <- plot_fit(prof_data = prof_data[disease], par_list = par_list, fit_list = fit_list)
 
 plot_fit_list$arrange_plot
 
 # repeat procedure for statistical fit to time series
 
-prof_data = hhs_set_fitdates_stat(prof_data=prof_data['influenza'], fit_start=NULL, fit_end=NULL)
+prof_data = hhs_set_fitdates_stat(prof_data=prof_data[disease], fit_start=NULL, fit_end=NULL)
 
-stat_fit_list <- plot_stat_fit(prof_data = prof_data['influenza'], ntraj = 1e4, filename = NULL)
+stat_fit_list <- plot_stat_fit(prof_data = prof_data[disease], ntraj = 1e4, filename = NULL)
 
 
 # Create and plot (to screen) mechanistic forecast
 
-forecast_list <- plot_forecast(prof_data = prof_data['influenza'], par_list = par_list, fit_list = fit_list, nfrcst = 28)
+forecast_list <- plot_forecast(prof_data = prof_data[disease], par_list = par_list, fit_list = fit_list, nfrcst = 28)
 
 forecast_list$arrange_plot
 
 # Create and plot (to screen) baseline statistical forecast
 
-forecast_stat_list <- plot_stat_forecast(prof_data = prof_data['influenza'], nfrcst = 28)
+forecast_stat_list <- plot_stat_forecast(prof_data = prof_data[disease], nfrcst = 28)
 
 forecast_stat_list$arrange_plot
 

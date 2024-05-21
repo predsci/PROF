@@ -260,7 +260,7 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
     stop("\nPlease provide population size as a positive integer.\n")
   }
 
-  if (!all(levels(raw_csv$disease)) %in% c('covid19', 'influenza')) {
+  if (!all(levels(raw_csv$disease) %in% c('covid19', 'influenza'))) {
     stop("\nPROF only supports covid19 and influenza. Please check your data\n")
   }
 
@@ -268,7 +268,7 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
     stop("\nThe value column can not contain negative values\n")
   }
 
-  if (!all(raw_csv$metric) == 'hosp') {
+  if (!all(levels(raw_csv$metric) == 'hosp')) {
     stop("\nPROF can only model hospitalization data\n")
   }
 
@@ -281,10 +281,10 @@ csv_to_prof <- function(filepath, population, location="PROFVille") {
   date_array <- unique(raw_csv$date)
 
   all_one_day_apart = all(diff(date_array) == 1)
-
-  if (!all_one_day_apart) {
-    stop("\nPROF currently supports only daily dat\n")
-  }
+#
+#   if (!all_one_day_apart) {
+#     stop("\nPROF currently supports only daily data\n")
+#   }
 
   # if (is.null(fit_start)) {
   #   fit_start <- min(raw_csv$date)
@@ -864,7 +864,7 @@ hhs_set_fitdates_stat <- function(prof_data=NULL, fit_start=NULL, fit_end=NULL) 
   return(prof_data)
 }
 
-#' @title Retrieve Poulation
+#' @title Retrieve Population
 #' @description Retrieve population of a U.S. state or territory.
 #'
 #' @param location character. Intended to be a two-letter abbreviation, but will

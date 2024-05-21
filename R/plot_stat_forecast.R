@@ -205,8 +205,6 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
 
     total_list[[disease]] = total
 
-    total = as.data.frame(total)
-
     reported_list[[disease]] = reported
     reported_fit_list[[disease]] = reported_fit
 
@@ -265,7 +263,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
       ggsave(filename = filename, plot = last_plot(), width = 7, height = 6, dpi = 300)
       cat("\n Saving Forecast Plots to: ", filename,'\n')
     }
-    return(list(arrange_plot = arrange_plot,total_list = total_list, wis_df = long_df))
+    return(list(arrange_plot = arrange_plot,total_list = total_list, wis_df = long_df, forecast_traj = forecast_traj))
   }
 
   # Combine forecasts
@@ -447,5 +445,5 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
 
   # return a list
 
-  return(list(total_list = total_list, wis_df = long_df, arrange_plot = arrange_plot))
+  return(list(total_list = total_list, wis_df = long_df, arrange_plot = arrange_plot, forecast_traj = forecast_traj))
 }

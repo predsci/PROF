@@ -117,6 +117,13 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
     nb = nb_vec[ip]
 
+    nparam = nparamtot - 2*nb
+    #
+
+    t0 = 0
+
+    dt = 1./15.
+
     # print information for the User
 
     cat("\nCreating Fit Plots For", reg_name, ' ', toupper(disease),'\n')
@@ -153,6 +160,13 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       #        paramnames=parnames_td_sirh) -> flu_sirh
       # }
 
+      state_names = c('S', 'I', 'R', 'H1', 'H2', 'Ih')
+      nstates = length(state_names)
+
+      accum = c('Ih')
+      iaccum = which(state_names %in% accum)
+      naccum = length(accum)
+
       icount=0
 
       for (ii in ind) {
@@ -181,26 +195,42 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
 
 
         yinit = c(state0$S0, state0$I0, 0, 0, 0, 0)
-        parms = c(mypar, 'wl' =wl)
-        time0 = parms['time0']
-        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'lsoda', func=td_sirh_dynamics, parms = parms)
-        results0 <- results0[,-1]
-        yinit0 <- as.numeric(results0[nrow(results0),])
-        if (nb == 2) {
-          results <- ode(y=yinit0, t = times, method='lsoda', func=td2_sirh_dynamics, parms = parms)
-        } else {
-          results <- ode(y=yinit0, t = times, method='lsoda', func=td3_sirh_dynamics, parms = parms)
-        }
 
-        model.pred = results[,-1] # remove the time column
-        colnames(model.pred) = c('S', 'I', 'R', 'H1', 'H2', 'Ih')
-
-        # generate simulation data with the parameters defined above
-
-        Ih = c(0, diff(model.pred[,'Ih']))
+        traj = array(0, c(ntimes, nstates))
+        out <- .Fortran('detsirh', nstates = as.integer(nstates), init = as.double(yinit), param = as.double(mypar),
+                        nparam = as.integer(nparam), nb = as.integer(nb), time = as.double(times), ntimes = as.integer(length(times)),
+                        t0 = as.double(t0), dt = as.double(dt),
+                        naccum = as.integer(naccum), iaccum = as.integer(iaccum),
+                        traj = as.double(traj), wl = as.double(wl))
+        #
+        traj = array(out$traj, c(ntimes, nstates))
+        colnames(traj) <- state_names
+        Ih = traj[,'Ih']
+        #
         cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
 
+
+        # parms = c(mypar, 'wl' =wl)
+        # time0 = parms['time0']
+        # results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'lsoda', func=td_sirh_dynamics, parms = parms)
+        # results0 <- results0[,-1]
+        # yinit0 <- as.numeric(results0[nrow(results0),])
+        # if (nb == 2) {
+        #   results <- ode(y=yinit0, t = times, method='lsoda', func=td2_sirh_dynamics, parms = parms)
+        # } else {
+        #   results <- ode(y=yinit0, t = times, method='lsoda', func=td3_sirh_dynamics, parms = parms)
+        # }
+        #
+        # model.pred = results[,-1] # remove the time column
+        # colnames(model.pred) = c('S', 'I', 'R', 'H1', 'H2', 'Ih')
+        #
+        # # generate simulation data with the parameters defined above
+        #
+        # Ih = c(0, diff(model.pred[,'Ih']))
+        # cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
+
         # if (model.pred$cases[which.max(obs)] > round(mypar['baseline'])) {
+
           if (cases[which.max(obs)] > round(mypar['baseline'])) {
           icount = icount + 1
           simdat[icount,] <- cases
@@ -242,6 +272,12 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
       #        statenames=c("S","E","I","R","H1","H2","Ih", 'time'),
       #        paramnames=parnames_td_seirh) -> covid_seir
 
+      state_names = c('S', 'E', 'I', 'R', 'H1', 'H2', 'Ih')
+      nstates = length(state_names)
+
+      accum = c('Ih')
+      iaccum = which(state_names %in% accum)
+      naccum = length(accum)
 
       icount=0
 
@@ -268,26 +304,40 @@ plot_fit <- function(prof_data, par_list, fit_list, ntraj =1000, filename = NULL
         # }
 
         yinit = c(state0$S0, state0$E0, state0$I0, 0, 0, 0, 0)
-        parms = c(mypar, 'wl' =wl)
-        time0 = parms['time0']
-        results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'lsoda', func=td_seirh_dynamics, parms = parms)
-        results0 <- results0[,-1]
-        yinit0 <- as.numeric(results0[nrow(results0),])
-        if (nb == 2) {
-          results <- ode(y=yinit0, t = times, method='lsoda', func=td2_seirh_dynamics, parms = parms)
-        } else {
-          results <- ode(y=yinit0, t = times, method='lsoda', func=td3_seirh_dynamics, parms = parms)
-          # calling H2 Ih here
-        }
 
-        model.pred = results[,-1] # remove the time column
-        colnames(model.pred) = c('S', 'E', 'I', 'R', 'H1', 'H2', 'Ih')
-
-        # generate simulation data with the parameters defined above
-
-        Ih = c(0, diff(model.pred[,'Ih']))
-
+        traj = array(0, c(ntimes, nstates))
+        out <- .Fortran('detseirh', nstates = as.integer(nstates), init = as.double(yinit), param = as.double(mypar),
+                        nparam = as.integer(nparam), nb = as.integer(nb), time = as.double(times), ntimes = as.integer(length(times)),
+                        t0 = as.double(t0), dt = as.double(dt),
+                        naccum = as.integer(naccum), iaccum = as.integer(iaccum),
+                        traj = as.double(traj), wl = as.double(wl))
+        #
+        traj = array(out$traj, c(ntimes, nstates))
+        colnames(traj) <- state_names
+        Ih = traj[,'Ih']
+        #
         cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
+
+        # parms = c(mypar, 'wl' =wl)
+        # time0 = parms['time0']
+        # results0 <- ode(y=yinit, t = seq(from=0,to=time0, length=max(round(time0),5)), method = 'lsoda', func=td_seirh_dynamics, parms = parms)
+        # results0 <- results0[,-1]
+        # yinit0 <- as.numeric(results0[nrow(results0),])
+        # if (nb == 2) {
+        #   results <- ode(y=yinit0, t = times, method='lsoda', func=td2_seirh_dynamics, parms = parms)
+        # } else {
+        #   results <- ode(y=yinit0, t = times, method='lsoda', func=td3_seirh_dynamics, parms = parms)
+        #   # calling H2 Ih here
+        # }
+        #
+        # model.pred = results[,-1] # remove the time column
+        # colnames(model.pred) = c('S', 'E', 'I', 'R', 'H1', 'H2', 'Ih')
+        #
+        # # generate simulation data with the parameters defined above
+        #
+        # Ih = c(0, diff(model.pred[,'Ih']))
+        #
+        # cases <- rpois(ntimes, Ih * mypar[['rho']] + mypar[['baseline']])
 
         # model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)
         # model.pred$cases <- rpois(ntimes, model.pred[,'Ih'] * mypar[['rho']] + mypar[['baseline']])

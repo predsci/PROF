@@ -1,6 +1,6 @@
 # PROF Installation Instructions
 
-This R package requires an R or Rstudio installation and Fortran/GCC compilers. We strongly recommend using the package with its user friends Shiny-app GUI (see below).
+This R package requires an R or Rstudio installation and Fortran/GCC compilers. We strongly recommend using the package with its user-friendly Shiny-app GUI (see below).
 
 ## Using 'devtools' in an R console
 

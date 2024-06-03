@@ -10,11 +10,11 @@ This R package requires an R or Rstudio installation and Fortran/GCC compilers. 
 
 ## Cloning through GitHub
 
-Users are also welcome to directly download the package either as a zip or by cloning the repository.
+Users are also welcome to download the package directly either as a zip file or by cloning the repository.
 
 To clone: `git clone https://github.com/predsci/PROF.git`
 
-Then Open an R or Rstudio session. Navigate to the location of the cloned project, open the PROF.Rproj file and install the package.
+Then, open an R or Rstudio session. Navigate to the location of the cloned project, open the PROF.Rproj file and install the package.
 
 ## Shiny-app PROF installation
 

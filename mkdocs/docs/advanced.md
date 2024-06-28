@@ -29,3 +29,59 @@ To conclude, this example demonstrates the need to experiment with the mechanist
 ## Uploading Your Own Data
 
 ## Editing the Parameter File
+The fit and forecast generating functions of PROF contain default parameter values that 
+are pathogen specific.  However, the user may customize these parameters by altering the 
+parameter list structure.  The customized parameter specification can then be saved to 
+a YAML file for later use/reference.  PROF provides two methods for initializing a 
+parameter list structure:
+
+1. Use PROF::init_par_list().  Here is an example for working with a single disease 
+   (COVID-19), using an SEIR model to produce hospitalizations.
+   ```R
+   library(PROF)
+   # to generate the parameter structure for a single disease
+   par_list1 = init_par_list(diseases=c("covid19"),
+                            models=c("seirh"))
+   str(par_list1)
+   ```
+   Here is a second example for working with two diseases (COVID-19, Influenza), using 
+   an SEIR model for COVID-19 hospitalizations and SIR for influenza.
+   ```R
+   # generate a multi-disease parameter structure
+   par_list2 = init_par_list(diseases=c("covid19", "influenza"),
+                            models=c("seirh", "sirh"))
+   str(par_list2)
+   ```
+2. Use the YAML template located in the 'parameters' directory of PROF: 
+   ```
+   PROF/parameters/param_exmpl.yml
+   ```
+   The YAML file can be copied and customized using a text editor, or by loading into R:
+   ```R
+   par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")
+   ```
+The parameter list is initialized with almost all values assigned NAs.  Any disease parameter
+whose value remains NA when passed to PROF will have its value set by PROF::init_param().  
+Manually setting a parameter is straightforward.  For example to set the influenza 
+generation-time to 3.5 days:
+```R
+par_list$influenza$dis_par_ranges$par$gamma = 1/3.5
+```
+Explain initial conditions estimated by PROF::est_I0().
+
+Explain which parameters can be/are optimized.
+
+Explain parameter ranges.
+
+Describe each parameter: initial, disease, mcmc...?
+
+
+When changes are complete (if editing the list in R), the parameter list can be saved to YAML format for future 
+reference:
+```R
+PROF::write_par_list_yaml(par_list=par_list, file_path="my_dir/test.yml")
+```
+
+
+## Inferring Mortality
+

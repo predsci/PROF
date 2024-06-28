@@ -103,7 +103,7 @@ covid19:
       baseline: .na
       I0: .na
       time0: .na
-       mu_rec: .na
+      mu_rec: .na
       immn_wn: .na
   # A character vector designating which parameters should be fit.
   par_opt:

@@ -201,28 +201,35 @@ forecast_stat_list = forecast_stat_list)
 <ol>
 <li>
 <p>Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.</p>
-<p>``` r
-library(PROF)</p>
-<h1 id="to-generate-the-parameter-structure-for-a-single-disease">to generate the parameter structure for a single disease</h1>
+<p>``` r</p>
+<blockquote>
 <p>par_list1 = init_par_list(diseases=c("covid19"),
                          models=c("seirh"))
 str(par_list1)
 ```</p>
+</blockquote>
 <p>Here is a second example for working with two diseases (COVID-19, Influenza), using an SEIRH model for COVID-19 hospitalizations and SIRH for influenza.</p>
 <p>``` r</p>
-<h1 id="generate-a-multi-disease-parameter-structure">generate a multi-disease parameter structure</h1>
+<blockquote>
 <p>par_list2 = init_par_list(diseases=c("covid19", "influenza"),
                          models=c("seirh", "sirh"))
 str(par_list2)
 ```</p>
+</blockquote>
 </li>
 <li>
 <p>Use the YAML template located in the 'parameters' directory of PROF:</p>
-<p><code>r
-PROF/parameters/param_exmpl.yml</code></p>
+<p>``` r</p>
+<blockquote>
+<p>PROF/parameters/param_exmpl.yml
+```</p>
+</blockquote>
 <p>The YAML file can be copied and customized using a text editor, or by loading into R:</p>
-<p><code>r
-par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")</code></p>
+<p>``` r</p>
+<blockquote>
+<p>par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")
+```</p>
+</blockquote>
 <p>The parameter list is initialized with almost all values assigned NAs. Any disease parameter whose value remains NA when passed to PROF will have its value set by PROF::init_param().\
 Manually setting a parameter is straightforward. For example to set the influenza generation-time to 3.5 days:</p>
 <p><code>r

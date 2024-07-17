@@ -49,7 +49,7 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../home/">Home</a>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
                     </li>
                 </ul>
                 <ul>
@@ -71,13 +71,13 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">PROF-Advanced Topics</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#1-selecting-the-number-of-values-for-rt">1. Selecting the number of values for R(t)</a>
+    <li class="toctree-l2"><a class="reference internal" href="#selecting-the-number-of-values-for-rt">Selecting the number of values for R(t)</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#2-uploading-your-own-data">2. Uploading Your Own Data</a>
+    <li class="toctree-l2"><a class="reference internal" href="#uploading-your-own-data">Uploading Your Own Data</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3-creating-a-mixed-mechanistic-and-statistical-forecast">3. Creating a Mixed (Mechanistic and Statistical) Forecast</a>
+    <li class="toctree-l2"><a class="reference internal" href="#editing-the-parameter-file">Editing the Parameter File</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-editing-the-parameter-file">4. Editing the Parameter File</a>
+    <li class="toctree-l2"><a class="reference internal" href="#inferring-mortality">Inferring Mortality</a>
     </li>
     </ul>
                     </li>
@@ -119,127 +119,63 @@
             <div class="section">
               
                 <h1 id="prof-advanced-topics">PROF Advanced Topics</h1>
-<p>The observed time-series data for both COVID-19 and influenza can be rather intricate, even within a single season. For instance, during the 2023-2024 season, many states (such as CA, FL, GA) experienced two distinct waves of COVID-19. Similarly, influenza can exhibit a dual wave attributed to different strains, e.g. influenza A and B. Whereas the PROF mechanistic framework includes only a single strain for each pathogen it does attempt to fit and forecast these complex time-series by employing a flexible time-dependent term for the force of infection. PROF uses a smoothly varying two- or three-value functional form to describe the time-dependent reproduction number, R(t) = β(t)γ where β(t) is the time-dependent transmission rate and γ is the total recovery rate. The first advanced topic we discuss is the choice of number of values for R(t), two vs. three. We illustrate this with the 2023-2024 COVID-19 time-series data for CA. We note that the example we show is somewhat extreme and not typical. It shows how a two-value fit to the data fails whereas the three-value fit is quite good. In general, we recommend starting with a two-value model and trying the three-value model only if the two-value one fails.</p>
-<h2 id="1-selecting-the-number-of-values-for-rt">1. Selecting the number of values for R(t)</h2>
+<p>The observed time-series data for both COVID-19 and influenza can be rather intricate, even within a single season. For instance, during the 2023-2024 season, many states (such as CA, FL, GA) experienced two distinct waves of COVID-19. Similarly, influenza can exhibit a dual wave attributed to different strains, e.g. influenza A and B. Whereas the PROF mechanistic framework includes only a single strain for each pathogen it does attempt to fit and forecast these complex time-series by employing a flexible time-dependent term for the force of infection. PROF uses a smoothly varying two- or three-value functional form to describe the time-dependent reproduction number, R(t) = β(t)γ where β(t) is the time-dependent transmision rate and γ is the total recovery rate. The first advanced topic we discuss is the choice of number of values for R(t), two vs. three. We illustrate this with the 2023-2024 COVID-19 time-series data for CA. We note that the example we show is somewhat extreme and not typical. It shows how a two-value fit to the data fails whereas the three-value fit is quite good. In general, we recommend starting with a two-value model and trying the three-value model only if the two-value one fails.</p>
+<h2 id="selecting-the-number-of-values-for-rt">Selecting the number of values for R(t)</h2>
 <p>Suppose that we are trying to fit the CA COVID-19 time-series for 2023-2024 from July 1st, 2023 to December 31, 2023 (dashed vertical line in the figure below): the data shows a peak in the late summer/fall and the start of winter wave.</p>
 <p><img alt="Figure 1: California, COVID-19 daily new reported hospitalization 2023-2024" src="../img/ca_covid19_data.png" /></p>
 <p>We start by selecting the SEIRH model, the two-value option for the force of infection and start and end dates of July 1, 2023 and December 2023, respectively. These choices are shown in the figure below.</p>
 <p><img alt="Figure 2: California selecting a two-value FOI to fit the 2023-24 season starting on July 1, 2023 and ending in December 31, 2023." src="../img/prof_ca_selection_2value.png" /></p>
-<p>The results of this fit are poor. In the figure below black circles are reported data and shaded areas are the median, 50`% and 95% confidence intervals. We see that the two value model is unable to fit the early peak and winter rise and is settling into a single broad peak. Clearly this fit would result in a poor forecast.</p>
+<p>The results of this fit are poor. In the figure below black circles are reported data and shaded areas are the median, 50% and 95% confidence intervals. We see that the two value model is unable to fit the early peak and winter rise and is settling into a single broad peak. Clearly this fit would result in a poor forecast.</p>
 <p><img alt="Figure 3: California, fitting the COVID-19 time series with a two-value force of infection." src="../img/ca_fitcovid_2value.png" /></p>
 <p>Given these poor results we will now repeat the fit with a three-value model and the results of this fit are shown below. We see that the more flexible three-value model improves the fit significantly although even this fit is not perfect: the rise in the second wave in the model is slower than the observed data.</p>
 <p><img alt="Figure 4: Same as above but with a three-value force of infection." src="../img/ca_fitcovid_3value.png" /></p>
 <p>We note that as the season progresses the fit with a two-value force of infection improves and is able to fit the two peaks: using one value for each peak (see below). This example demonstrates the complexity of the fits and our somewhat limited ability to control the convergence of the optimization procedure. As discussed below, our 'control knobs' are limited to the minimum and maximum values we explore in the search for optimal parameters.</p>
 <p><img alt="Figure 5: California, fitting the COVID-19 time series with a two-value force of infection but later in the season, with data up to February 24, 2024." src="../img/ca_fitcovid_2value_long.png" /></p>
-<p>To conclude, this example demonstrates the need to experiment with the mechanistic models. We suggest starting with a two-value force of infection and if the results are not-satisfactory to try and repeat the fit with a three value model. If no improvement is achieved with three values you can attempt to improve the results by adjusting the default values for the initial guess of the fitted parameters and their permissible ranges. This requires more knowledge in R and is discussed below.</p>
-<h2 id="2-uploading-your-own-data">2. Uploading Your Own Data</h2>
-<p>To fit and forecast your own data, you will need to provide a CSV data file containing daily or weekly hospitalization incidence data, the population size you are modeling, and a location name. The latter is only needed for display on the plots. Currently, PROF supports only the modeling of daily or weekly hospitalization data for two pathogens: COVID-19 and Influenza. Your CSV file MUST have the following columns with the following information and format specifications:</p>
-<p>(i) column name: date. Date information in the format <code>\%Y-\%m-\%d</code> , e.g., <code>2024-10-01</code>. Currently we support daily and weekly data</p>
-<p>(ii) column name: disease. String with disease name. Currently we support <code>covid19</code> and <code>influenza</code>. This information must be provided for each incidence date.</p>
-<p>(iii) column name: metric. String with the metric of incidence. Currently, PROF only supports <code>hosp</code>.</p>
-<p>(iv) columns name: value. Numeric. Non-negative incidence value.</p>
-<p>We require the incidence data to be in long format, i.e., if you are providing data for both pathogens, list all the data for the first one followed by the data for the second one. The figure below presents an example of the expected format. The COVID-19 data is followed by the influenza data. Only a small portion of the COVID-19 data is displayed, and none of the influenza data is shown. You can download this example csv file from the link below: <a href="files/example_inc.csv">Download example incidence data file</a></p>
-<p>Please note that PROF supports the fitting and forecasting of only ONE season at a time.</p>
-<p><img alt="Figure 6: Example of required CSV data file format." src="img/example_csv.png" /></p>
-<h2 id="3-creating-a-mixed-mechanistic-and-statistical-forecast">3. Creating a Mixed (Mechanistic and Statistical) Forecast</h2>
-<p>Currently this advanced option is available only when using PROF from the command line. You can download an example script that demonstrates this capability from the link below.</p>
-<p><a href="files/example_mixed_forecast.R">Download the example mixed-forecast script</a></p>
-<p>A mixed <code>mechanistic-statistical</code> forecast can be generated for each pathogen and requires the following steps: 1. Select a location and a season (or upload you own incidence data file) and extract data, e.g.,</p>
-<pre><code class="language-r">&gt; state = &quot;CA&quot;
-&gt; season = 2023
-&gt; prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=state)
-</code></pre>
+<p>To conclude, this example demonstrates the need to experiment with the mechanistic models. We suggest starting with a two-value force of infection and if the results are not-satisfactory to try and repeat the fit with a three value model. If no improvement is achieved with three values you can try to improve the results by changing the default values for the initial guess of the fitted parameters and their allowed ranges. This requires more knowledge in R and is discussed below.</p>
+<h2 id="uploading-your-own-data">Uploading Your Own Data</h2>
+<h2 id="editing-the-parameter-file">Editing the Parameter File</h2>
+<p>The fit and forecast generating functions of PROF contain default parameter values that 
+are pathogen specific.  However, the user may customize these parameters by altering the 
+parameter list structure.  The customized parameter specification can then be saved to 
+a YAML file for later use/reference.  PROF provides two methods for initializing a 
+parameter list structure:</p>
 <ol>
-<li>Select a pathogen and set start and end date for the fit, e.g.,</li>
+<li>Use PROF::init_par_list().  Here is an example for working with a single disease 
+   (COVID-19), using an SEIR model to produce hospitalizations.
+   <code>R
+   library(PROF)
+   # to generate the parameter structure for a single disease
+   par_list1 = init_par_list(diseases=c("covid19"),
+                            models=c("seirh"))
+   str(par_list1)</code>
+   Here is a second example for working with two diseases (COVID-19, Influenza), using 
+   an SEIR model for COVID-19 hospitalizations and SIR for influenza.
+   <code>R
+   # generate a multi-disease parameter structure
+   par_list2 = init_par_list(diseases=c("covid19", "influenza"),
+                            models=c("seirh", "sirh"))
+   str(par_list2)</code></li>
+<li>Use the YAML template located in the 'parameters' directory of PROF: 
+   <code>PROF/parameters/param_exmpl.yml</code>
+   The YAML file can be copied and customized using a text editor, or by loading into R:
+   <code>R
+   par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")</code>
+The parameter list is initialized with almost all values assigned NAs.  Any disease parameter
+whose value remains NA when passed to PROF will have its value set by PROF::init_param().<br />
+Manually setting a parameter is straightforward.  For example to set the influenza 
+generation-time to 3.5 days:</li>
 </ol>
-<pre><code class="language-r">&gt; disease = 'influenza'
-&gt; prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
+<pre><code class="language-R">par_list$influenza$dis_par_ranges$par$gamma = 1/3.5
 </code></pre>
-<ol>
-<li>Select a compartmental model (SIRH or SEIRH) and load default parameter file for the pathogen/model selection, e.g.,</li>
-</ol>
-<pre><code class="language-r">&gt; par_list = init_par_list(diseases=disease,
+<p>Explain initial conditions estimated by PROF::est_I0().</p>
+<p>Explain which parameters can be/are optimized.</p>
+<p>Explain parameter ranges.</p>
+<p>Describe each parameter: initial, disease, mcmc...?</p>
+<p>When changes are complete (if editing the list in R), the parameter list can be saved to YAML format for future 
+reference:</p>
+<pre><code class="language-R">PROF::write_par_list_yaml(par_list=par_list, file_path=&quot;my_dir/test.yml&quot;)
 </code></pre>
-<ol>
-<li>Fit a mechanistic model to the incidence data and display the results, e.g.,</li>
-</ol>
-<pre><code class="language-r">&gt; fit_list &lt;- fit_data(prof_data = prof_data[disease], par_list = par_list, nb_vec=3)
-&gt; plot_fit_list &lt;- plot_fit(prof_data = prof_data[disease], par_list = par_list, 
-fit_list = fit_list)
-&gt; plot_fit_list$arrange_plot
-</code></pre>
-<ol>
-<li>Repeat steps 2 and 4 for the baseline statistical model:</li>
-</ol>
-<pre><code class="language-r">&gt; prof_data = hhs_set_fitdates_stat(prof_data=prof_data[disease], fit_start=NULL, fit_end=NULL)
-&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data[disease], ntraj = 1e4, filename = NULL)
-&gt; stat_fit_list$arrange_plot
-</code></pre>
-<ol>
-<li>Create a mechanistic forecast and display the results:</li>
-</ol>
-<pre><code class="language-r">&gt; forecast_list &lt;- plot_forecast(prof_data = prof_data[disease], par_list = par_list, 
-fit_list = fit_list, nfrcst = 28)
-&gt; forecast_list$arrange_plot
-</code></pre>
-<ol>
-<li>Create a statistical forecast and display the results:</li>
-</ol>
-<pre><code class="language-r">&gt; forecast_stat_list &lt;- plot_stat_forecast(prof_data = prof_data[disease], nfrcst = 28)
-&gt; forecast_stat_list$arrange_plot
-</code></pre>
-<ol>
-<li>Combine, i.e., mix the two forecast and display the results:</li>
-</ol>
-<pre><code class="language-r">&gt; forecast_mix_list &lt;- plot_mixed_forecast(prof_data = prof_data, forecast_list = forecast_list, 
-forecast_stat_list = forecast_stat_list)
-&gt; forecast_mix_list$arrange_plot
-</code></pre>
-<p>Steps 1-7 outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating a mixed forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.</p>
-<h2 id="4-editing-the-parameter-file">4. Editing the Parameter File</h2>
-<p>The fit and forecast generating functions of PROF contain default parameter values that are pathogen specific. However, the user may customize these parameters by altering the parameter list structure. The customized parameter specification can then be saved to a YAML file for later use/reference. PROF provides two methods for initializing a parameter list structure:</p>
-<ol>
-<li>
-<p>Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.</p>
-<p>``` r
-library(PROF)</p>
-<h1 id="to-generate-the-parameter-structure-for-a-single-disease">to generate the parameter structure for a single disease</h1>
-<p>par_list1 = init_par_list(diseases=c("covid19"),
-                         models=c("seirh"))
-str(par_list1)
-```</p>
-<p>Here is a second example for working with two diseases (COVID-19, Influenza), using an SEIRH model for COVID-19 hospitalizations and SIRH for influenza.</p>
-<p>``` r</p>
-<h1 id="generate-a-multi-disease-parameter-structure">generate a multi-disease parameter structure</h1>
-<p>par_list2 = init_par_list(diseases=c("covid19", "influenza"),
-                         models=c("seirh", "sirh"))
-str(par_list2)
-```</p>
-</li>
-<li>
-<p>Use the YAML template located in the 'parameters' directory of PROF:</p>
-<p><code>PROF/parameters/param_exmpl.yml</code></p>
-<p>The YAML file can be copied and customized using a text editor, or by loading into R:</p>
-<p><code>r
-par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")</code></p>
-<p>The parameter list is initialized with almost all values assigned NAs. Any disease parameter whose value remains NA when passed to PROF will have its value set by PROF::init_param().\
-Manually setting a parameter is straightforward. For example to set the influenza generation-time to 3.5 days:</p>
-<p><code>r
-par_list$influenza$dis_par_ranges$par$gamma = 1/3.5</code></p>
-</li>
-</ol>
-<pre><code>&lt;!-- Explain initial conditions estimated by PROF::est_I0().
-
-Explain which parameters can be/are optimized.
-
-Explain parameter ranges.
-
-Describe each parameter: initial, disease, mcmc...? --&gt;
-</code></pre>
-<p>When changes are complete (if editing the list in R), the parameter list can be saved to YAML format for future reference:</p>
-<pre><code class="language-r">PROF::write_par_list_yaml(par_list=par_list, file_path=&quot;my_dir/test.yml&quot;)
-</code></pre>
-<!-- ## 5. Inferring Mortality -->
+<h2 id="inferring-mortality">Inferring Mortality</h2>
               
             </div>
           </div>

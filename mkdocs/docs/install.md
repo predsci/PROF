@@ -4,15 +4,21 @@ This R package requires an R or Rstudio installation and Fortran/GCC compilers. 
 
 ## Using 'devtools' in an R console
 
-> \> library(devtools)
+``` bash
+> library(devtools)
 
-> \> install_git(url="<https://github.com/predsci/PROF>")
+> install_git(url="<https://github.com/predsci/PROF>")
+```
 
 ## Cloning through GitHub
 
 Users are also welcome to download the package directly either as a zip file or by cloning the repository.
 
-To clone: `git clone https://github.com/predsci/PROF.git`
+To clone:
+
+``` bash
+> git clone https://github.com/predsci/PROF.git
+```
 
 Then, open an R or Rstudio session. Navigate to the location of the cloned project, open the PROF.Rproj file and install the package.
 
@@ -20,6 +26,8 @@ Then, open an R or Rstudio session. Navigate to the location of the cloned proje
 
 After successfully installing the PROF package please proceed to clone the GUI for it:
 
-`git clone https://github.com/predsci/PROF-shiny-app.git`
+``` bash
+> git clone https://github.com/predsci/PROF-shiny-app.git
+```
 
 To launch the GUI open the `ui.R` file within PRO-shiny-app

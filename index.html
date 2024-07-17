@@ -5,26 +5,26 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="description" content="PROF Documentation">
   <meta name="author" content="PROF Team">
   
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Home - PROF</title>
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <title>PROF</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="../css/theme.css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/theme_extra.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
   
   <script>
     // Current page data
     var mkdocs_page_name = "Home";
-    var mkdocs_page_input_path = "home.md";
+    var mkdocs_page_input_path = "index.md";
     var mkdocs_page_url = null;
   </script>
   
-  <script src="../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="js/jquery-2.1.1.min.js" defer></script>
+  <script src="js/modernizr-2.8.3.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
@@ -39,9 +39,9 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> PROF</a>
+        <a href="." class="icon icon-home"> PROF</a>
         <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
@@ -49,29 +49,29 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
                 <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Home</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
     <ul class="current">
     </ul>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    <li class="toctree-l1"><a class="reference internal" href="about/">About</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../install/">Install</a>
+                    <li class="toctree-l1"><a class="reference internal" href="install/">Install</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../tutorial/">PROF-Shiny Tutorial</a>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorial/">PROF-Shiny Tutorial</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../example/">PROF Command Line Tutorial</a>
+                    <li class="toctree-l1"><a class="reference internal" href="example/">PROF Command Line Tutorial</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../advanced/">PROF-Advanced Topics</a>
+                    <li class="toctree-l1"><a class="reference internal" href="advanced/">PROF-Advanced Topics</a>
                     </li>
                 </ul>
       </div>
@@ -83,7 +83,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">PROF</a>
+        <a href=".">PROF</a>
       </nav>
 
       
@@ -91,14 +91,14 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
+    <li><a href=".">Docs</a> &raquo;</li>
     
       
     
     <li>Home</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/home.md"
+        <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/index.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -122,9 +122,9 @@
 <p>The data set is provided by the U.S. Department of Health &amp; Human Services, is updated weekly on Friday, and is called: "COVID-19 Reported Patient Impact and Hospital Capacity by State (RAW)".   For more on the data set, see <a href="https://healthdata.gov/dataset/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/6xf2-c3ie">here</a>.</p>
 <h1 id="compartmental-models">Compartmental Models</h1>
 <p>PROF uses compartmental models with a flexible, time-dependent transmission term to fit daily hospitalization data. Whereas pathogen can be fitted by either one of the models we support, however we do recommend using the SEIRH model for COVID-19 and the SIRH model for influenza.  Both models include a hospitalization compartment which is split into two sub-compartments. This split ensures that the model preserves the correct generation time (T<sub>g</sub>) and that the ratio between cumulative recovered and hospitalized individuals is determined by the infection-hospitalization-ratio (p<sub>H</sub>). In the SIRH mode, individuals begin in the susceptible compartment. If exposed, they transition (&beta;(t)) to the infectious compartment where there is a probability of hospitalization or recovery (p<sub>H</sub>/1-p<sub>H</sub>) Individuals progress (1/&mu;) from the first hospitalization compartment (H<sub>1</sub>) to the second (H<sub>2</sub>), and the number entering this compartment is recorded as daily incidence (and optimized, see below). </p>
-<p><img alt="Influenza Model" src="../img/model_influenza.png" /></p>
+<p><img alt="Influenza Model" src="img/model_influenza.png" /></p>
 <p>The SEIRH model is similar with the only difference being the addition of the Exposed (but not yet infectious) compartment.</p>
-<p><img alt="covid19 Model" src="../img/model_covid19.png" /></p>
+<p><img alt="covid19 Model" src="img/model_covid19.png" /></p>
 <p>While we recommend utilizing the SIRH model for influenza and SEIRH for COVID-19, PROF is flexible and supports the fitting of either model to either pathogen. </p>
 <h1 id="time-dependent-force-of-infection">Time-Dependent Force of Infection</h1>
 <p>We use a smoothly varying two- or three-value functional form to describe the time-dependent reproduction number: R(t) = &beta;(t)&gamma;, where &beta;(t) is the time-dependent transmission rate and &gamma; is the total recovery rate. </p>
@@ -143,7 +143,7 @@ with an approximate transition time of ~2L days. For the general case of three (
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../about/" class="btn btn-neutral float-right" title="About">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="about/" class="btn btn-neutral float-right" title="About">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
     </div>
@@ -175,18 +175,18 @@ with an approximate transition time of ~2L days. For the general case of three (
     
     
     
-      <span><a href="../about/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="about/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
+    <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
+    <script src="js/theme.js" defer></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
-      <script src="../javascripts/config.js" defer></script>
+      <script src="javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
-      <script src="../search/main.js" defer></script>
+      <script src="search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);
@@ -195,3 +195,8 @@ with an approximate transition time of ~2L days. For the general case of three (
 
 </body>
 </html>
+
+<!--
+MkDocs version : 1.2.2
+Build Date UTC : 2024-07-17 23:17:42.824267+00:00
+-->

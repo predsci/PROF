@@ -218,7 +218,8 @@ str(par_list2)
 </li>
 <li>
 <p>Use the YAML template located in the 'parameters' directory of PROF:</p>
-<p><code>PROF/parameters/param_exmpl.yml</code></p>
+<p><code>r
+PROF/parameters/param_exmpl.yml</code></p>
 <p>The YAML file can be copied and customized using a text editor, or by loading into R:</p>
 <p><code>r
 par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")</code></p>
@@ -228,14 +229,14 @@ Manually setting a parameter is straightforward. For example to set the influenz
 par_list$influenza$dis_par_ranges$par$gamma = 1/3.5</code></p>
 </li>
 </ol>
-<pre><code>&lt;!-- Explain initial conditions estimated by PROF::est_I0().
+<!-- Explain initial conditions estimated by PROF::est_I0(). -->
 
-Explain which parameters can be/are optimized.
+<!-- Explain which parameters can be/are optimized. -->
 
-Explain parameter ranges.
+<!-- Explain parameter ranges. -->
 
-Describe each parameter: initial, disease, mcmc...? --&gt;
-</code></pre>
+<!-- Describe each parameter: initial, disease, mcmc...? -->
+
 <p>When changes are complete (if editing the list in R), the parameter list can be saved to YAML format for future reference:</p>
 <pre><code class="language-r">PROF::write_par_list_yaml(par_list=par_list, file_path=&quot;my_dir/test.yml&quot;)
 </code></pre>

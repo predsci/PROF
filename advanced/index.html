@@ -199,24 +199,19 @@ forecast_stat_list = forecast_stat_list)
 <h2 id="4-editing-the-parameter-file">4. Editing the Parameter File</h2>
 <p>The fit and forecast generating functions of PROF contain default parameter values that are pathogen specific. However, the user may customize these parameters by altering the parameter list structure. The customized parameter specification can then be saved to a YAML file for later use/reference. PROF provides two methods for initializing a parameter list structure:</p>
 <ol>
-<li>
-<p>Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.</p>
-<p>``` r</p>
-<blockquote>
-<p>par_list1 = init_par_list(diseases=c("covid19"),
-                         models=c("seirh"))
-str(par_list1)
-```</p>
-</blockquote>
+<li>Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.</li>
+</ol>
+<pre><code class="language-r">&gt; par_list1 = init_par_list(diseases=c(&quot;covid19&quot;), models=c(&quot;seirh&quot;))
+&gt; str(par_list1)
+</code></pre>
 <p>Here is a second example for working with two diseases (COVID-19, Influenza), using an SEIRH model for COVID-19 hospitalizations and SIRH for influenza.</p>
-<p>``` r</p>
-<blockquote>
-<p>par_list2 = init_par_list(diseases=c("covid19", "influenza"),
+<pre><code>``` r
+&gt; par_list2 = init_par_list(diseases=c("covid19", "influenza"),
                          models=c("seirh", "sirh"))
-str(par_list2)
-```</p>
-</blockquote>
-</li>
+&gt; str(par_list2)
+```
+</code></pre>
+<ol>
 <li>
 <p>Use the YAML template located in the 'parameters' directory of PROF:</p>
 <p>``` r</p>

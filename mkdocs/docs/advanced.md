@@ -46,7 +46,7 @@ Please note that PROF supports the fitting and forecasting of only ONE season at
 
 ## 3. Creating a Mixed (Mechanistic and Statistical) Forecast
 
-Currently this advanced option is available only when using PROF from the command line. You can download an example script that demonstrates this capability from the link below.
+Currently this advanced option is available only when using PROF from the command line. You can download an example script that demonstrates this capability from the link below:
 
 [Download the example mixed-forecast script](files/example_mixed_forecast.R)
 
@@ -119,58 +119,51 @@ The fit and forecast generating functions of PROF contain default parameter valu
 
 1.  Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.
 
-    ``` r
-    library(PROF)
-    # to generate the parameter structure for a single disease
-    par_list1 = init_par_list(diseases=c("covid19"),
-                             models=c("seirh"))
-    str(par_list1)
-    ```
+```r
+> par_list1 = init_par_list(diseases=c("covid19"), models=c("seirh"))
+> str(par_list1)
+```
+    
 
-    Here is a second example for working with two diseases (COVID-19, Influenza), using an SEIRH model for COVID-19 hospitalizations and SIRH for influenza.
+Here is a second example for working with two diseases (COVID-19, Influenza), using an SEIRH model for COVID-19 hospitalizations and SIRH for influenza.
 
-    ``` r
-    # generate a multi-disease parameter structure
-    par_list2 = init_par_list(diseases=c("covid19", "influenza"),
+``` r
+> par_list2 = init_par_list(diseases=c("covid19", "influenza"),
                              models=c("seirh", "sirh"))
-    str(par_list2)
-    ```
+> str(par_list2)
+```
 
 2.  Use the YAML template located in the 'parameters' directory of PROF:
 
-    ```         
-    PROF/parameters/param_exmpl.yml
-    ```
-
-    The YAML file can be copied and customized using a text editor, or by loading into R:
-
-    ``` r
-    par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")
-    ```
-
-    The parameter list is initialized with almost all values assigned NAs. Any disease parameter whose value remains NA when passed to PROF will have its value set by PROF::init_param().\
-    Manually setting a parameter is straightforward. For example to set the influenza generation-time to 3.5 days:
-
-    ``` r
-    par_list$influenza$dis_par_ranges$par$gamma = 1/3.5
-    ```
-
-```{=html}
-<!-- Explain initial conditions estimated by PROF::est_I0().
-
-Explain which parameters can be/are optimized.
-
-Explain parameter ranges.
-
-Describe each parameter: initial, disease, mcmc...? -->
+``` r
+> PROF/parameters/param_exmpl.yml
 ```
+
+The YAML file can be copied and customized using a text editor, or by loading into R:
+
+``` r
+> par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")
+```
+
+The parameter list is initialized with almost all values assigned NAs. Any disease parameter whose value remains NA when passed to PROF will have its value set by PROF::init_param().
+Manually setting a parameter is straightforward. For example to set the influenza generation-time to 3.5 days:
+
+``` r
+> par_list$influenza$dis_par_ranges$par$gamma = 1/3.5
+```
+
+<!-- Explain initial conditions estimated by PROF::est_I0(). -->
+
+<!-- Explain which parameters can be/are optimized. -->
+
+<!-- Explain parameter ranges. -->
+
+<!-- Describe each parameter: initial, disease, mcmc...? -->
+
 When changes are complete (if editing the list in R), the parameter list can be saved to YAML format for future reference:
 
 ``` r
-PROF::write_par_list_yaml(par_list=par_list, file_path="my_dir/test.yml")
+> PROF::write_par_list_yaml(par_list=par_list, file_path="my_dir/test.yml")
 ```
 
 <!-- ## 5. Inferring Mortality -->
-
-
-

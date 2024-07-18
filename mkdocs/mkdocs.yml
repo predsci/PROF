@@ -8,7 +8,7 @@ edit_uri: blob/master/mkdocs/docs/
 
 # site navigation
 nav:
-  - Home: home.md
+  - Home: index.md
   - Install: install.md
   - PROF-Shiny Tutorial: tutorial.md
   - PROF Command Line Tutorial: example.md

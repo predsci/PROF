@@ -2,7 +2,8 @@
 
 While we expect most users to interact with PROF using the Shiny app GUI, there are instances where using the package from the command line is preferred. For example, when sequentially fitting multiple locations.
 
-The `prof_dev` sub-directory includes multiple example scripts with the `example.R` being the basic one. We suggest that you give it a try if you would like to learn to use PROF without its shiny GUI. You can download the `example.R` script from the link below: [Download the example document](files/example.R)
+The `prof_dev` sub-directory includes multiple example scripts with the `example.R` being the basic one. We suggest that you give it a try if you would like to learn to use PROF without its shiny GUI. You can download the `example.R` script from the link below: 
+[Download the example.R script](files/example.R)
 
 This example has been configured for fitting and forecasting influenza and COVID-19 data for any of the 50 states D.C. and Puerto Rico for the 2021-22, 2022-23, or 2023-24 seasons.
 

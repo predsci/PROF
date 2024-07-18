@@ -112,15 +112,14 @@
               
                 <h1 id="prof-command-line-tutorial">PROF Command Line Tutorial</h1>
 <p>While we expect most users to interact with PROF using the Shiny app GUI, there are instances where using the package from the command line is preferred. For example, when sequentially fitting multiple locations.</p>
-<p>The <code>prof_dev</code> sub-directory includes multiple example scripts with the <code>example.R</code> being the basic one. We suggest that you give it a try if you would like to learn to use PROF without its shiny GUI. You can download the <code>example.R</code> script from the link below: 
-<a href="../files/example.R">Download the example.R script</a></p>
+<p>The <code>prof_dev</code> sub-directory includes multiple example scripts with the <code>example.R</code> being the basic one. We suggest that you give it a try if you would like to learn to use PROF without its shiny GUI. You can download the <code>example.R</code> script from the link below: <a href="../files/example.R">Download the example.R script</a></p>
 <p>This example has been configured for fitting and forecasting influenza and COVID-19 data for any of the 50 states D.C. and Puerto Rico for the 2021-22, 2022-23, or 2023-24 seasons.</p>
 <p>All available data is first downloaded and then the data for the requested location is retrieved and processed. You can fit the entire requested season or just part of it. Below we demonstrate both options.</p>
 <p>We start by opening an R or Rstudio session and loading the PROF package:</p>
 <pre><code class="language-r">&gt; library(PROF)
 </code></pre>
-<p>We then download the HHS data using the provided 'hhs_hosp_state_down' function</p>
-<pre><code class="language-r">&gt; result = fetch_hhs_data(down_dir=&quot;\~/Downloads&quot;)
+<p>We then download the HHS data using the provided <code>fetch_hhs_data</code> function</p>
+<pre><code class="language-r">&gt; result = fetch_hhs_data(down_dir=&quot;~/Downloads&quot;)
 </code></pre>
 <p>We can check to see if the download was successful:</p>
 <pre><code class="language-r">&gt; result$out_flag
@@ -135,13 +134,13 @@
 <pre><code class="language-r">&gt; prof_data = hhs_2_PROF(hhs_path=result\$download_path, season = season, state=state)
 </code></pre>
 <p>You can select other states or any of the two previous seasons (2021 and 2022).</p>
-<p>The 'prof_data' data structure should now be available and the data can be plotted to the screen:</p>
+<p>The <code>prof_data</code> data structure should now be available and the data can be plotted to the screen:</p>
 <pre><code class="language-r">&gt; plot_prof_data(prof_data = prof_data)
 </code></pre>
 <p>Plots can also be saved to a file using:</p>
 <pre><code class="language-r">&gt; plot_prof_data(prof_data = prof_data, filename = '/path/to/filename')
 </code></pre>
-<p>Next we will add 'fit data' structure to each pathogen - this is the data that will be fitted using a mechanistic compartmental model. NULL values for start/end dates mean set to start/end of the season data, and fit all available data:</p>
+<p>Next we will add <code>fit data</code> structure to each pathogen - this is the data that will be fitted using a mechanistic compartmental model. NULL values for start/end dates mean set to start/end of the season data, and fit all available data:</p>
 <pre><code class="language-r">&gt; prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 </code></pre>
 <p>To fit only part of the data use for example:</p>
@@ -155,9 +154,9 @@
 <pre><code class="language-r">&gt; prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=c(NULL, &quot;2023-10-01&quot;), fit_end=&quot;2023-10-28&quot;)
 </code></pre>
 <p>will keep the default start date for COVID-19 and change it for influenza. Please note that whereas the start date can be set individually for each pathogen, there is a single end date for both pathogens.</p>
-<p>If you would like to fit only part of the data we recommend using the interactive plots of the data for selecting the ''fit_start' dates and 'fit_end' date.</p>
-<p>Please note that whereas each pathogen has its own 'fit_start' date, the end date for the fitting is always the same for both pathogen.</p>
-<p>Next we load the parameters for the models (for more details see the R/ex_par_list.R script):</p>
+<p>If you would like to fit only part of the data we recommend using the interactive plots of the data for selecting the <code>fit_start</code> dates and <code>fit_end</code> date.</p>
+<p>Please note that whereas each pathogen has its own <code>fit_start</code> date, the end date for the fitting is always the same for both pathogen.</p>
+<p>Next we load the parameters for the models (for more details <a href="../files/ex_par_list.R">Download the ex_par_list.R script</a>):</p>
 <pre><code class="language-r">&gt; par_list = init_par_list(diseases=c(&quot;covid19&quot;, &quot;influenza&quot;), models=c(&quot;seirh&quot;, &quot;sirh&quot;))
 </code></pre>
 <p>The above call tells PROF that we would like to fit SEIRH/SIRH models to the COVID-19/influenza data.</p>
@@ -165,72 +164,77 @@
 <pre><code class="language-r">&gt; par_list = init_par_list(diseases=c(&quot;covid19&quot;, &quot;influenza&quot;), models=c(&quot;seirh&quot;, &quot;seirh&quot;))
 </code></pre>
 <p>We can now sequentially fit both pathogens using the compartmental models we selected:</p>
-<pre><code class="language-r">&gt; fit_list &lt;- fit_data(prof_data = prof_data, par_list = par_list)
+<pre><code class="language-r">&gt; fit_list = fit_data(prof_data = prof_data, par_list = par_list)
 </code></pre>
 <p>You can now sit and relax for 5-10 minutes</p>
 <p>To save the results of the fit (posterior distribution and initial state) use:</p>
 <pre><code class="language-r">&gt; saveRDS(fit_list, filename = '/path/to/filename.rds')
 </code></pre>
 <p>To plot the results of the fit to the screen use:</p>
-<pre><code class="language-r">&gt; fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+<pre><code class="language-r">&gt; fit_traj = plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 </code></pre>
 <p>The plotting routine returns a list with the following elements: fit_traj - a list for each disease containing: model fit mechanistic trajectories, dates, and reported incidence pl - a list of ggplot2 objects one for each disease for the mechanistic plots</p>
 <p>To save the plot to a file use:</p>
-<pre><code class="language-r">&gt; fit_traj &lt;- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')
+<pre><code class="language-r">&gt; fit_traj = plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')
 &gt; plot_fit_list$arrange_plot
 </code></pre>
-<p>Please note that by default this routine also plots the results of fitting a baseline statistical model to the data. Early in the season this may provide a reasonable fit and forecast.</p>
-<p>To plot the results of fitting a baseline statistical mode to each pathogen use:</p>
-<pre><code class="language-r">&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data)
-&gt; stat_fit_list$arrange_plot
-</code></pre>
-<p>The above call returns a list with the following elements:</p>
-<p>stat_fit_traj - a list for each disease containing: baseline statistical fit trajectories, dates, and reported incidence pl_stat - a list of ggplot2 objects one for each disease for the statistical plots</p>
-<p>To use the posterior distributions of the fits to create individual forecasts and a combined burden forecast use:</p>
-<pre><code class="language-r">&gt; forecast_traj &lt;- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+<p>The above call returns a list with the <code>arrange_plot</code> being an interactive plotly object of the statistical fit plots.</p>
+<p>To use the posterior distributions of the compartmental fits to create individual forecasts and a combined burden forecast use:</p>
+<pre><code class="language-r">&gt; forecast_traj = plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
 &gt; forecast_traj$arrange_plot
 </code></pre>
-<p>Please note that we currently provide two versions of the combined forecast: random (bottom left panel), and sorted (bottom right panel).</p>
-<p>The plotting routine returns a list with four elements ('covid19', 'influenza', 'random', and 'sorted'). Random and Sorted are the combined burden calculated with random and sorted selection of trajectories, respectively. Each element is a list with the trajectories used to create the plots, the date array and the reported incidence array.</p>
+<p>PROF uses our error correlation procedure to estimate the combined burden. Two estimates are provided:</p>
+<ol>
+<li>Random Estimate (bottom left panel): This estimate uses an error correlation value of zero.</li>
+<li>Sorted Estimate (bottom right panel): This estimate uses a default error correlation value of one, with a range between zero and one. The user can modify the default value for the sorted option.</li>
+</ol>
+<p>The random estimate is always generated, but you can customize the sorted estimate using this command:</p>
+<pre><code class="language-r">&gt; forecast_traj = plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, err_cor = 0.7)
+&gt; forecast_traj$arrange_plot
+</code></pre>
 <p>To also save the plot to a file use:</p>
-<pre><code class="language-r">&gt; forecast_traj &lt;- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, filename = '/path/to/filename')
+<pre><code class="language-r">&gt; forecast_traj = plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list, err_cor = 0.7, filename = '/path/to/filename')
 </code></pre>
 <p>PROF can also be used to fit and forecast using a fast baseline statistical model. The procedure follows the steps we have taken for the compartmental mechanistic model.</p>
-<p>First, we add 'fit-stat data' structure to each pathogen - this is the data that will be fitted using a baseline statistical model. NULL values for start/end dates mean set to start/end of the season data, and fit all available data:</p>
+<p>First, we add <code>fit-stat data</code> structure to each pathogen - this is the data that will be fitted using a baseline statistical model. NULL values for start/end dates mean set to start/end of the season data, and fit all available data:</p>
 <pre><code class="language-r">&gt; prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=c(NULL,NULL), fit_end=NULL)
 </code></pre>
 <p>Note that here too the start date for fitting can be different for each pathogen but the end date for fitting is the same.</p>
 <p>To fit and plot the results we use:</p>
-<pre><code class="language-r">&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data, ntarj = 2e4, filename = NULL)
+<pre><code class="language-r">&gt; stat_fit_list = plot_stat_fit(prof_data = prof_data, ntarj = 2e4, filename = NULL)
 </code></pre>
 <p>Here we have set the number of trajectories to 2,000 (default is 1,000). To save the plots to a file use:</p>
-<pre><code class="language-r">&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data, ntarj = 1e4, filename = 'path/to/filename')
+<pre><code class="language-r">&gt; stat_fit_list = plot_stat_fit(prof_data = prof_data, ntarj = 2e4, filename = 'path/to/filename')
 </code></pre>
-<p>To use the baseline statistical model to create a 28 day forward forecast and the two estimates for the combined burden use:</p>
-<pre><code class="language-r">&gt; stat_forecast_list &lt;- plot_stat_forecast(prof_data = prof_data, nfrcst = 28)
+<p>To use the baseline statistical model to create a 28 day forward forecast and the two estimates for the combined burden (with an error correlation value of 0.5 for example) use:</p>
+<pre><code class="language-r">&gt; stat_forecast_list = plot_stat_forecast(prof_data = prof_data, nfrcst = 28, err_cor = 0.5)
+&gt; stat_forecast_list$arrange_plot
 </code></pre>
-<p>For the combined burden of the baseline statistical model we offer the same two options (random and sorted). The statistical plotting routine returns a list with the same four elements as the one for the mechanistic forecasts</p>
-<p>For both the mechanistic and statistical options the number of forecast horizons is set by the parameter 'nfrcst' above. By default it is set to 28. The cadence (i.e., units) of this parameter are assumed to be the same as that of the incidence data.</p>
-<p>For both the mechanistic and statistical models you can fit and forecast a single pathogen.</p>
+<p>For both the mechanistic and statistical options, the number of forecast horizons is determined by the nfrcst parameter, with the unit of time always set to days (even if the incidence data cadence is in weeks). By default, this is set to 28 days. For weekly data, nfrcst must be a multiple of seven (e.g., 7, 14, 21, etc.).</p>
+<p>Finally, we demonstrate how to use PROF to fit only one pathogen.</p>
 <p>If for example you would like to only fit the 'covid19' data you should follow these steps:</p>
 <p>Load an initial guess for the parameters and set the model only for 'covid19'</p>
 <pre><code class="language-r">&gt; par_list = init_par_list(diseases=c(&quot;covid19&quot;), models=c(&quot;seirh&quot;))
 </code></pre>
 <p>Fit only the covid19 data using:</p>
-<pre><code class="language-r">&gt; fit_list &lt;- fit_data(prof_data = prof_data['covid19'], par_list = par_list)
+<pre><code class="language-r">&gt; fit_list = fit_data(prof_data = prof_data['covid19'], par_list = par_list)
 </code></pre>
 <p>Plot the single pathogen fit results:</p>
-<pre><code class="language-r">&gt; fit_traj &lt;- plot_fit(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)
+<pre><code class="language-r">&gt; fit_traj = plot_fit(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)
+&gt; fit_traj$arrange_plot
 </code></pre>
 <p>Use the posterior distribution of the single pathogen fit to perform and plot the forecast:</p>
-<pre><code class="language-r">&gt; forecast_traj &lt;- plot_forecast(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)
+<pre><code class="language-r">&gt; forecast_traj = plot_forecast(prof_data = prof_data['covid19'], par_list = par_list, fit_list = fit_list)
+&gt; forecast_traj$arrange_plot
 </code></pre>
 <p>Since only one pathogen was modeled there is no estimate for a combined burden.</p>
-<p>To plot the results of fitting a baseline statistical model only to covid19 use:</p>
-<pre><code class="language-r">&gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data['covid19'])
+<p>Similarly, to fit a baseline statistical model only to covid19 use:</p>
+<pre><code class="language-r">&gt; stat_fit_list = plot_stat_fit(prof_data = prof_data['covid19'])
+&gt; stat_fit_list$arrange_plot
 </code></pre>
 <p>And for the forecast:</p>
-<pre><code class="language-r">&gt; stat_forecast_list &lt;- plot_stat_forecast(prof_data = prof_data['covid19'], nfrcst = 28)
+<pre><code class="language-r">&gt; stat_forecast_list = plot_stat_forecast(prof_data = prof_data['covid19'], nfrcst = 28)
+&gt; stat_forecast_list$arrange_ploy
 </code></pre>
 <p>To fit and forecast only influenza use the same logic in all the calls shown above replacing 'covid19' with 'influenza' and using an 'sirh' compartmental model.</p>
               

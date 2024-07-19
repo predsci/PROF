@@ -1,122 +1,104 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <meta name="author" content="PROF Team">
-  
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>PROF-Advanced Topics - PROF</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
-
-  <link rel="stylesheet" href="../css/theme.css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "PROF-Advanced Topics";
-    var mkdocs_page_input_path = "advanced.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="PROF Team" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>PROF-Advanced Topics - PROF</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "PROF-Advanced Topics";
+        var mkdocs_page_input_path = "advanced.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
 
   <div class="wy-grid-for-nav">
-
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> PROF</a>
-        <div role="search">
+          <a href="..">
+          <img src="../img/psi.png" class="logo" alt="Logo"/>
+        </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../install/">Install</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../tutorial/">PROF-Shiny Tutorial</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../example/">PROF Command Line Tutorial</a>
-                    </li>
-                </ul>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">PROF-Advanced Topics</a>
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Install</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">PROF-Shiny Tutorial</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../example/">PROF Command Line Tutorial</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">PROF-Advanced Topics</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#1-selecting-the-number-of-values-for-rt">1. Selecting the number of values for R(t)</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#2-uploading-your-own-data">2. Uploading Your Own Data</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3-creating-a-mixed-mechanistic-and-statistical-forecast">3. Creating a Mixed (Mechanistic and Statistical) Forecast</a>
+    <li class="toctree-l2"><a class="reference internal" href="#3-creating-an-ensemble-forecast">3. Creating an Ensemble Forecast</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#4-editing-the-parameter-file">4. Editing the Parameter File</a>
     </li>
     </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
-                    </li>
-                </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                </li>
+              </ul>
       </div>
     </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">PROF</a>
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">PROF</a>
+        
       </nav>
-
-      
       <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
-    
-      
-    
-    <li>PROF-Advanced Topics</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li class="breadcrumb-item active">PROF-Advanced Topics</li>
     <li class="wy-breadcrumbs-aside">
-      
-        <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/advanced.md"
-          class="icon icon-github"> Edit on GitHub</a>
-      
+          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/advanced.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
-  
   <hr/>
 </div>
-
-          <div role="main">
-            <div class="section">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
               
                 <h1 id="prof-advanced-topics">PROF Advanced Topics</h1>
 <p>The observed time-series data for both COVID-19 and influenza can be rather intricate, even within a single season. For instance, during the 2023-2024 season, many states (such as CA, FL, GA) experienced two distinct waves of COVID-19. Similarly, influenza can exhibit a dual wave attributed to different strains, e.g. influenza A and B. Whereas the PROF mechanistic framework includes only a single strain for each pathogen it does attempt to fit and forecast these complex time-series by employing a flexible time-dependent term for the force of infection. PROF uses a smoothly varying two- or three-value functional form to describe the time-dependent reproduction number, R(t) = β(t)γ where β(t) is the time-dependent transmission rate and γ is the total recovery rate. The first advanced topic we discuss is the choice of number of values for R(t), two vs. three. We illustrate this with the 2023-2024 COVID-19 time-series data for CA. We note that the example we show is somewhat extreme and not typical. It shows how a two-value fit to the data fails whereas the three-value fit is quite good. In general, we recommend starting with a two-value model and trying the three-value model only if the two-value one fails.</p>
@@ -141,10 +123,13 @@
 <p>We require the incidence data to be in long format, i.e., if you are providing data for both pathogens, list all the data for the first one followed by the data for the second one. The figure below presents an example of the expected format. The COVID-19 data is followed by the influenza data. Only a small portion of the COVID-19 data is displayed, and none of the influenza data is shown. You can download this example csv file from the link below: <a href="../files/example_inc.csv">Download example incidence data file</a></p>
 <p>Please note that PROF supports the fitting and forecasting of only ONE season at a time.</p>
 <p><img alt="Figure 6: Example of required CSV data file format." src="../img/example_csv.png" /></p>
-<h2 id="3-creating-a-mixed-mechanistic-and-statistical-forecast">3. Creating a Mixed (Mechanistic and Statistical) Forecast</h2>
+<h2 id="3-creating-an-ensemble-forecast">3. Creating an Ensemble Forecast</h2>
 <p>Currently this advanced option is available only when using PROF from the command line. You can download an example script that demonstrates this capability from the link below:</p>
-<p><a href="../files/example_mixed_forecast.R">Download the example mixed-forecast script</a></p>
-<p>A mixed <code>mechanistic-statistical</code> forecast can be generated for each pathogen and requires the following steps: 1. Select a location and a season (or upload you own incidence data file) and extract data, e.g.,</p>
+<p><a href="../files/example_ensemble_forecast.R">Download the example ensemble-forecast script</a></p>
+<p>An ensemble <code>mechanistic-statistical</code> forecast can be generated for each pathogen and requires the following steps: </p>
+<ol>
+<li>Select a location and a season (or upload you own incidence data file) and extract data, e.g.,</li>
+</ol>
 <pre><code class="language-r">&gt; state = &quot;CA&quot;
 &gt; season = 2023
 &gt; prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=state)
@@ -189,13 +174,13 @@ fit_list = fit_list, nfrcst = 28)
 &gt; forecast_stat_list$arrange_plot
 </code></pre>
 <ol>
-<li>Combine, i.e., mix the two forecast and display the results:</li>
+<li>Combine the two forecasts to create an ensemble forecast and display the results:</li>
 </ol>
 <pre><code class="language-r">&gt; forecast_mix_list &lt;- plot_mixed_forecast(prof_data = prof_data, forecast_list = forecast_list, 
 forecast_stat_list = forecast_stat_list)
 &gt; forecast_mix_list$arrange_plot
 </code></pre>
-<p>Steps 1-7 outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating a mixed forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.</p>
+<p>Steps 1-7 outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating an ensemble forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.</p>
 <h2 id="4-editing-the-parameter-file">4. Editing the Parameter File</h2>
 <p>The fit and forecast generating functions of PROF contain default parameter values that are pathogen specific. However, the user may customize these parameters by altering the parameter list structure. The customized parameter specification can then be saved to a YAML file for later use/reference. PROF provides two methods for initializing a parameter list structure:</p>
 <ol>
@@ -235,29 +220,21 @@ Manually setting a parameter is straightforward. For example to set the influenz
 <!-- ## 5. Inferring Mortality -->
               
             </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../example/" class="btn btn-neutral float-left" title="PROF Command Line Tutorial"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../about/" class="btn btn-neutral float-right" title="About">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../example/" class="btn btn-neutral" title="PROF Command Line Tutorial"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <!-- Copyright etc -->
-    
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-      
+          
         </div>
       </div>
 
@@ -265,11 +242,11 @@ Manually setting a parameter is straightforward. For example to set the influenz
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" aria-label="Versions">
   <span class="rst-current-version" data-toggle="rst-current-version">
     
         <span>
-          <a href="https://github.com/predsci/PROF/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/predsci/PROF" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
         </span>
     
     
@@ -280,18 +257,19 @@ Manually setting a parameter is straightforward. For example to set the influenz
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
-      <script src="../javascripts/config.js" defer></script>
-      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      <script src="../javascripts/config.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

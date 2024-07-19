@@ -1,5 +1,5 @@
 #
-# Example use of PROF with a mixed mechanistic/statistical forecast
+# Example use of PROF with an ensemble (i.e. mixed) mechanistic/statistical forecast
 #
 
 library(PROF)
@@ -72,7 +72,7 @@ forecast_stat_list <- plot_stat_forecast(prof_data = prof_data[disease], nfrcst 
 forecast_stat_list$arrange_plot
 
 ##########################
-## Mix the two forecasts
+## Combine to create an Ensemble
 ##########################
 
 forecast_mix_list <- plot_mixed_forecast(prof_data = prof_data, forecast_list = forecast_list, forecast_stat_list = forecast_stat_list)

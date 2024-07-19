@@ -44,13 +44,15 @@ Please note that PROF supports the fitting and forecasting of only ONE season at
 
 ![Figure 6: Example of required CSV data file format.](img/example_csv.png)
 
-## 3. Creating a Mixed (Mechanistic and Statistical) Forecast
+## 3. Creating an Ensemble Forecast
 
 Currently this advanced option is available only when using PROF from the command line. You can download an example script that demonstrates this capability from the link below:
 
-[Download the example mixed-forecast script](files/example_mixed_forecast.R)
+[Download the example ensemble-forecast script](files/example_ensemble_forecast.R)
 
-A mixed `mechanistic-statistical` forecast can be generated for each pathogen and requires the following steps: 1. Select a location and a season (or upload you own incidence data file) and extract data, e.g.,
+An ensemble `mechanistic-statistical` forecast can be generated for each pathogen and requires the following steps: 
+
+1. Select a location and a season (or upload you own incidence data file) and extract data, e.g.,
 
 ``` r
 > state = "CA"
@@ -103,7 +105,7 @@ fit_list = fit_list, nfrcst = 28)
 > forecast_stat_list$arrange_plot
 ```
 
-8.  Combine, i.e., mix the two forecast and display the results:
+8.  Combine the two forecasts to create an ensemble forecast and display the results:
 
 ``` r
 > forecast_mix_list <- plot_mixed_forecast(prof_data = prof_data, forecast_list = forecast_list, 
@@ -111,7 +113,7 @@ forecast_stat_list = forecast_stat_list)
 > forecast_mix_list$arrange_plot
 ```
 
-Steps 1-7 outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating a mixed forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.
+Steps 1-7 outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating an ensemble forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.
 
 ## 4. Editing the Parameter File
 

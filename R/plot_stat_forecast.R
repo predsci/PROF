@@ -50,6 +50,10 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
 
   wis_df = list()
 
+  wis_df_both = list()
+
+  dates_score_list = list()
+
   # https://www.statology.org/ggplot-default-colors/#:~:text=By%20default%2C%20ggplot2%20chooses%20to,and%20blue%20for%20the%20bars.&text=Here's%20how%20to%20interpret%20the,in%20the%20plot%20is%20%2300BA38.
 
   # Define colors for plots
@@ -162,6 +166,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
       nscore = length(dates_frcst_only_in_obs)
       obs_score = obs[keep_ind_obs]
       dates_score = dates[keep_ind_obs]
+      dates_score_list[[disease]] = dates_score
 
       # find the subset from the model that we are going to score
       sim_score = simdat[, keep_ind_model]
@@ -298,6 +303,23 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
 
   obs_fit_both = combined_frcst$obs_fit_both
 
+  # check to see if we can score the combined burden
+  if (length(dates_score_list) > 1) {
+    dates1 = tibble(x=as.Date(dates_score_list[[diseases[1]]]))
+    dates2 = tibble(x=as.Date(dates_score_list[[diseases[2]]]))
+    dates_score_both = intersect(dates1, dates2)$x
+    keep_ind_obs_both = match(dates_fore, dates_score_both)
+    sim_score_ecor = combined_frcst_ecor$simdat_both[[1]][,keep_ind_obs_both]
+    sim_score_rand = combined_frcst_rand$simdat_both[[1]][,keep_ind_obs_both]
+    obs_score_both = obs_both[(length(obs_fit_both))+keep_ind_obs_both]
+    wis_arr_ecor = score_forecast(obs = obs_score_both, simdat = sim_score_ecor)
+    wis_arr_rand = score_forecast(obs = obs_score_both, simdat = sim_score_rand)
+
+    wis_df_both[[combined_names[1]]] = data.frame(date=dates_score_both, wis = wis_arr_ecor, disease = 'combined_ecor', model = 'stat')
+    wis_df_both[[combined_names[2]]] = data.frame(date=dates_score_both, wis = wis_arr_rand, disease = 'combined_rand', model = 'stat')
+  }
+
+
   # npad = length(dates_both) - length(obs_both)
   npad = length(dates_fore)
 
@@ -368,24 +390,7 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
 
     total_list[[combined_names[[ic]]]] = total_both
 
-    # apply(simdat_both[[ic]],2,quantile,probs=c(0.025,0.25,0.5,0.75,0.975)) -> quantiles_both
-    #
-    # quantiles_both <- t(quantiles_both)
-    # quantiles_both <- as.data.frame(quantiles_both)
-    #
-    # forecast_traj[[combined_names[[ic]]]] = list(traj = simdat_both[[ic]],
-    #                                              date = as.Date(dates_both, format = '%Y-%m-%d'),
-    #                                              reported_both = reported_both,
-    #                                              reported_fit_both = reported_fit_both)
-    #
-    # total_both=cbind(date = as.Date(dates_both, format = '%Y-%m-%d'),quantiles_both,
-    #                  reported = c(obs_both, rep(NA, length(dates_both)-length(obs_both))),
-    #                  reported_fit = c(obs_fit_both, rep(NA, length(dates_both)-length(obs_fit_both))))
-    #
-    # total_list[[combined_names[ic]]] = total_both
-    #
-    # copy_total_both = total_both
-    # total_both[1:length(obs_fit_both), c('2.5%', '25%', '50%', '75%', '97.5%')] <- NA
+
 
     if (combined_names[ic]=="err_cor") {
       mytitle = paste0(reg_name,' - Combined Burden (err_cor=', err_cor, ')')
@@ -443,7 +448,10 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
     cat("\n Saving Forecast Plots to: ", filename,'\n')
   }
 
+  if (length(wis_df_both) !=0) {
+    long_df_both = bind_rows(wis_df_both)
+  }
   # return a list
 
-  return(list(total_list = total_list, wis_df = long_df, arrange_plot = arrange_plot, forecast_traj = forecast_traj))
+  return(list(total_list = total_list, wis_df = long_df, wis_df_both = long_df_both, arrange_plot = arrange_plot, forecast_traj = forecast_traj))
 }

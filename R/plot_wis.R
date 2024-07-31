@@ -64,7 +64,11 @@ plot_wis <- function(wis_data, loc = NA, filename = NULL) {
   }
 
 
-  suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 1)))
+  # suppressWarnings(print(grid.arrange(pl[[1]], pl[[2]], ncol = 1)))
+
+  arrange_plot <- subplot(interactive_plot[[1]], interactive_plot[[2]],
+                          nrows = 2, titleX = TRUE, titleY = TRUE)
+
 
   if (!is.null(filename)) {
     suppressWarnings(grid_plots <- grid.arrange(pl[[1]], pl[[2]], ncol = 1))
@@ -72,5 +76,5 @@ plot_wis <- function(wis_data, loc = NA, filename = NULL) {
     cat("\n Saving Forecast Plots to: ", filename,'\n')
   }
 
-  return(wis_df)
+  return(list(wis_df, arrange_plot = arrange_plot))
 }

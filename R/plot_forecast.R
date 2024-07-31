@@ -98,6 +98,10 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
 
   wis_df = list()
 
+  wis_df_both = list()
+
+  dates_score_list = list()
+
   for (ip in 1:npath) {
 
     mydata = prof_data[[ip]]
@@ -329,21 +333,6 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
         state0["E0"] = mypar['I0']
         state0$S0 = as.numeric(mypar['pop']) - (state0$I0+state0$E0)
 
-        # coef(covid_seir) <- c(mypar['Beta1'], mypar['Beta2'], mypar['tcng1'], mypar['gamma'],
-        #                       mypar['mu_H1H2'], mypar['mu_EI'], mypar['pH'], mypar['pop'],
-        #                       state0['I0'], state0['S0'], state0['E0'], state0['R0'],
-        #                       mypar['rho'], round(mypar['baseline']), wl = wl)
-        #
-        # # generate simulation data with the parameters defined above
-        #
-        # model.pred <- simulate(covid_seir, format="data.frame", nsim = 1)
-        #
-        # if (max(model.pred$cases) > mypar['baseline']){
-        #   icount = icount + 1
-        #   simdat[icount,] <- model.pred$cases
-        #
-        # }
-
         yinit = c(state0$S0, state0$I0, state0$E0, 0, 0, 0, 0)
 
         traj = array(0, c(ntimes_frcst, nstates))
@@ -417,6 +406,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
       nscore = length(dates_frcst_only_in_obs)
       obs_score = obs[keep_ind_obs]
       dates_score = dates[keep_ind_obs]
+      dates_score_list[[disease]] = dates_score
 
       # find the subset from the model that we are going to score
       sim_score = simdat[, keep_ind_model]
@@ -546,6 +536,22 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
 
   obs_fit_both = combined_frcst$obs_fit_both
 
+  # check to see if we can score the combined burden
+  if (length(dates_score_list) > 1) {
+    dates1 = tibble(x=as.Date(dates_score_list[[diseases[1]]]))
+    dates2 = tibble(x=as.Date(dates_score_list[[diseases[2]]]))
+    dates_score_both = intersect(dates1, dates2)$x
+    keep_ind_obs_both = match(dates_fore, dates_score_both)
+    sim_score_ecor = combined_frcst_ecor$simdat_both[[1]][,keep_ind_obs_both]
+    sim_score_rand = combined_frcst_rand$simdat_both[[1]][,keep_ind_obs_both]
+    obs_score_both = obs_both[(length(obs_fit_both))+keep_ind_obs_both]
+    wis_arr_ecor = score_forecast(obs = obs_score_both, simdat = sim_score_ecor)
+    wis_arr_rand = score_forecast(obs = obs_score_both, simdat = sim_score_rand)
+
+    wis_df_both[[combined_names[1]]] = data.frame(date=dates_score_both, wis = wis_arr_ecor, disease = 'combined_ecor', model = 'mech')
+    wis_df_both[[combined_names[2]]] = data.frame(date=dates_score_both, wis = wis_arr_rand, disease = 'combined_rand', model = 'mech')
+  }
+
   # npad = length(dates_both) - length(obs_both)
   npad = length(dates_fore)
 
@@ -674,8 +680,12 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
       cat("\n Saving Forecast Plots to: ", filename,'\n')
   }
 
+  if (length(wis_df_both) !=0) {
+    long_df_both = bind_rows(wis_df_both)
+  }
+
   # return forecast_traj
 
   return(list(forecast_traj = forecast_traj, total_list = total_list, wis_df = long_df,
-              arrange_plot = arrange_plot))
+              wis_df_both = long_df_both, arrange_plot = arrange_plot))
 }

@@ -50,9 +50,9 @@ Currently this advanced option is available only when using PROF from the comman
 
 [Download the example ensemble-forecast script](files/example_ensemble_forecast.R)
 
-An ensemble `mechanistic-statistical` forecast can be generated for each pathogen and requires the following steps: 
+An ensemble `mechanistic-statistical` forecast can be generated for each pathogen and requires the following steps:
 
-1. Select a location and a season (or upload you own incidence data file) and extract data, e.g.,
+1.  Select a location and a season (or upload you own incidence data file) and extract data, e.g.,
 
 ``` r
 > state = "CA"
@@ -121,11 +121,10 @@ The fit and forecast generating functions of PROF contain default parameter valu
 
 1.  Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.
 
-```r
+``` r
 > par_list1 = init_par_list(diseases=c("covid19"), models=c("seirh"))
 > str(par_list1)
 ```
-    
 
 Here is a second example for working with two diseases (COVID-19, Influenza), using an SEIRH model for COVID-19 hospitalizations and SIRH for influenza.
 
@@ -147,8 +146,7 @@ The YAML file can be copied and customized using a text editor, or by loading in
 > par_list = PROF::read_par_list_yaml(file_path=".../PROF/parameters/param_exmpl.yml")
 ```
 
-The parameter list is initialized with almost all values assigned NAs. Any disease parameter whose value remains NA when passed to PROF will have its value set by PROF::init_param().
-Manually setting a parameter is straightforward. For example to set the influenza generation-time to 3.5 days:
+The parameter list is initialized with almost all values assigned NAs. Any disease parameter whose value remains NA when passed to PROF will have its value set by PROF::init_param(). Manually setting a parameter is straightforward. For example to set the influenza generation-time to 3.5 days:
 
 ``` r
 > par_list$influenza$dis_par_ranges$par$gamma = 1/3.5

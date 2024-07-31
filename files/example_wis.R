@@ -1,5 +1,6 @@
 # example use of PROF for evaluating the accuracy of forecasts using the WIS score
 # We will use data for CA, 2023-24 season
+# Example includes estimating the WIS score of the combined burden
 
 library(PROF)
 library(plotly)
@@ -39,7 +40,7 @@ prof_data = hhs_set_fitdates(prof_data=prof_data,
                                        'influenza'=fit_end_date))
 
 # We can view the fitting and forecasting time windows by re-plotting the data.
-# The data we are NOT fitting will have a higher transperancy
+# The data we are NOT fitting will have a higher transparency
 
 plot_prof_data(prof_data = prof_data)
 
@@ -81,10 +82,10 @@ forecast_list$arrange_plot
 stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 28)
 stat_forecast_list$arrange_plot
 
-# retrieve teh WIS information for mechanistic forecast
+# retrieve the WIS information for mechanistic forecast
 wis_df_mech <- forecast_list$wis_df
 
-# retrieve teh WIS information for statisical forecast
+# retrieve the WIS information for statistical forecast
 wis_df_stat <- stat_forecast_list$wis_df
 
 # create a list with all mechanistic and statistical WIS information
@@ -93,6 +94,20 @@ wis_data <- list(mech=wis_df_mech, stat = wis_df_stat)
 # Call plotting routine. To save plot to a file provide a filename
 
 wis_df <- plot_wis(wis_data = wis_data, loc = state, filename = NULL)
+wis_df$arrange_plot
 
+# if both pathogens were modeled we can also score the combined burden WIS
 
+# retrieve the WIS information for combined-burden mechanistic forecast
+wis_df_mech_both <- forecast_list$wis_df_both
+
+# retrieve the WIS information for combined-burden statistical forecast
+wis_df_stat_both <- stat_forecast_list$wis_df_both
+
+# create a list with all mechanistic and statistical combined-WIS information
+wis_data_both = list(mech = wis_df_mech_both, stat = wis_df_stat_both)
+
+# Call plotting routine. To save plot to a file provide a filename
+wis_df_both <- plot_wis(wis_data = wis_data_both, loc = state, filename = NULL)
+wis_df_both$arrange_plot
 

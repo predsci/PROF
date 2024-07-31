@@ -19,7 +19,7 @@ prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=sta
 
 plot_prof_data(prof_data = prof_data)
 
-# to seewhen the data ends you can use:
+# to see when the data ends you can use:
 tail(prof_data[['covid19']]$data)
 tail(prof_data[['influenza']]$data)
 
@@ -50,12 +50,6 @@ par_list = init_par_list(diseases=c("covid19", "influenza"),
                          models=c("seirh", "sirh"))
 
 
-# to load the parameters for the models use:
-# for more details see the ex_par_list.R script
-
-par_list = init_par_list(diseases=c("covid19", "influenza"),
-                         models=c("seirh", "sirh"))
-
 # to fit both pathogens use:
 # Here we use a 3-value model for the FOI for COVID19 and a 2-value for influenza
 # you can now seat and relax for 10-15 minutes
@@ -65,6 +59,7 @@ fit_list <- fit_data(prof_data = prof_data, par_list = par_list, nb_vec=c(3,2))
 # We will now plot the results to the screen
 
 plot_fit_list <- plot_fit(prof_data = prof_data, par_list = par_list, fit_list = fit_list)
+plot_fit_list$arrange_plot
 
 # We now fit the same time window using the statistical model
 
@@ -72,29 +67,32 @@ prof_data = hhs_set_fitdates_stat(prof_data=prof_data,
                                   fit_start=c(NULL, NULL),
                                   fit_end=c('covid19'=fit_end_date,
                                             'influenza'=fit_end_date))
-stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntraj = 1e4, filename = NULL)
+stat_fit_list <- plot_stat_fit(prof_data = prof_data, filename = NULL)
+stat_fit_list$arrange_plot
 
 # Mechanistic forecast 28 days forward, the function will also score our mechanistic forecast
 
 forecast_list <- plot_forecast(prof_data = prof_data, par_list = par_list, fit_list = fit_list,
                                nfrcst = 28)
+forecast_list$arrange_plot
 
 # Baseline Statistical forecast 28 days forward, the function will also score our mechanistic forecast
 
 stat_forecast_list <- plot_stat_forecast(prof_data = prof_data, nfrcst = 28)
+stat_forecast_list$arrange_plot
 
 # retrieve teh WIS information for mechanistic forecast
-wis_df_mech = forecast_list$wis_df
+wis_df_mech <- forecast_list$wis_df
 
 # retrieve teh WIS information for statisical forecast
-wis_df_stat = stat_forecast_list$wis_df
+wis_df_stat <- stat_forecast_list$wis_df
 
 # create a list with all mechanistic and statistical WIS information
-wis_data = list(mech=wis_df_mech, stat = wis_df_stat)
+wis_data <- list(mech=wis_df_mech, stat = wis_df_stat)
 
 # Call plotting routine. To save plot to a file provide a filename
 
-wis_df = plot_wis(wis_data = wis_data, loc = state, filename = NULL)
+wis_df <- plot_wis(wis_data = wis_data, loc = state, filename = NULL)
 
 
 

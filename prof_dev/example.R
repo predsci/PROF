@@ -4,6 +4,7 @@
 
 library(PROF)
 library(plotly)
+
 library(deSolve)
 
 # download the most recent HHS Hospitalization file
@@ -84,6 +85,7 @@ prof_data = hhs_set_fitdates_stat(prof_data=prof_data, fit_start=NULL, fit_end=N
 # few seconds:
 
 stat_fit_list <- plot_stat_fit(prof_data = prof_data, ntraj = 1e4, filename = NULL)
+stat_fit_list$arrange_plot
 
 # in the above call we set the number of trajectories to 1e4 and we do not save the plots
 # to a file (to save to a file set a value to the filename)

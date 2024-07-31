@@ -6,7 +6,7 @@ The development of PROF is supported by the Council of State and Territorial Epi
 
 -   [Ben-Nun et al. 2022](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010375)
 -   [Riley et al. 2023](https://academic.oup.com/milmed/article/188/1-2/311/6387156)
--   Turtle et al. (2023) - Epidemics, Accepted
+-   [Turtle et al. 2024](https://doi.org/10.1016/j.epidem.2024.100758)
 
 ## Contact
 

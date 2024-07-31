@@ -25,7 +25,10 @@ plot_prof_data(prof_data = prof_data)
 # select a single disease for this example, 'covid19' or 'influenza'
 disease = 'influenza'
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 # Use default values for start and end of fitting window
 
 prof_data = hhs_set_fitdates(prof_data=prof_data,

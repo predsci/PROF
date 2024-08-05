@@ -450,6 +450,8 @@ plot_stat_forecast <- function(prof_data, ntraj = NULL, nfrcst = NULL,
 
   if (length(wis_df_both) !=0) {
     long_df_both = bind_rows(wis_df_both)
+  } else {
+    long_df_both = NULL
   }
   # return a list
 

@@ -682,6 +682,8 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
 
   if (length(wis_df_both) !=0) {
     long_df_both = bind_rows(wis_df_both)
+  } else {
+    long_df_both = NULL
   }
 
   # return forecast_traj

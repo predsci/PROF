@@ -542,6 +542,7 @@ plot_forecast <- function(prof_data, par_list, fit_list, ntraj =1000, nfrcst = 2
     dates2 = tibble(x=as.Date(dates_score_list[[diseases[2]]]))
     dates_score_both = intersect(dates1, dates2)$x
     keep_ind_obs_both = match(dates_fore, dates_score_both)
+    keep_ind_obs = na.omit(keep_ind_obs)
     sim_score_ecor = combined_frcst_ecor$simdat_both[[1]][,keep_ind_obs_both]
     sim_score_rand = combined_frcst_rand$simdat_both[[1]][,keep_ind_obs_both]
     obs_score_both = obs_both[(length(obs_fit_both))+keep_ind_obs_both]

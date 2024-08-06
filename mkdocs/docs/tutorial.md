@@ -74,13 +74,13 @@ To evaluate a forecast you must select an `end date` for the fitting that preced
 
 If you plan to also run a mechanistic model we recommend setting the same end date for it so that the accuracy of both models can be evaluated for the same forecast horizon. Once the fitting process is completed, for either one or two models and for either one or two pathogens you can proceed to the `3. Create Forecast` tab. You can create a forecast for each pathogen/model combination you fitted. Your only selection is for the number of days in the forecast horizon with the default being 28 days. Since the forecast step is fast we recommend doing it for all pathogens/models you fitted. The plot below shows the results of a 28 day forward mechanistic forecast.
 
-![Figure 10: Mechanistic forecast for a retrospective study](img/prof_shiny_mech_forecast.png)
+![Figure 10: Mechanistic forecast for a retrospective study](img/prof_shiny_mech_forecast_ca.png)
 
-Based on our selections, there are 28 days of data in the forecast time-window, and we will assess the accuracy of the forecasts for these 28 days. Since we utilized both mechanistic and statistical models to fit both pathogens, we can evaluate the accuracy of both models for each pathogen, as illustrated in the figure below. The top and bottom panels in this figure depict the WIS score of the mechanistic (red) and statistical (blue) models for the COVID-19 and Influenza forecasts, respectively. With lower scores indicating better performance, we observe that the mechanistic forecast outperformed the statistical forecast for nearly all days in the case of COVID-19, while for Influenza, it significantly outperformed the statistical forecast for ALL days. Please note that the value of the WIS score is related to the magnitude of the observed incidence. Therefore, WIS scores should not be compared across different pathogens, as such comparisons are not valid.
+Based on our selections, there are 28 days of data in the forecast time-window, and we will assess the accuracy of the forecasts for these 28 days. Since we utilized both mechanistic and statistical models to fit both pathogens, we can evaluate the accuracy of both models for each pathogen, as illustrated in the figure below. The top panels in this figure depict the WIS score of the mechanistic (red) and statistical (blue) models for the COVID-19 and Influenza forecasts. With lower scores indicating better performance, we observe that the mechanistic forecast outperformed the statistical forecast for nearly all days in the case of COVID-19, while for Influenza, it significantly outperformed the statistical forecast for ALL days. The bottom panels depict the WIS score for the combined burden evaluated using a random selection of the individual forecasts (bottom right panel) and with the user selected value for the error correlation (bottom left panel). Please note that the value of the WIS score is related to the magnitude of the observed incidence. Therefore, WIS scores should not be compared across different pathogens, as such comparisons are not valid. It is valid, and may be useful to compare the WIS score of the combined burden calculated randomly or with a non-zero error correlation value.
 
-![Figure 11: WIS score for mechanistic (red) and statistical (blue) models, COVID-19 and Influenza (top and bottom panels, respectively)](img/prof_shiny_forecast_evaluation.png)
+![Figure 11: WIS score for mechanistic (red) and statistical (blue) models, COVID-19 and Influenza (top left and right panels, respectively). Bottom panels: As in the top panels but for the combined burden.](img/prof_shiny_forecast_evaluation_ca.png)
 
-If you are using PROF from the command line, the script below provides a step-by-step example of fitting/forecasting and evaluating a forecast using the WIS score. This script also demonstrates how to evaluate the WIS score of the combined burden forecast. This feature is currently supported only from the command line.
+If you are using PROF from the command line, the script below provides a step-by-step example of fitting/forecasting and evaluating a forecast using the WIS score. This script also demonstrates how to evaluate the WIS score of the combined burden forecast.
 
 [Download the example WIS score script](files/example_wis.R)
 
@@ -88,6 +88,6 @@ If you are using PROF from the command line, the script below provides a step-by
 
 The `About` tab provides background information about PROF as well as an Acknowledgement and a link to our web documentation. For questions/comments/suggestions/bugs please email us at:
 
--   *Michal Ben-Nun*: [mbennun\@predsci.com](mailto:mbennun@predsci.com){.email}
--   *James Turtle*: [jturtle\@predsci.com](mailto:jturtle@predsci.com){.email}
--   *Pete Riley*: [pete\@predsci.com](mailtp:pete@predsci.com){.email}
+-   *Michal Ben-Nun*: [mbennun@predsci.com](mailto:mbennun@predsci.com){.email}
+-   *James Turtle*: [jturtle@predsci.com](mailto:jturtle@predsci.com){.email}
+-   *Pete Riley*: [pete@predsci.com](mailtp:pete@predsci.com){.email}

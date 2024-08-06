@@ -52,7 +52,7 @@ Currently this advanced option is available only when using PROF from the comman
 
 An ensemble `mechanistic-statistical` forecast can be generated for each pathogen and requires the following steps:
 
-1.  Select a location and a season (or upload you own incidence data file) and extract data, e.g.,
+A.  Select a location and a season (or upload you own incidence data file) and extract data, e.g.,
 
 ``` r
 > state = "CA"
@@ -60,20 +60,20 @@ An ensemble `mechanistic-statistical` forecast can be generated for each pathoge
 > prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=state)
 ```
 
-2.  Select a pathogen and set start and end date for the fit, e.g.,
+B.  Select a pathogen and set start and end date for the fit, e.g.,
 
 ``` r
 > disease = 'influenza'
 > prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 ```
 
-3.  Select a compartmental model (SIRH or SEIRH) and load default parameter file for the pathogen/model selection, e.g.,
+C.  Select a compartmental model (SIRH or SEIRH) and load default parameter file for the pathogen/model selection, e.g.,
 
 ``` r
 > par_list = init_par_list(diseases=disease,
 ```
 
-4.  Fit a mechanistic model to the incidence data and display the results, e.g.,
+D.  Fit a mechanistic model to the incidence data and display the results, e.g.,
 
 ``` r
 > fit_list <- fit_data(prof_data = prof_data[disease], par_list = par_list, nb_vec=3)
@@ -82,7 +82,7 @@ fit_list = fit_list)
 > plot_fit_list$arrange_plot
 ```
 
-5.  Repeat steps 2 and 4 for the baseline statistical model:
+E.  Repeat steps 2 and 4 for the baseline statistical model:
 
 ``` r
 > prof_data = hhs_set_fitdates_stat(prof_data=prof_data[disease], fit_start=NULL, fit_end=NULL)
@@ -90,7 +90,7 @@ fit_list = fit_list)
 > stat_fit_list$arrange_plot
 ```
 
-6.  Create a mechanistic forecast and display the results:
+F.  Create a mechanistic forecast and display the results:
 
 ``` r
 > forecast_list <- plot_forecast(prof_data = prof_data[disease], par_list = par_list, 
@@ -98,14 +98,14 @@ fit_list = fit_list, nfrcst = 28)
 > forecast_list$arrange_plot
 ```
 
-7.  Create a statistical forecast and display the results:
+G.  Create a statistical forecast and display the results:
 
 ``` r
 > forecast_stat_list <- plot_stat_forecast(prof_data = prof_data[disease], nfrcst = 28)
 > forecast_stat_list$arrange_plot
 ```
 
-8.  Combine the two forecasts to create an ensemble forecast and display the results:
+H.  Combine the two forecasts to create an ensemble forecast and display the results:
 
 ``` r
 > forecast_mix_list <- plot_mixed_forecast(prof_data = prof_data, forecast_list = forecast_list, 
@@ -113,13 +113,13 @@ forecast_stat_list = forecast_stat_list)
 > forecast_mix_list$arrange_plot
 ```
 
-Steps 1-7 outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating an ensemble forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.
+Steps A-G outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating an ensemble forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.
 
 ## 4. Editing the Parameter File
 
 The fit and forecast generating functions of PROF contain default parameter values that are pathogen specific. However, the user may customize these parameters by altering the parameter list structure. The customized parameter specification can then be saved to a YAML file for later use/reference. PROF provides two methods for initializing a parameter list structure:
 
-1.  Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.
+A.  Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.
 
 ``` r
 > par_list1 = init_par_list(diseases=c("covid19"), models=c("seirh"))
@@ -134,7 +134,7 @@ Here is a second example for working with two diseases (COVID-19, Influenza), us
 > str(par_list2)
 ```
 
-2.  Use the YAML template located in the 'parameters' directory of PROF:
+B.  Use the YAML template located in the 'parameters' directory of PROF:
 
 ``` r
 > PROF/parameters/param_exmpl.yml

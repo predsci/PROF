@@ -8,7 +8,7 @@
     <title>PROF-Advanced Topics - PROF</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,14 +17,13 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yml.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/rust.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -37,7 +36,7 @@
           <img src="../img/psi.png" class="logo" alt="Logo"/>
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -60,7 +59,7 @@
                 </li>
               </ul>
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">PROF-Advanced Topics</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">PROF-Advanced Topics</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#1-selecting-the-number-of-values-for-rt">1. Selecting the number of values for R(t)</a>
     </li>
@@ -90,15 +89,14 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>PROF-Advanced Topics</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">PROF-Advanced Topics</li>
     <li class="wy-breadcrumbs-aside">
-        <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/advanced.md"
-          class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/advanced.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
 </div>
-
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
@@ -129,65 +127,47 @@
 <p>Currently this advanced option is available only when using PROF from the command line. You can download an example script that demonstrates this capability from the link below:</p>
 <p><a href="../files/example_ensemble_forecast.R">Download the example ensemble-forecast script</a></p>
 <p>An ensemble <code>mechanistic-statistical</code> forecast can be generated for each pathogen and requires the following steps:</p>
-<ol>
-<li>Select a location and a season (or upload you own incidence data file) and extract data, e.g.,</li>
-</ol>
+<p>A.  Select a location and a season (or upload you own incidence data file) and extract data, e.g.,</p>
 <pre><code class="language-r">&gt; state = &quot;CA&quot;
 &gt; season = 2023
 &gt; prof_data = hhs_2_PROF(hhs_path=result$download_path, season = season, state=state)
 </code></pre>
-<ol>
-<li>Select a pathogen and set start and end date for the fit, e.g.,</li>
-</ol>
+<p>B.  Select a pathogen and set start and end date for the fit, e.g.,</p>
 <pre><code class="language-r">&gt; disease = 'influenza'
 &gt; prof_data = hhs_set_fitdates(prof_data=prof_data, fit_start=NULL, fit_end=NULL)
 </code></pre>
-<ol>
-<li>Select a compartmental model (SIRH or SEIRH) and load default parameter file for the pathogen/model selection, e.g.,</li>
-</ol>
+<p>C.  Select a compartmental model (SIRH or SEIRH) and load default parameter file for the pathogen/model selection, e.g.,</p>
 <pre><code class="language-r">&gt; par_list = init_par_list(diseases=disease,
 </code></pre>
-<ol>
-<li>Fit a mechanistic model to the incidence data and display the results, e.g.,</li>
-</ol>
+<p>D.  Fit a mechanistic model to the incidence data and display the results, e.g.,</p>
 <pre><code class="language-r">&gt; fit_list &lt;- fit_data(prof_data = prof_data[disease], par_list = par_list, nb_vec=3)
 &gt; plot_fit_list &lt;- plot_fit(prof_data = prof_data[disease], par_list = par_list, 
 fit_list = fit_list)
 &gt; plot_fit_list$arrange_plot
 </code></pre>
-<ol>
-<li>Repeat steps 2 and 4 for the baseline statistical model:</li>
-</ol>
+<p>E.  Repeat steps 2 and 4 for the baseline statistical model:</p>
 <pre><code class="language-r">&gt; prof_data = hhs_set_fitdates_stat(prof_data=prof_data[disease], fit_start=NULL, fit_end=NULL)
 &gt; stat_fit_list &lt;- plot_stat_fit(prof_data = prof_data[disease], ntraj = 1e4, filename = NULL)
 &gt; stat_fit_list$arrange_plot
 </code></pre>
-<ol>
-<li>Create a mechanistic forecast and display the results:</li>
-</ol>
+<p>F.  Create a mechanistic forecast and display the results:</p>
 <pre><code class="language-r">&gt; forecast_list &lt;- plot_forecast(prof_data = prof_data[disease], par_list = par_list, 
 fit_list = fit_list, nfrcst = 28)
 &gt; forecast_list$arrange_plot
 </code></pre>
-<ol>
-<li>Create a statistical forecast and display the results:</li>
-</ol>
+<p>G.  Create a statistical forecast and display the results:</p>
 <pre><code class="language-r">&gt; forecast_stat_list &lt;- plot_stat_forecast(prof_data = prof_data[disease], nfrcst = 28)
 &gt; forecast_stat_list$arrange_plot
 </code></pre>
-<ol>
-<li>Combine the two forecasts to create an ensemble forecast and display the results:</li>
-</ol>
+<p>H.  Combine the two forecasts to create an ensemble forecast and display the results:</p>
 <pre><code class="language-r">&gt; forecast_mix_list &lt;- plot_mixed_forecast(prof_data = prof_data, forecast_list = forecast_list, 
 forecast_stat_list = forecast_stat_list)
 &gt; forecast_mix_list$arrange_plot
 </code></pre>
-<p>Steps 1-7 outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating an ensemble forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.</p>
+<p>Steps A-G outline the standard procedure for performing mechanistic and statistical fits and forecasts for a single pathogen. If you anticipate creating an ensemble forecast, please ensure that the fitting and forecasting time windows have the same start and end dates for both the statistical and mechanistic models.</p>
 <h2 id="4-editing-the-parameter-file">4. Editing the Parameter File</h2>
 <p>The fit and forecast generating functions of PROF contain default parameter values that are pathogen specific. However, the user may customize these parameters by altering the parameter list structure. The customized parameter specification can then be saved to a YAML file for later use/reference. PROF provides two methods for initializing a parameter list structure:</p>
-<ol>
-<li>Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.</li>
-</ol>
+<p>A.  Use PROF::init_par_list(). Here is an example for working with a single disease (COVID-19), using an SEIRH model to produce hospitalizations.</p>
 <pre><code class="language-r">&gt; par_list1 = init_par_list(diseases=c(&quot;covid19&quot;), models=c(&quot;seirh&quot;))
 &gt; str(par_list1)
 </code></pre>
@@ -196,9 +176,7 @@ forecast_stat_list = forecast_stat_list)
                              models=c(&quot;seirh&quot;, &quot;sirh&quot;))
 &gt; str(par_list2)
 </code></pre>
-<ol>
-<li>Use the YAML template located in the 'parameters' directory of PROF:</li>
-</ol>
+<p>B.  Use the YAML template located in the 'parameters' directory of PROF:</p>
 <pre><code class="language-r">&gt; PROF/parameters/param_exmpl.yml
 </code></pre>
 <p>The YAML file can be copied and customized using a text editor, or by loading into R:</p>
@@ -258,18 +236,19 @@ forecast_stat_list = forecast_stat_list)
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
-      <script src="../javascripts/config.js" defer></script>
-      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      <script src="../javascripts/config.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

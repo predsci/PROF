@@ -58,6 +58,6 @@ By default, PROF calculates the combined burden using values of zero and one. Th
 
 The combined burden estimates are available for both compartmental and statistical models and require the fitting and forecasting of both pathogens.
 
-## Mixing Compartmental and Statistical Forecasts
+## Ensemble Forecasts
 
-As explained in the [Advanced Topics Section](https://predsci.github.io/PROF/advanced/#3-creating-an-ensemble-forecast), the command-line version of PROF provides an option to create a mixed forecast by combining mechanistic and statistical forecasts with equal weights.
+As explained in the [Advanced Topics Section](https://predsci.github.io/PROF/advanced/#3-creating-an-ensemble-forecast), the command-line version of PROF provides an option to create an ensemble forecast by combining mechanistic and statistical forecasts with equal weights.

@@ -43,7 +43,7 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#data">Data</a>
     </li>
@@ -57,7 +57,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#estimating-the-combined-burden-of-multiple-pathogens">Estimating the Combined Burden of Multiple Pathogens</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#mixing-compartmental-and-statistical-forecasts">Mixing Compartmental and Statistical Forecasts</a>
+    <li class="toctree-l2"><a class="reference internal" href="#ensemble-forecasts">Ensemble Forecasts</a>
     </li>
     </ul>
                 </li>
@@ -95,7 +95,7 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
       <li class="breadcrumb-item active">Home</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
@@ -136,8 +136,8 @@
 <p>The final step in PROF involves providing an estimation for the forecast of the combined burden. The uncertainty associated with this combined burden is determined through our error-correlation procedure. Essentially, this procedure introduces a tunable parameter (with a range from zero to one) that adjusts the combination of uncertainties present in the individual forecasts. A value of one indicates full correlation among the individual errors, leading to greater uncertainty in the combined forecast. Conversely, a value of zero suggests errors that are entirely independent, resulting in a narrower forecast.</p>
 <p>By default, PROF calculates the combined burden using values of zero and one. The user is prompted to adjust the default value of one to any value in the 0-1 range. Consequently, two combined burden estimates are provided: one assuming a correlation between the errors, as set by the user, and another assuming no correlation between the errors of the two forecasts.</p>
 <p>The combined burden estimates are available for both compartmental and statistical models and require the fitting and forecasting of both pathogens.</p>
-<h2 id="mixing-compartmental-and-statistical-forecasts">Mixing Compartmental and Statistical Forecasts</h2>
-<p>As explained in the <a href="https://predsci.github.io/PROF/advanced/#3-creating-an-ensemble-forecast">Advanced Topics Section</a>, the command-line version of PROF provides an option to create a mixed forecast by combining mechanistic and statistical forecasts with equal weights.</p>
+<h2 id="ensemble-forecasts">Ensemble Forecasts</h2>
+<p>As explained in the <a href="https://predsci.github.io/PROF/advanced/#3-creating-an-ensemble-forecast">Advanced Topics Section</a>, the command-line version of PROF provides an option to create an ensemble forecast by combining mechanistic and statistical forecasts with equal weights.</p>
               
             </div>
           </div><footer>
@@ -193,6 +193,6 @@
 </html>
 
 <!--
-MkDocs version : 1.6.0
-Build Date UTC : 2024-08-06 23:00:36.935009+00:00
+MkDocs version : 1.5.2
+Build Date UTC : 2024-08-16 19:18:43.729785+00:00
 -->

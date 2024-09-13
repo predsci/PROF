@@ -14,7 +14,7 @@ We start by opening an R or Rstudio session and loading the PROF package:
 > library(PROF)
 ```
 
-We then download the HHS data using the provided `fetch_hhs_data` function
+We then download the NHSN data using the provided `fetch_hhs_data` function
 
 ``` r
 > result = fetch_hhs_data(down_dir="~/Downloads")

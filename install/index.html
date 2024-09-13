@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="PROF Team" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>About - PROF</title>
+    <title>Home - PROF</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "About";
-        var mkdocs_page_input_path = "about.md";
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "install.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -42,8 +42,16 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../install/">Home</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#using-devtools-in-an-r-console">Using 'devtools' in an R console</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#cloning-through-github">Cloning through GitHub</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shiny-app-prof-installation">Shiny-app PROF installation</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -62,14 +70,8 @@
                 <li class="toctree-l1"><a class="reference internal" href="../advanced/">PROF-Advanced Topics</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">About</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#references">References</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#contact">Contact</a>
-    </li>
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
                 </li>
               </ul>
       </div>
@@ -86,9 +88,9 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-      <li class="breadcrumb-item active">About</li>
+      <li class="breadcrumb-item active">Home</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/about.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/predsci/PROF/blob/master/mkdocs/docs/install.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -96,23 +98,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="about-the-project">About the Project</h1>
-<p>The development of PROF is supported by the Council of State and Territorial Epidemiologists (CSTE) and the Centers for Disease Control and Prevention (CDC) through cooperative agreement number NU38OT000297, as part of the "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision-making" project.</p>
-<h2 id="references">References</h2>
-<ul>
-<li><a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010375">Ben-Nun et al. 2022</a></li>
-<li><a href="https://academic.oup.com/milmed/article/188/1-2/311/6387156">Riley et al. 2023</a></li>
-<li><a href="https://doi.org/10.1016/j.epidem.2024.100758">Turtle et al. 2024</a></li>
-</ul>
-<h2 id="contact">Contact</h2>
-<p><strong>Michal Ben-Nun</strong>: <a class="email" href="mailto:mbennun@predsci.com">mbennun@predsci.com</a></p>
-<p><strong>James Turtle</strong>: <a class="email" href="mailto:jturtle@predsci.com">jturtle@predsci.com</a></p>
-<p><strong>Pete Riley</strong>: <a class="email" href="mailto:pete@predsci.com">pete@predsci.com</a></p>
+                <h1 id="prof-installation-instructions">PROF Installation Instructions</h1>
+<p>This R package requires an R or Rstudio installation and Fortran/GCC compilers. We strongly recommend using the package with its user-friendly Shiny-app GUI (see below).</p>
+<h2 id="using-devtools-in-an-r-console">Using 'devtools' in an R console</h2>
+<pre><code class="language-bash">&gt; library(devtools)
+
+&gt; install_git(url=&quot;&lt;https://github.com/predsci/PROF&gt;&quot;)
+</code></pre>
+<h2 id="cloning-through-github">Cloning through GitHub</h2>
+<p>Users are also welcome to download the package directly either as a zip file or by cloning the repository.</p>
+<p>To clone:</p>
+<pre><code class="language-bash">&gt; git clone https://github.com/predsci/PROF.git
+</code></pre>
+<p>Then, open an R or Rstudio session. Navigate to the location of the cloned project, open the PROF.Rproj file and install the package.</p>
+<h2 id="shiny-app-prof-installation">Shiny-app PROF installation</h2>
+<p>After successfully installing the PROF package please proceed to clone the GUI for it:</p>
+<pre><code class="language-bash">&gt; git clone https://github.com/predsci/PROF-shiny-app.git
+</code></pre>
+<p>To launch the GUI open the <code>ui.R</code> file within PRO-shiny-app</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../advanced/" class="btn btn-neutral float-left" title="PROF-Advanced Topics"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href=".." class="btn btn-neutral float-right" title="PROF-Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -139,8 +147,8 @@
         </span>
     
     
-      <span><a href="../advanced/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
+      <span><a href=".." style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -19,6 +19,13 @@ This R package requires an R or RStudio installation and Fortran/GCC compilers.
 >\> library(devtools)  
 >\> install_git(url="https://github.com/predsci/PROF")  
 
+### PROF Graphical User Interface
+
+To clone the User-friendly Graphical User Interface for PROF:
+
+>\> git clone https://github.com/predsci/PROF-shiny-app.git
+
+
 ## Getting Started
 The PROF/prof_dev directory provides an example script that is a good starting point for using the package.  This script relies on two other scripts in the same directory and hence we suggest to start as follows.
 

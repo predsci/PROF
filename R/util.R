@@ -348,7 +348,8 @@ dates_to_int <- function(dates) {
 
   int_dates = as.numeric(dates)
 
-  times = int_dates - int_dates[1] + 1
+  cadence = diff(dates)[1]
+  times = int_dates - int_dates[1] + cadence
 
   return(times)
 }
@@ -788,7 +789,8 @@ stat_forecast <- function(data, ntraj, nfrcst) {
 
   ntimes = length(times)
 
-  ntimes_frcst= ntimes + nfrcst
+  ntimes_frcst= ntimes + nfrcst/as.numeric(cadence)
+
 
   # build also the arrays for the forecasts
 
@@ -828,7 +830,7 @@ stat_forecast <- function(data, ntraj, nfrcst) {
   simdat <- array(0, c(ntraj, ntimes_frcst))
 
   # figure out how many times data_last needs to be added to inc
-  nadd = floor(nfrcst/length(data_last))
+  nadd = floor(nfrcst/length(data_last)/as.numeric(cadence))
   inc_frcst = c(inc, rep(data_last, nadd))
 
   if (length(inc_frcst) < ntimes_frcst) {

@@ -7,8 +7,27 @@ COLS <- list("date", "state", "previous_day_admission_influenza_confirmed",
           "previous_day_admission_pediatric_covid_confirmed",
           "previous_day_admission_pediatric_covid_confirmed_coverage",
           "deaths_covid", "deaths_covid_coverage")
+# COLS_2024 <- list("Week.Ending.Date", "Geographic.aggregation",
+#                   "Weekly.Total.Adult.COVID.19.Admissions",
+#                   "Weekly.Total.Pediatric.COVID.19.Admissions",
+#                   "Weekly.Total.COVID.19.Admissions",
+#                   "Weekly.Total.Influenza.Admissions", 
+#                   "Percent.Hospital.Reporting.Days",
+#                   "Percent.Hospitals.Reporting.Adult.COVID.19.Admissions",
+#                   "Percent.Hospitals.Reporting.Pediatric.COVID.19.Admissions",
+#                   "Percent.Hospitals.Reporting.Influenza.Admissions")
+COLS_2024 <- list("week_end_date", "jurisdiction",
+                  "total_admissions_adult_covid_confirmed",
+                  "total_admissions_pediatric_covid_confirmed",
+                  "total_admissions_all_covid_confirmed",
+                  "total_admissions_all_influenza_confirmed",
+                  "weekly_percent_days_reporting_any_data",
+                  "percent_hospitals_previous_day_admission_adult_covid_confirmed",
+                  "percent_hospitals_previous_day_admission_pediatric_covid_confirmed",
+                  "percent_hospitals_previous_day_admission_influenza_confirmed")
 
 DEF_FILE_BASE <- "HHS_daily-hosp_state"
+DEF_FILE_BASE_2024 <- "HHS_weekly-hosp_state"
 
 FROM_TIMESTAMP_FMT <- "%a, %d %b %Y %H:%M:%S GMT"
 
@@ -17,6 +36,7 @@ TO_TIMESTAMP_FMT <- "%y%m%d%H%M%S"
 SUPPORTED_SEASONS <- c(2021, 2022, 2023)
 
 API <- "https://healthdata.gov/resource/g62h-syeh.csv"
+API_2024 <- "https://data.cdc.gov/resource/aemt-mg7g.csv"
 
 #' @title Download daily state-level HHS PROTECT hospitalization admission data
 #' to a CSV.
@@ -141,6 +161,137 @@ fetch_hhs_data <- function(down_dir="~",
       }
     }
 
+    return(return_data)
+  } else {
+    cat(httr::content(response, as="text"))
+    return(return_data)
+  }
+}
+
+
+#' @title Download daily state-level HHS PROTECT hospitalization admission data
+#' to a CSV in the post summer 2024 format/API.
+#'
+#' @description Function returns the filepath where the HHS csv file was downloaded to,
+#' the date the dataset was last modified (as reported by healthdata.gov),
+#' and a flag corresponding to the status code of the API call. The data
+#' fetched through `fetch_hhs_data` is accessed through the HealthData.gov API,
+#' supported by the Socrata framework. As such, the API utilizes SoQL
+#' syntax to construct a DB query and retrieve the relevant data. The
+#' function signature for `fetch_hhs_data` wraps the Socrata API,
+#' constructing a SoQL query of the form:
+#'      SELECT `fields` FROM `API`
+#'      WHERE `conditions`
+#'      ORDER BY `order` ASC
+#'      LIMIT `limit`
+#'
+#' NOTE: When no `down_filename` is provided, the function creates a filename
+#' HHS_weekly-hosp_state__<last_modified>.csv, where `last_modified` is a POSIX
+#' timestamp of the form: YYmmddHHMMSS.
+#'
+#' @param down_dir character string. The directory path to download to.
+#' @param down_filename character string. The filename to download to.
+#' @param fields character vector. Fields included in GET query.
+#' @param order character string. Field to order the returned dataset on.
+#' @param limit integer. Maximum number of records returned by GET query.
+#' @param conditions character string. WHERE clause used in DB query.
+#'
+#' @return list. Named list containing: download_path, last_modified, and out_flag
+#' @export
+#'
+#' @examples
+#' fetch_hhs_data(down_dir = "data")
+#' fetch_hhs_data(down_dir = "data",
+#'                fields=c("date", "state", deaths_covid"),
+#'                conditions="state == 'CA' AND deaths_covid IS NOT NULL")
+#'
+fetch_hhs_data_2024 <- function(down_dir="~",
+                                down_filename=NULL,
+                                fields=COLS_2024,
+                                order="week_end_date",
+                                limit=1000000,
+                                conditions=NULL) {
+  
+  return_data <- list(download_path=NULL, last_modified=NULL, out_flag=1)
+  
+  if (!dir.exists(down_dir)) {
+    cat("'", down_dir, "'", "directory does not exist\n")
+    return(return_data)
+  }
+  
+  query <- list()
+  if (!is.null(fields)) {
+    query$`$select` <- paste(fields, collapse = ",")
+  }
+  if (!is.null(order)) {
+    query$`$order` <- as.character(order)
+  }
+  if (!is.null(limit)) {
+    # query$`$limit` <- as.character(limit)
+    query$`$limit` <- format(limit, scientific=FALSE)
+  }
+  if (!is.null(conditions)) {
+    query$`$where` <- as.character(conditions)
+  }
+  
+  # Perform API request
+  # If query dictionary has been populated, pass this as an argument to GET call
+  if (length(query) == 0) {
+    response <- httr::GET(API_2024)
+  } else {
+    response <- httr::GET(API_2024, query=query)
+  }
+  
+  # Check response status
+  if (response$status_code == 200) {
+    posix_timestamp <- as.POSIXct(response$headers$`last-modified`, format = FROM_TIMESTAMP_FMT, tz = "GMT")
+    
+    # Generate default download_path of the form:
+    # HHS_daily-hosp_state__<last_modified>.csv
+    
+    # This default naming protocol can be used in conjunction with the function
+    # `filename_timestamp_to_posix` to read in the `last_modified` metadata pertaining
+    # to a dataset, and determine if a more recent dataset is available from the
+    # healthdata.gov API.
+    if (is.null(down_filename)) {
+      fmt_timestamp <- format(posix_timestamp, TO_TIMESTAMP_FMT)
+      down_filename <- paste(DEF_FILE_BASE_2024, "__", fmt_timestamp, ".csv", sep = "")
+    }
+    
+    filepath <- file.path(down_dir, down_filename)
+    data <- read.csv(text = httr::content(response, "text"))
+    
+    # "https://healthdata.gov/resource/g62h-syeh.csv" returns the `date` column as a
+    # datetime type. PROF requires the `date` column to be a date type, not datetime.
+    # As such, if `date` is included, it is cast into the form: YYYY-mm-dd.
+    if ("week_end_date" %in% colnames(data)) {
+      data$week_end_date <- as.Date(data$week_end_date, format = "%Y-%m-%d")
+    }
+    
+    write.csv(data, filepath, row.names = FALSE)
+    
+    if (file.exists(filepath)) {
+      cat("\nData Saved At:", filepath, "\n\n")
+      return_data$download_path <- filepath
+      return_data$last_modified <- posix_timestamp
+      return_data$out_flag <- 0
+      
+      # Clean out existing dataset. For now, this only looks for csv files that
+      # have been generated through the function's default filepath naming
+      # conventions, viz. using the "__<last_modified>.csv" as an identifier for
+      # possible matches.
+      # This functionality has been commented out pending approval.
+      
+      file_pattern <- paste(DEF_FILE_BASE_2024, "__[0-9]+\\.csv$", sep = "")
+      files <- list.files(down_dir, pattern = file_pattern)
+      for (file in files) {
+        if (file != down_filename) {
+          file.remove(file.path(down_dir, file))
+          cat("Removing File:", file, "\n")
+        }
+      }
+    }
+    
     return(return_data)
   } else {
     cat(httr::content(response, as="text"))

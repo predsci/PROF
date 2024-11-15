@@ -7,24 +7,24 @@ COLS <- list("date", "state", "previous_day_admission_influenza_confirmed",
           "previous_day_admission_pediatric_covid_confirmed",
           "previous_day_admission_pediatric_covid_confirmed_coverage",
           "deaths_covid", "deaths_covid_coverage")
-# COLS_2024 <- list("Week.Ending.Date", "Geographic.aggregation",
-#                   "Weekly.Total.Adult.COVID.19.Admissions",
-#                   "Weekly.Total.Pediatric.COVID.19.Admissions",
-#                   "Weekly.Total.COVID.19.Admissions",
-#                   "Weekly.Total.Influenza.Admissions", 
-#                   "Percent.Hospital.Reporting.Days",
-#                   "Percent.Hospitals.Reporting.Adult.COVID.19.Admissions",
-#                   "Percent.Hospitals.Reporting.Pediatric.COVID.19.Admissions",
-#                   "Percent.Hospitals.Reporting.Influenza.Admissions")
-COLS_2024 <- list("week_end_date", "jurisdiction",
-                  "total_admissions_adult_covid_confirmed",
-                  "total_admissions_pediatric_covid_confirmed",
-                  "total_admissions_all_covid_confirmed",
-                  "total_admissions_all_influenza_confirmed",
-                  "weekly_percent_days_reporting_any_data",
-                  "percent_hospitals_previous_day_admission_adult_covid_confirmed",
-                  "percent_hospitals_previous_day_admission_pediatric_covid_confirmed",
-                  "percent_hospitals_previous_day_admission_influenza_confirmed")
+# COLS_2024 <- list("week_end_date", "jurisdiction",
+#                   "total_admissions_adult_covid_confirmed",
+#                   "total_admissions_pediatric_covid_confirmed",
+#                   "total_admissions_all_covid_confirmed",
+#                   "total_admissions_all_influenza_confirmed",
+#                   "weekly_percent_days_reporting_any_data",
+#                   "percent_hospitals_previous_day_admission_adult_covid_confirmed",
+#                   "percent_hospitals_previous_day_admission_pediatric_covid_confirmed",
+#                   "percent_hospitals_previous_day_admission_influenza_confirmed")
+COLS_2024 <- list("weekendingdate", "jurisdiction",
+                  "totalconfc19newadmadult", "totalconfc19newadmped",
+                  "totalconfc19newadm", "totalconfflunewadmadult",
+                  "totalconfflunewadmped", "totalconfflunewadm",
+                  "totalconfrsvnewadmadult",
+                  "totalconfrsvnewadmped", "totalconfrsvnewadm",
+                  "totalconfc19newadmperchosprep",
+                  "totalconfflunewadmperchosprep",
+                  "totalconfrsvnewadmperchosprep")
 
 DEF_FILE_BASE <- "HHS_daily-hosp_state"
 DEF_FILE_BASE_2024 <- "HHS_weekly-hosp_state"
@@ -36,7 +36,8 @@ TO_TIMESTAMP_FMT <- "%y%m%d%H%M%S"
 SUPPORTED_SEASONS <- c(2021, 2022, 2023)
 
 API <- "https://healthdata.gov/resource/g62h-syeh.csv"
-API_2024 <- "https://data.cdc.gov/resource/aemt-mg7g.csv"
+# API_2024 <- "https://data.cdc.gov/resource/aemt-mg7g.csv"
+API_2024 <- "https://data.cdc.gov/resource/ua7e-t2fy.csv"
 
 #' @title Download daily state-level HHS PROTECT hospitalization admission data
 #' to a CSV.
@@ -208,7 +209,7 @@ fetch_hhs_data <- function(down_dir="~",
 fetch_hhs_data_2024 <- function(down_dir="~",
                                 down_filename=NULL,
                                 fields=COLS_2024,
-                                order="week_end_date",
+                                order="weekendingdate",
                                 limit=1000000,
                                 conditions=NULL) {
   

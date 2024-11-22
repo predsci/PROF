@@ -208,6 +208,7 @@ fetch_hhs_data <- function(down_dir="~",
 #'
 fetch_hhs_data_2024 <- function(down_dir="~",
                                 down_filename=NULL,
+                                api_url=API_2024,
                                 fields=COLS_2024,
                                 order="weekendingdate",
                                 limit=1000000,
@@ -238,9 +239,9 @@ fetch_hhs_data_2024 <- function(down_dir="~",
   # Perform API request
   # If query dictionary has been populated, pass this as an argument to GET call
   if (length(query) == 0) {
-    response <- httr::GET(API_2024)
+    response <- httr::GET(api_url)
   } else {
-    response <- httr::GET(API_2024, query=query)
+    response <- httr::GET(api_url, query=query)
   }
   
   # Check response status
